@@ -9,6 +9,9 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.amazonaws.util.json.JSONException;
+import com.amazonaws.util.json.JSONObject;
+
 /*import com.amazonaws.auth.AWSCredentialsProviderChain;
 import com.amazonaws.auth.ClasspathPropertiesFileCredentialsProvider;
 import com.amazonaws.auth.InstanceProfileCredentialsProvider;
@@ -70,23 +73,7 @@ public class WorkerServlet extends HttpServlet {
             response.setContentType("text/html;charset=UTF-8");
             
             response.setStatus(200);
-            
-            PrintWriter out = response.getWriter();
-            
-            try {
-                out.println("<!DOCTYPE html>");  // HTML 5
-                out.println("<html><head>");
-                out.println("<meta http-equiv='Content-Type' content='text/html; charset=UTF-8'>");
-                out.println("<title>Hello World</title></head>");
-                out.println("<body>");
-                out.println("<h1>Hello World</h1>");  // Prints "Hello, world!"
-                // Set a hyperlink image to refresh this page
-                out.println("<a href='" + request.getRequestURI() + "'><img src='images/return.gif'></a>");
-                out.println("</body></html>");
-             } finally {
-                out.close();  // Always close the output writer
-             }
-            
+      
             
 
         } catch (RuntimeException | InterruptedException exception) {
@@ -96,12 +83,38 @@ public class WorkerServlet extends HttpServlet {
             // case the failure was transient (eg a temporary network issue
             // when writing to Amazon S3).
             
-            response.setStatus(500);
+            response.setStatus(501);
             try (PrintWriter writer =
                  new PrintWriter(response.getOutputStream())) {
                 exception.printStackTrace(writer);
             }
         }
+    }
+    
+    @Override
+    protected void doGet(HttpServletRequest request,
+            HttpServletResponse response)
+                 throws ServletException,
+                        IOException    {
+    	
+    	response.setContentType("application/json");
+    	
+    	//JSONObject jsonObj = (JSONObject) JSONValue.parse(request.getParameter("para"));
+    	JSONObject obj = new JSONObject();
+    	try {
+			obj.put("message", "hello from server");
+		}
+        response.setStatus(200);
+        
+        PrintWriter out = response.getWriter();
+        
+        try {
+        	out.print(obj);
+            //out.println("</body></html>");
+         } finally {
+            out.close();  // Always close the output writer
+         }
+    	
     }
     
 }
