@@ -1,6 +1,6 @@
 # RESTService
 
-Install Amazon Eclipse Tools (Eclipse Marketplace) to build me!
+Install Amazon Eclipse Tools (Eclipse Marketplace) to build me!, you WILL need Eclipse for Java EE not just Java
 
 To set up Tomcat
 
