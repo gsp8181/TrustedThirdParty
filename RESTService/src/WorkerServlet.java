@@ -103,7 +103,8 @@ public class WorkerServlet extends HttpServlet {
     	JSONObject obj = new JSONObject();
     	try {
 			obj.put("message", "hello from server");
-		}
+		} catch (JSONException e) {}
+		
         response.setStatus(200);
         
         PrintWriter out = response.getWriter();
