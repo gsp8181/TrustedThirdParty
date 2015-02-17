@@ -32,4 +32,4 @@ Finish, right click and press start
 
 Visit http://localhost:8080/RESTService
 
-You can right click the tomcat service and press publish to update changes
+If it doesn't work it may need you to mess around with it a bit!
