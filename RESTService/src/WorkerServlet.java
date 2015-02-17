@@ -9,11 +9,11 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.amazonaws.auth.AWSCredentialsProviderChain;
+/*import com.amazonaws.auth.AWSCredentialsProviderChain;
 import com.amazonaws.auth.ClasspathPropertiesFileCredentialsProvider;
 import com.amazonaws.auth.InstanceProfileCredentialsProvider;
 import com.amazonaws.services.s3.AmazonS3Client;
-import com.amazonaws.services.s3.model.ObjectMetadata;
+import com.amazonaws.services.s3.model.ObjectMetadata;*/
 
 /**
  * An example Amazon Elastic Beanstalk Worker Tier application. This example
@@ -31,10 +31,10 @@ public class WorkerServlet extends HttpServlet {
      * Instance Profile associated with the EC2 instance on which it is
      * run.
      */
-    private final AmazonS3Client s3 = new AmazonS3Client(
+    /*private final AmazonS3Client s3 = new AmazonS3Client(
         new AWSCredentialsProviderChain(
             new InstanceProfileCredentialsProvider(),
-            new ClasspathPropertiesFileCredentialsProvider()));
+            new ClasspathPropertiesFileCredentialsProvider()));*/
     
     /**
      * This method is invoked to handle POST requests from the local
@@ -60,15 +60,34 @@ public class WorkerServlet extends HttpServlet {
             
             byte[] message = workRequest.getMessage().getBytes(UTF_8);
             
-            s3.putObject(workRequest.getBucket(),
+            /*s3.putObject(workRequest.getBucket(),
                          workRequest.getKey(),
                          new ByteArrayInputStream(message),
-                         new ObjectMetadata());
+                         new ObjectMetadata());*/
 
             // Signal to beanstalk that processing was successful so this work
             // item should not be retried.
+            response.setContentType("text/html;charset=UTF-8");
             
             response.setStatus(200);
+            
+            PrintWriter out = response.getWriter();
+            
+            try {
+                out.println("<!DOCTYPE html>");  // HTML 5
+                out.println("<html><head>");
+                out.println("<meta http-equiv='Content-Type' content='text/html; charset=UTF-8'>");
+                out.println("<title>Hello World</title></head>");
+                out.println("<body>");
+                out.println("<h1>Hello World</h1>");  // Prints "Hello, world!"
+                // Set a hyperlink image to refresh this page
+                out.println("<a href='" + request.getRequestURI() + "'><img src='images/return.gif'></a>");
+                out.println("</body></html>");
+             } finally {
+                out.close();  // Always close the output writer
+             }
+            
+            
 
         } catch (RuntimeException | InterruptedException exception) {
             
