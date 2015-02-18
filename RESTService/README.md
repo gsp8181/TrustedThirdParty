@@ -27,3 +27,6 @@ Add the following between the <tomcat-users>...</tomcat-users> tags
     <user username="tomcat" password="tomcat" roles="manager-script,manager-gui" />
 
 ##To import the project
+
+    mvn clean package
+    mvn tomcat7:deploy
