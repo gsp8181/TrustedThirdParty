@@ -43,5 +43,5 @@ Add to eclipse as a new maven project
 
 ##Test Links
 
-[http://localhost:8080/restservice/rest/hello/yourmessage](http://localhost:8080/restservice/rest/hello/yourmessage)
-[http://localhost:8080/restservice/rest/hellorest/yourmessage](http://localhost:8080/restservice/rest/hellorest/yourmessage)
+[http://localhost:8080/service/rest/hello/yourmessage](http://localhost:8080/service/rest/hello/yourmessage)
+[http://localhost:8080/service/rest/hellorest/yourmessage](http://localhost:8080/service/rest/hellorest/yourmessage)
