@@ -1,4 +1,4 @@
-package com.team2.jax;
+package com.team2.jax.helloworld;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -24,7 +24,8 @@ public class HelloWorldRESTService {
     @GET
     @Path("/{param}")
     public Response getMsg(@PathParam("param") String msg) {
-        String response = msg;
+        HelloWorld response = new HelloWorld();
+        response.setVal(msg);
         return Response.ok(response).build();
     }
 	
