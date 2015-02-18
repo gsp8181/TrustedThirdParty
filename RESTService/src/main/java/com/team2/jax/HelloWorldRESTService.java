@@ -9,7 +9,7 @@ import javax.ejb.Stateless;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-@Path("/HelloREST")
+@Path("/hellorest")
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
 @Stateless
