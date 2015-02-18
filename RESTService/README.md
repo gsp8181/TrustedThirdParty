@@ -28,5 +28,11 @@ Add the following between the <tomcat-users>...</tomcat-users> tags
 
 ##To import the project
 
+Add to eclipse as a new maven project
+
+##Maven Commands
+
     mvn clean package
     mvn tomcat7:deploy
+    mvn tomcat7:undeploy 
+    mvn tomcat7:redeploy
