@@ -17,7 +17,7 @@ public class HelloWorldRESTService {
 	
 
     /**
-     * <p>Search for and return all the Customers.  They are sorted alphabetically by name.</p>
+     * Hello, World!
      * 
      * @return JSON wow
      */
