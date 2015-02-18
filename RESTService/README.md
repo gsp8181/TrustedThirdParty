@@ -37,4 +37,4 @@ Add to eclipse as a new maven project
     mvn tomcat7:undeploy 
     mvn tomcat7:redeploy
 
-http://localhost:8080/RESTService/rest/hello/<message>
+[http://localhost:8080/RESTService/rest/hello/yourmessage](http://localhost:8080/RESTService/rest/hello/yourmessage)
