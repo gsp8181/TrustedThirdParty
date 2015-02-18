@@ -22,9 +22,9 @@ Install Amazon Eclipse Tools (Eclipse Marketplace) to build me!, you WILL need E
 
 * In Tomcat installation directory, find conf/tomcat-users.xml
 
-* Add the following between the <tomcat-users>...</tomcat-users> tags
+* Add the following between the `<tomcat-users>...</tomcat-users>` tags
 
-	<user username="tomcat" password="tomcat" roles="manager-script,manager-gui" />
+`<user username="tomcat" password="tomcat" roles="manager-script,manager-gui" />`
     
 * Start tomcat in eclipse
 
@@ -41,4 +41,7 @@ Add to eclipse as a new maven project
     mvn tomcat7:undeploy 
     mvn tomcat7:redeploy
 
+##Test Links
+
 [http://localhost:8080/restservice/rest/hello/yourmessage](http://localhost:8080/restservice/rest/hello/yourmessage)
+[http://localhost:8080/restservice/rest/hellorest/yourmessage](http://localhost:8080/restservice/rest/hellorest/yourmessage)
