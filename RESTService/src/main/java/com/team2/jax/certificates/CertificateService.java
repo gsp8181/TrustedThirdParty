@@ -13,8 +13,7 @@ public class CertificateService {
 	@Inject
     private @Named("logger") Logger log;
 	
-	
 	@Inject
-    private CertificateRepository crud;
+    private CertificateRepositorySimple crud;
 	
 }
