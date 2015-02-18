@@ -4,9 +4,9 @@
   <groupId>com.team2.jax</groupId>
   <artifactId>RESTService</artifactId>
   <packaging>war</packaging>
-  <version>1.0-SNAPSHOT</version>
+  <version>0.1-SNAPSHOT</version>
   <name>RESTService Maven Webapp</name>
-  <url>http://maven.apache.org</url>
+  <url>http://github.com/gsp8181/TrustedThirdParty</url>
   <repositories>
 		<repository>
 			<id>maven2-repository.java.net</id>
@@ -43,7 +43,7 @@
 		<configuration>
 			<url>http://localhost:8080/manager/text</url>
 			<server>TomcatServer</server>
-			<path>/RESTService</path>
+			<path>/restservice</path>
 			<username>tomcat</username>
 			<password>tomcat</password>
 		</configuration>

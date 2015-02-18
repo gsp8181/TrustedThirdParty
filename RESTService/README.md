@@ -4,27 +4,31 @@ Install Amazon Eclipse Tools (Eclipse Marketplace) to build me!, you WILL need E
 
 ##To set up Tomcat
 
-Ensure you have the Amazon Plugins installed (type amazon into eclipse marketplace)
+* Ensure you have the Amazon Plugins installed (type amazon into eclipse marketplace)
 
-Go to the server management pane (Window->Show View->Server->Servers)
+* Go to the server management pane (Window->Show View->Server->Servers)
 
-Right click->New->Server
+* Right click->New->Server
 
-Apache->Tomcat->Tomcat v7->Next
+* Apache->Tomcat->Tomcat v7->Next
 
-Download and Install
+* Download and Install
 
-Then press Next and finish
+* Then press Next and finish
 
-Double click on the tomcat server in the server management pane
+* Double click on the tomcat server in the server management pane
 
-Check use tomcat installation and hit finish
+* Check use tomcat installation and hit finish
 
-In Tomcat installation directory, find conf/tomcat-users.xml
+* In Tomcat installation directory, find conf/tomcat-users.xml
 
-Add the following between the <tomcat-users>...</tomcat-users> tags
+* Add the following between the <tomcat-users>...</tomcat-users> tags
 
-    <user username="tomcat" password="tomcat" roles="manager-script,manager-gui" />
+	<user username="tomcat" password="tomcat" roles="manager-script,manager-gui" />
+    
+* Start tomcat in eclipse
+
+* Verify that tomcat is working by going to [http://localhost:8080/](http://localhost:8080/)
 
 ##To import the project
 
@@ -37,4 +41,4 @@ Add to eclipse as a new maven project
     mvn tomcat7:undeploy 
     mvn tomcat7:redeploy
 
-[http://localhost:8080/RESTService/rest/hello/yourmessage](http://localhost:8080/RESTService/rest/hello/yourmessage)
+[http://localhost:8080/restservice/rest/hello/yourmessage](http://localhost:8080/restservice/rest/hello/yourmessage)
