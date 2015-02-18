@@ -20,4 +20,10 @@ Double click on the tomcat server in the server management pane
 
 Check use tomcat installation and hit finish
 
+In Tomcat installation directory, find conf/tomcat-users.xml
+
+Add the following between the <tomcat-users>...</tomcat-users> tags
+
+    <user username="tomcat" password="tomcat" roles="manager-script,manager-gui" />
+
 ##To import the project
