@@ -16,20 +16,8 @@ Download and Install
 
 Then press Next and finish
 
+Double click on the tomcat server in the server management pane
+
+Check use tomcat installation and hit finish
+
 ##To import the project
-
-Make a new Dynamic Web Service project for Tomcat (Not Amazon for now)
-
-Close that project
-
-Clone the RESTService directory into the project you just created
-
-Open the project again
-
-Right click on the Tomcat server in servers, press add and remove and move the service from available to configured
-
-Finish, right click and press start
-
-Visit http://localhost:8080/RESTService
-
-If it doesn't work it may need you to mess around with it a bit!
