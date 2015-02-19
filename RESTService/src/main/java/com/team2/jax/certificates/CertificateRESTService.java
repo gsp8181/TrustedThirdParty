@@ -8,6 +8,7 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.WebApplicationException;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -29,10 +30,13 @@ public class CertificateRESTService {
     
     @GET
     @Path("/{param}")
-    public Response getCert(@PathParam("param") String certId) {
-    	throw new RuntimeException();
-        //response.setVal(msg);
-        //return Response.ok(response).build();
+    public Response getCertByUsername(@PathParam("param") String username) {
+    	Certificate cert = service.findByUsername(username);
+    	if(cert == null)
+    		throw new WebApplicationException(Response.Status.NOT_FOUND);
+    	
+    	
+        return Response.ok(cert).build();
     }
     
     @POST

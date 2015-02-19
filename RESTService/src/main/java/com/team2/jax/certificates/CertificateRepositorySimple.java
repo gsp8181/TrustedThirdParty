@@ -18,5 +18,10 @@ public class CertificateRepositorySimple implements CertificateRepository {
     private static EntityManagerFactoryImpl factory = new EntityManagerFactoryImpl("Certificate", properties);
     EntityManager em = factory.createEntityManager();
     
+	public Certificate findByUsername(String username) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+    
     
 }

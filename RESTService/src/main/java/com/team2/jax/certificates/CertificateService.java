@@ -14,6 +14,10 @@ public class CertificateService {
     private @Named("logger") Logger log;
 	
 	@Inject
-    private CertificateRepositorySimple crud;
+    private CertificateRepositoryTest crud;
+
+	public Certificate findByUsername(String username) {
+		return crud.findByUsername(username);
+	}
 	
 }
