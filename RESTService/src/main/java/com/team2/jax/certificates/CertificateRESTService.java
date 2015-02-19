@@ -24,8 +24,9 @@ public class CertificateRESTService {
     //@Inject
     //private @Named("logger") Logger log;
     
-    @Inject
-    private CertificateService service;
+    //@Inject
+	//private CertificateService service; TODO: figure out injection
+    private static CertificateService service = new CertificateService();
 
     
     @GET
@@ -33,7 +34,7 @@ public class CertificateRESTService {
     public Response getCertByUsername(@PathParam("param") String username) {
     	Certificate cert = service.findByUsername(username);
     	if(cert == null)
-    		throw new WebApplicationException(Response.Status.NOT_FOUND);
+    		throw new WebApplicationException(Response.Status.NOT_FOUND); //TODO: doesn't display an error message
     	
     	
         return Response.ok(cert).build();

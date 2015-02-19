@@ -5,10 +5,10 @@ public class CertificateRepositoryTest implements CertificateRepository {
 	public Certificate findByUsername(String username) {
 		Certificate rtn = new Certificate();
 		rtn.setUsername(username);
-		if(username == "test")
+		if(username.equals("test"))
 		{
 			rtn.setPublicKey("ok");
-		} else if(username == "no")
+		} else if(username.equals("no"))
 		{
 			return null;
 		}else
