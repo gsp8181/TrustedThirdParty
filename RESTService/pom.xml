@@ -35,57 +35,38 @@
 			</releases>
 		</pluginRepository>
 	</pluginRepositories>
+	
 	<dependencies>
 		<!-- TESTING DEPENDENCIES -->
-		<!-- <dependency>
+		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
-			<version>3.8.1</version>
+			<version>4.8.1</version>
+			<type>jar</type>
 			<scope>test</scope>
-		</dependency> -->
-		<dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>4.8.1</version>
-            <type>jar</type>
-            <scope>test</scope>
-        </dependency>
-        <!-- <dependency>
-          <groupId>log4j</groupId>
-          <artifactId>log4j</artifactId>
-          <version>1.2.15</version>
-          <exclusions>
-            <exclusion>
-              <groupId>javax.mail</groupId>
-              <artifactId>mail</artifactId>
-            </exclusion>
-            <exclusion>
-              <groupId>javax.jms</groupId>
-              <artifactId>jms</artifactId>
-            </exclusion>
-            <exclusion>
-              <groupId>com.sun.jdmk</groupId>
-              <artifactId>jmxtools</artifactId>
-            </exclusion>
-            <exclusion>
-              <groupId>com.sun.jmx</groupId>
-              <artifactId>jmxri</artifactId>
-            </exclusion>
-          </exclusions>
-        </dependency> -->
+		</dependency>
+		<!-- <dependency> <groupId>log4j</groupId> <artifactId>log4j</artifactId> 
+			<version>1.2.15</version> <exclusions> <exclusion> <groupId>javax.mail</groupId> 
+			<artifactId>mail</artifactId> </exclusion> <exclusion> <groupId>javax.jms</groupId> 
+			<artifactId>jms</artifactId> </exclusion> <exclusion> <groupId>com.sun.jdmk</groupId> 
+			<artifactId>jmxtools</artifactId> </exclusion> <exclusion> <groupId>com.sun.jmx</groupId> 
+			<artifactId>jmxri</artifactId> </exclusion> </exclusions> </dependency> -->
 		<!-- END TESTING -->
-		<!-- JERSEY (REST) -->
-		<!-- <dependency>
-			<groupId>com.sun.jersey</groupId>
-			<artifactId>jersey-server</artifactId>
-			<version>1.8</version>
-		</dependency> --><!-- TODO: make libs actually work -->
+		
+		<!-- JERSEY (Server container) -->
+		<!-- Disabled as TomEE comes with its own jersey implementation -->
+		<!-- <dependency> <groupId>com.sun.jersey</groupId> <artifactId>jersey-server</artifactId> 
+			<version>1.8</version> </dependency> -->
+		<!-- END JERSEY -->
+		
+		<!-- Jackson JSON parser -->
 		<dependency>
 			<groupId>com.sun.jersey</groupId>
 			<artifactId>jersey-json</artifactId>
 			<version>1.8</version>
 		</dependency>
-		<!-- END JERSEY -->
+		<!-- END Jackson -->
+		
 		<!-- JAVAX (for JPA) -->
 		<dependency>
 			<groupId>javax</groupId>
@@ -93,34 +74,42 @@
 			<version>7.0</version>
 		</dependency>
 		<!-- END JAVAX -->
+		
+		<!-- Hibernate (Validation annotations) -->
+		<!-- <dependency> <groupId>org.hibernate</groupId> <artifactId>hibernate-validator</artifactId> 
+			<version>5.1.3.Final</version> </dependency> -->
+		<!-- End Hibernate -->
+		
 		<!-- SimpleJPA -->
-        <dependency>
-            <groupId>net.sf.scannotation</groupId>
-            <artifactId>scannotation</artifactId>
-            <version>1.0.2</version>
-        </dependency>
-        <dependency>
-            <groupId>simplejpa</groupId>
-            <artifactId>simplejpa</artifactId>
-            <version>AWSSDK</version>
-            <scope>system</scope>
-                <systemPath>${basedir}/src/main/webapp/WEB-INF/lib/SimpleJPA-1.5.1.jar</systemPath>
-        </dependency>
-        <dependency>
-            <groupId>javax.persistence</groupId>
-            <artifactId>persistence-api</artifactId>
-            <version>1.0</version>
-        </dependency>
+		<dependency>
+			<groupId>net.sf.scannotation</groupId>
+			<artifactId>scannotation</artifactId>
+			<version>1.0.2</version>
+		</dependency>
+		<dependency>
+			<groupId>simplejpa</groupId>
+			<artifactId>simplejpa</artifactId>
+			<version>AWSSDK</version>
+			<scope>system</scope>
+			<systemPath>${basedir}/src/main/webapp/WEB-INF/lib/SimpleJPA-1.5.1.jar</systemPath>
+		</dependency>
+		<dependency>
+			<groupId>javax.persistence</groupId>
+			<artifactId>persistence-api</artifactId>
+			<version>1.0</version>
+		</dependency>
 		<!-- END SimpleJPA -->
 
 		<!-- AWS SDK ADD AND REMOVE AS NEEDED -->
 		<!-- http://mvnrepository.com/artifact/com.amazonaws/aws-java-sdk/ -->
-		 <dependency> 
-		 <groupId>com.amazonaws</groupId>
-		  <artifactId>aws-java-sdk</artifactId> 
-			<version>1.9.20.1</version> </dependency>
-			<!-- END AWS -->
+		<dependency>
+			<groupId>com.amazonaws</groupId>
+			<artifactId>aws-java-sdk</artifactId>
+			<version>1.9.20.1</version>
+		</dependency>
+		<!-- END AWS -->
 	</dependencies>
+	
 	<build>
 		<finalName>RESTService</finalName>
 		<plugins>
@@ -136,6 +125,13 @@
 					<password>tomcat</password>
 				</configuration>
 			</plugin>
+			
+			<!--<plugin> <groupId>org.apache.openejb.maven</groupId> <artifactId>tomee-maven-plugin</artifactId> 
+				<version>1.7.1</version> <configuration> <tomeeVersion>1.7.1</tomeeVersion> 
+				<tomeeClassifier>plus</tomeeClassifier> <url>http://localhost:8080/manager/text</url> 
+				<server>TomcatServer</server> <path>/apache-tomee-plus-1.7.1/webapps/service</path> 
+				<username>tomcat</username> <password>tomcat</password> </configuration> 
+				</plugin> -->
 		</plugins>
 	</build>
 </project>
