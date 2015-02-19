@@ -16,9 +16,18 @@ public class CertificateService {
 	//@Inject
     //private CertificateRepositoryTest crud; TODO: figure out
 	private static CertificateRepository crud = new CertificateRepositoryTest();
+	
+	private static CertificateValidator validator = new CertificateValidator();
 
 	public Certificate findByUsername(String username) {
 		return crud.findByUsername(username);
+	}
+
+	public Certificate create(Certificate cert) {
+		validator.validateCertificate(cert);
+		
+		return crud.create(cert);
+		
 	}
 	
 }

@@ -46,4 +46,9 @@ public class Certificate implements Serializable {
 	public void setUsername(String username) {
 		this.username = username;
 	}
+	
+	public String getId()
+	{
+		return id;
+	}
 }

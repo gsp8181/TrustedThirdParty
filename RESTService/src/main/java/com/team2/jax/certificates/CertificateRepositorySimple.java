@@ -22,6 +22,11 @@ public class CertificateRepositorySimple implements CertificateRepository {
 		// TODO Auto-generated method stub
 		return null;
 	}
+
+	public Certificate create(Certificate certificate) {
+		// TODO Auto-generated method stub
+		return null;
+	}
     
     
 }

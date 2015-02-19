@@ -44,7 +44,14 @@ public class CertificateRESTService {
     public Response sendCert(Certificate cert)
     {
     	
-    	throw new RuntimeException();
+    	if(cert == null)
+    		throw new WebApplicationException(Response.Status.BAD_REQUEST);
+    	
+    	service.create(cert);
+    	
+    	return Response.status(Response.Status.CREATED).entity(cert).build();
+    	
+    	
     }
 	
 }

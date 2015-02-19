@@ -18,4 +18,8 @@ public class CertificateRepositoryTest implements CertificateRepository {
 		return rtn;
 	}
 
+	public Certificate create(Certificate certificate) {
+		return certificate;
+	}
+
 }
