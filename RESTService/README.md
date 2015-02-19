@@ -2,9 +2,9 @@
 
 Install Amazon Eclipse Tools (Eclipse Marketplace) to build me!, you WILL need Eclipse for Java EE not just Java
 
-##To set up Tomcat
+##To set up TomEE (Tomcat)
 
-* Ensure you have the Amazon Plugins installed (type amazon into eclipse marketplace)
+* Download and unzip TomEE somewhere [http://www.apache.org/dyn/closer.cgi/tomee/tomee-1.7.1/apache-tomee-1.7.1-plus.zip](http://www.apache.org/dyn/closer.cgi/tomee/tomee-1.7.1/apache-tomee-1.7.1-plus.zip)
 
 * Go to the server management pane (Window->Show View->Server->Servers)
 
@@ -12,7 +12,7 @@ Install Amazon Eclipse Tools (Eclipse Marketplace) to build me!, you WILL need E
 
 * Apache->Tomcat->Tomcat v7->Next
 
-* Download and Install
+* Specify the location of the installation of TomEE
 
 * Then press Next and finish
 
@@ -37,6 +37,9 @@ Add to eclipse as a new maven project
 ##Maven Commands
 
     mvn clean package
+    mvn clean tomcat7:deploy
+    mvn clean tomcat7:undeploy
+    mvn clean tomcat7:redeploy
     mvn tomcat7:deploy
     mvn tomcat7:undeploy 
     mvn tomcat7:redeploy

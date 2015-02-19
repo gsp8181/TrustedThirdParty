@@ -10,8 +10,8 @@ import javax.inject.Named;
 public class CertificateService {
 
 	
-	@Inject
-    private @Named("logger") Logger log;
+	//@Inject
+    //private @Named("logger") Logger log;
 	
 	@Inject
     private CertificateRepositoryTest crud;

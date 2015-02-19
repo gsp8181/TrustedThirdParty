@@ -21,8 +21,8 @@ import javax.ws.rs.core.Response;
 @Stateless
 public class CertificateRESTService {
 	
-    @Inject
-    private @Named("logger") Logger log;
+    //@Inject
+    //private @Named("logger") Logger log;
     
     @Inject
     private CertificateService service;

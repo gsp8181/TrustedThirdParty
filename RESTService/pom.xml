@@ -75,11 +75,11 @@
         </dependency> -->
 		<!-- END TESTING -->
 		<!-- JERSEY (REST) -->
-		<dependency>
+		<!-- <dependency>
 			<groupId>com.sun.jersey</groupId>
 			<artifactId>jersey-server</artifactId>
 			<version>1.8</version>
-		</dependency>
+		</dependency> --><!-- TODO: make libs actually work -->
 		<dependency>
 			<groupId>com.sun.jersey</groupId>
 			<artifactId>jersey-json</artifactId>
