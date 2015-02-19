@@ -4,7 +4,6 @@ import java.util.logging.Logger;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
-import javax.ws.rs.NotSupportedException;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -31,7 +30,7 @@ public class CertificateRESTService {
     @GET
     @Path("/{param}")
     public Response getCert(@PathParam("param") String certId) {
-    	throw new NotSupportedException();
+    	throw new RuntimeException();
         //response.setVal(msg);
         //return Response.ok(response).build();
     }
@@ -40,7 +39,7 @@ public class CertificateRESTService {
     public Response sendCert(Certificate cert)
     {
     	
-    	throw new NotSupportedException();
+    	throw new RuntimeException();
     }
 	
 }
