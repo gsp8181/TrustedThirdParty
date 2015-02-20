@@ -15,7 +15,7 @@ public class CertificateService {
 	
 	//@Inject
     //private CertificateRepositoryTest crud; TODO: figure out
-	private static CertificateRepository crud = new CertificateRepositoryTest();
+	private static CertificateRepository crud = new CertificateRepositoryMemory();
 	
 	private static CertificateValidator validator = new CertificateValidator();
 
