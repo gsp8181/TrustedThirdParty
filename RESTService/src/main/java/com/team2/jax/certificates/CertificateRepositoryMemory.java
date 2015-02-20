@@ -19,7 +19,8 @@ public class CertificateRepositoryMemory implements CertificateRepository {
 		if (repo.containsKey(certificate.getUsername())) {
 			return null; // todo: should be not created
 		} else {
-			return repo.put(certificate.getUsername(),certificate);
+			repo.put(certificate.getUsername(),certificate);
+			return certificate;
 		}
 	}
 

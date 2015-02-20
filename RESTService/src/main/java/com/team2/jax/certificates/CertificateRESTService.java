@@ -1,7 +1,13 @@
 package com.team2.jax.certificates;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 import java.util.logging.Logger;
 
+import javax.validation.ConstraintViolation;
+import javax.validation.ConstraintViolationException;
+import javax.validation.ValidationException;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -20,38 +26,84 @@ import javax.ws.rs.core.Response;
 @Produces(MediaType.APPLICATION_JSON)
 @Stateless
 public class CertificateRESTService {
-	
-    //@Inject
-    //private @Named("logger") Logger log;
-    
-    //@Inject
-	//private CertificateService service; TODO: figure out injection
-    private static CertificateService service = new CertificateService();
 
-    
-    @GET
-    @Path("/{param}")
-    public Response getCertByUsername(@PathParam("param") String username) {
-    	Certificate cert = service.findByUsername(username);
-    	if(cert == null)
-    		throw new WebApplicationException(Response.Status.NOT_FOUND); //TODO: doesn't display an error message
-    	
-    	
-        return Response.ok(cert).build();
-    }
-    
-    @POST
-    public Response sendCert(Certificate cert)
-    {
-    	
-    	if(cert == null)
-    		throw new WebApplicationException(Response.Status.BAD_REQUEST);
-    	
-    	service.create(cert);
-    	
-    	return Response.status(Response.Status.CREATED).entity(cert).build();
-    	
-    	
-    }
-	
+	// @Inject
+	// private @Named("logger") Logger log;
+
+	// @Inject
+	// private CertificateService service; TODO: figure out injection
+	private static CertificateService service = new CertificateService();
+
+	@GET
+	@Path("/{param}")
+	public Response getCertByUsername(@PathParam("param") String username) {
+		Certificate cert = service.findByUsername(username);
+		if (cert == null)
+			throw new WebApplicationException(Response.Status.NOT_FOUND); // TODO: doesn't display an error message
+
+		return Response.ok(cert).build();
+	}
+
+	@POST
+	public Response sendCert(Certificate cert) {
+
+		if (cert == null)
+			throw new WebApplicationException(Response.Status.BAD_REQUEST);
+
+		Response.ResponseBuilder builder = null;
+
+		try {
+			Certificate out = service.create(cert);
+
+			builder = Response.status(Response.Status.CREATED).entity(out);
+
+		} catch (ConstraintViolationException ce) {
+			// Handles bean specific constraint exceptions
+			builder = createViolationResponse(ce.getConstraintViolations());
+
+		} catch (ValidationException ve) {
+			Map<String, String> responseObj = new HashMap<String, String>();
+            if(ve.getMessage().startsWith("Username Already Exists"))
+            		{
+            responseObj.put("username", "Username Already Exists");
+            		}
+            builder = Response.status(Response.Status.CONFLICT).entity(responseObj);
+			
+		} catch (Exception e) {
+			// Handle generic exceptions
+			Map<String, String> responseObj = new HashMap<String, String>();
+			responseObj.put("error", e.getMessage());
+			builder = Response.status(Response.Status.BAD_REQUEST).entity(
+					responseObj);
+		}
+
+		return builder.build();
+
+	}
+
+	/**
+	 * <p>
+	 * Creates a JAX-RS "Bad Request" response including a map of all violation
+	 * fields, and their message. This can be used by calling client
+	 * applications to display violations to users.
+	 * <p/>
+	 * 
+	 * @param violations
+	 *            A Set of violations that need to be reported in the Response
+	 *            body
+	 * @return A Bad Request (400) Response containing all violation messages
+	 */
+	private Response.ResponseBuilder createViolationResponse(
+			Set<ConstraintViolation<?>> violations) {
+
+		Map<String, String> responseObj = new HashMap<String, String>();
+
+		for (ConstraintViolation<?> violation : violations) {
+			responseObj.put(violation.getPropertyPath().toString(),
+					violation.getMessage());
+		}
+
+		return Response.status(Response.Status.BAD_REQUEST).entity(responseObj);
+	}
+
 }

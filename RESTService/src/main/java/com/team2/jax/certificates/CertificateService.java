@@ -5,6 +5,8 @@ import java.util.logging.Logger;
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.validation.ConstraintViolationException;
+import javax.validation.ValidationException;
 
 //@Dependent TODO: figure out
 public class CertificateService {
@@ -23,7 +25,7 @@ public class CertificateService {
 		return crud.findByUsername(username);
 	}
 
-	public Certificate create(Certificate cert) {
+	public Certificate create(Certificate cert) throws ConstraintViolationException, ValidationException, Exception {
 		validator.validateCertificate(cert);
 		
 		return crud.create(cert);
