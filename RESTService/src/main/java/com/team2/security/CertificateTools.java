@@ -1,6 +1,7 @@
 package com.team2.security;
 
 import java.security.InvalidKeyException;
+import java.security.Key;
 import java.security.KeyFactory;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
@@ -22,37 +23,12 @@ public class CertificateTools {
 
 	private static Logger log = Logger.getAnonymousLogger();
 	
-	/*public static void main(String[] args) throws NoSuchAlgorithmException, NoSuchProviderException, InvalidKeyException, SignatureException, InvalidKeySpecException {
-		
-		KeyPairGenerator keyGen = KeyPairGenerator.getInstance("DSA");
-		SecureRandom random = SecureRandom.getInstance("SHA1PRNG", "SUN");
-		keyGen.initialize(1024, random);
-		KeyPair pair = keyGen.generateKeyPair();
-		
-		Signature dsa = Signature.getInstance("SHA1withDSA");
-		String dataS = "signed";
-		byte[] data = dataS.getBytes();
-		
-		PrivateKey priv = pair.getPrivate();
-		dsa.initSign(priv);
-		dsa.update(data);
-		byte[] sig = dsa.sign();
-		
-		PublicKey pub = pair.getPublic();
-		
-		PublicKey pub2;
-		
-			pub2 = decode(encoded(pub));
-		
-		dsa.initVerify(pub2);
-
-		System.out.println(encoded(pub));
-		
-		dsa.update(data);
-		boolean verifies = dsa.verify(sig);
-		System.out.println("signature verifies: " + verifies);
-	}*/
-	
+	/**
+	 * Returns an object containing an example private/public key pair and signed data. 
+	 * Should only be used for testing
+	 * @param dataToSign The data to sign, usually the username
+	 * @return The TestData object with the signed data and the keypair
+	 */
 	public static TestData getTestData(String dataToSign) throws NoSuchAlgorithmException, NoSuchProviderException, InvalidKeyException, SignatureException
 	{
 		KeyPairGenerator keyGen = KeyPairGenerator.getInstance("DSA");
@@ -75,20 +51,15 @@ public class CertificateTools {
 	}
 	
 	
-	public static String encodeDSA(PrivateKey key)
+	/**
+	 * Encodes a Key object with Base64
+	 * @param key The PublicKey or PrivateKey to encode
+	 * @return The base64 encoded key string
+	 */
+	public static String encodeDSA(Key key)
 	{
 		byte[] array = key.getEncoded();
-		Encoder encoder = Base64.getEncoder();
-		byte[] out = encoder.encode(array);
-		return new String(out);
-	}
-	
-	public static String encodeDSA(PublicKey key)
-	{
-		byte[] array = key.getEncoded();
-		Encoder encoder = Base64.getEncoder();
-		byte[] out = encoder.encode(array);
-		return new String(out);
+		return encodeBase64(array);
 	}
 
 	public static PublicKey decodeDSAPub(String key) throws NoSuchAlgorithmException, InvalidKeySpecException{
@@ -99,6 +70,11 @@ public class CertificateTools {
 	        return kf.generatePublic(X509publicKey);
 	}
 	
+	/**
+	 * Decodes a base64 encoded string to a byte array
+	 * @param value The base64 encoded string
+	 * @return The decoded byte array
+	 */
 	public static byte[] decodeBase64(String value)
 	{
     	Decoder decoder = Base64.getDecoder();
@@ -106,6 +82,11 @@ public class CertificateTools {
         return byteKey;
 	}
 	
+	/**
+	 * Encodes a byte array as Base64 string
+	 * @param bytes The byte array to encode
+	 * @return The base64 encoded string
+	 */
 	public static String encodeBase64(byte[] bytes)
 	{
 		Encoder encoder = Base64.getEncoder();
@@ -113,6 +94,11 @@ public class CertificateTools {
 		return new String(out);
 	}
 	
+	/**
+	 * Encodes a string as Base64 string
+	 * @param string The string to encode
+	 * @return The base64 encoded string
+	 */
 	public static String encodeBase64(String string)
 	{
 		return encodeBase64(string.getBytes());
@@ -120,7 +106,7 @@ public class CertificateTools {
 	
 	public static boolean verify(String keyBase64, String signedData, String sigBase64) throws NoSuchAlgorithmException, InvalidKeySpecException, SignatureException, InvalidKeyException
 	{
-		log.info("verifying " + keyBase64 + " : " + signedData + " : " + sigBase64);
+		//log.info("verifying " + keyBase64 + " : " + signedData + " : " + sigBase64);
 		return verify(decodeDSAPub(keyBase64), signedData, sigBase64);
 	}
 	

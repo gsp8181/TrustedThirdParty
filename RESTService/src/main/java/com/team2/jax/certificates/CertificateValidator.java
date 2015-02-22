@@ -1,14 +1,5 @@
 package com.team2.jax.certificates;
 
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
-import java.security.SignatureException;
-import java.security.spec.InvalidKeySpecException;
-import java.util.HashSet;
-import java.util.Set;
-
-import javax.validation.ConstraintViolation;
-import javax.validation.ConstraintViolationException;
 import javax.validation.ValidationException;
 import javax.validation.Validator;
 import javax.ws.rs.WebApplicationException;
@@ -54,7 +45,6 @@ public class CertificateValidator {
 		try {
 			return CertificateTools.verify(CertificateTools.decodeDSAPub(cert.getPublicKey()), cert.getUsername(), cert.getSignedData());
 		} catch (Exception e) {
-			//e.printStackTrace();
 			throw new WebApplicationException(Response.Status.INTERNAL_SERVER_ERROR);
 		}
 	}
