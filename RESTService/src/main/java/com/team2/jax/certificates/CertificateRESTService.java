@@ -65,12 +65,13 @@ public class CertificateRESTService {
 			Map<String, String> responseObj = new HashMap<String, String>();
 			if (ve.getMessage().startsWith("Username Already Exists")) {
 				responseObj.put("username", "Username Already Exists");
+				builder = Response.status(Response.Status.CONFLICT).entity(responseObj);
 			}
 			if (ve.getMessage().startsWith("Certificate verification failed")) {
 				responseObj.put("publicKey", "Certificate verification failed");
+				builder = Response.status(Response.Status.BAD_REQUEST).entity(responseObj);
 			}
-			builder = Response.status(Response.Status.CONFLICT).entity(
-					responseObj);
+			//builder = Response.status(Response.Status.CONFLICT).entity(responseObj);
 
 		} catch (Exception e) {
 			// Handle generic exceptions
