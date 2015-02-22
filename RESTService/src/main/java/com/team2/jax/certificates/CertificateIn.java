@@ -2,19 +2,27 @@ package com.team2.jax.certificates;
 
 import java.io.Serializable;
 
-import javax.persistence.Entity;
+import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlRootElement;
 
-@Entity
 @XmlRootElement
 public class CertificateIn implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 	
+	@NotNull
     private String username;
     
+    /**
+     * The public key is the DSA public key in base64 format
+     */
+	@NotNull
     private String publicKey; //TODO: NOT NULL
     
+    /**
+     * The signed data is the DSA signed username in base64 format
+     */
+	@NotNull
     private String signedData;
 
 	public String getSignedData() {
