@@ -45,7 +45,7 @@ public class CertificateRESTService {
 	}
 
 	@POST
-	public Response sendCert(Certificate cert) {
+	public Response sendCert(CertificateIn cert) {
 
 		if (cert == null)
 			throw new WebApplicationException(Response.Status.BAD_REQUEST);
@@ -67,6 +67,10 @@ public class CertificateRESTService {
             		{
             responseObj.put("username", "Username Already Exists");
             		}
+            if(ve.getMessage().startsWith("Certificate verification failed"))
+    		{
+    responseObj.put("publicKey", "Certificate verification failed");
+    		}
             builder = Response.status(Response.Status.CONFLICT).entity(responseObj);
 			
 		} catch (Exception e) {
