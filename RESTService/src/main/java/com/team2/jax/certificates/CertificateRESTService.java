@@ -34,14 +34,20 @@ public class CertificateRESTService {
 	// private CertificateService service; TODO: figure out injection
 	private static CertificateService service = new CertificateService();
 
+	/**
+	 * Get a certificate by username
+	 * @param username The username of the desired certificate
+	 * @return The certificate object
+	 */
 	@GET
-	@Path("/{param}")
-	public Response getCertByUsername(@PathParam("param") String username) {
+	@Path("/{username}")
+	public Certificate getCertByUsername(@PathParam("username") String username) {
 		Certificate cert = service.findByUsername(username);
 		if (cert == null)
 			throw new WebApplicationException(Response.Status.NOT_FOUND); // TODO: doesn't display an error message
 
-		return Response.ok(cert).build();
+		return cert;
+		//return Response.ok(cert).build();
 	}
 
 	@POST
