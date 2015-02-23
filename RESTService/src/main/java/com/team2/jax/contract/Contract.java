@@ -25,8 +25,14 @@ public class Contract implements Serializable {
     
     private String docRef;
     
+	/*
+	 * SigA(h(doc)) in base64 format
+	 */
     private String intermediateContract;
     
+	/*
+	 * SigB(SigA(h(doc))) in base64 format
+	 */
     private String contract;
     
     private boolean completed;
