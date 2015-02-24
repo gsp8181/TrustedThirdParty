@@ -21,7 +21,7 @@ public class Contract implements Serializable {
     
     private String sender;
     
-    private String receipent;
+    private String recipient;
     
     private String docRef;
     

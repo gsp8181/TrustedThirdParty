@@ -18,7 +18,7 @@ public class StartSign implements Serializable {
 	
 	private String username;
 	
-	private String receipent;
+	private String recipient;
 
 	public byte[] getDoc() {
 		return doc;
@@ -44,11 +44,11 @@ public class StartSign implements Serializable {
 		this.username = username;
 	}
 
-	public String getReceipent() {
-		return receipent;
+	public String getRecipient() {
+		return recipient;
 	}
 
-	public void setReceipent(String receipent) {
-		this.receipent = receipent;
+	public void setRecipient(String recipient) {
+		this.recipient = recipient;
 	}
 }
