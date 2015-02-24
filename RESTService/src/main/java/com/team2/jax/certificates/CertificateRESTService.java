@@ -41,7 +41,7 @@ public class CertificateRESTService {
 	 */
 	@GET
 	@Path("/{username}")
-	public Certificate getCertByUsername(@PathParam("username") String username) {
+	public Certificate /*Response*/ getCertByUsername(@PathParam("username") String username) {
 		Certificate cert = service.findByUsername(username);
 		if (cert == null)
 			throw new WebApplicationException(Response.Status.NOT_FOUND); // TODO: doesn't display an error message

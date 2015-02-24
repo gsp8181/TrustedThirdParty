@@ -29,8 +29,6 @@ public class Certificate implements Serializable {
     //@Column(unique=true, nullable=false)
     private String publicKey;
 
-    // If you are wondering, lob defines a data type that is large, may not need to be used though here
-    //@Lob
 	public String getPublicKey() {
 		return publicKey;
 	}
