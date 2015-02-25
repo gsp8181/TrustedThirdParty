@@ -21,6 +21,7 @@ import javax.ws.rs.core.Response;
 
 import com.team2.jax.certificates.Certificate;
 import com.team2.jax.certificates.CertificateService;
+import com.team2.jax.contract.input.Complete;
 import com.team2.jax.contract.input.Intermediate;
 import com.team2.jax.contract.input.StartSign;
 
@@ -70,7 +71,7 @@ public class ContractRESTService {
 	
 	@GET
 	@Path("/2/{username}")
-	public List<Intermediate> startCounterSign(@PathParam("username") String username)
+	public List<Intermediate> startCounterSign(@PathParam("username") String username) //TODO: USE INTERMEDIATE?
 	{
 		List<Intermediate> intermediates = service.getIntermediates(username);
 		if (intermediates == null)
@@ -81,11 +82,40 @@ public class ContractRESTService {
 		//return Response.ok(intermediates).build();
 	}
 	
-	@POST
-	@Path("/3")
-	public Response counterSign()
+	@POST //TODO: PUT
+	@Path("/3/{id}")
+	public Response counterSign(@PathParam("id") String id, Complete contract) //TODO: id -> int
 	{
-		throw new WebApplicationException(Response.Status.BAD_REQUEST);
+		if (contract == null)
+			throw new WebApplicationException(Response.Status.BAD_REQUEST);
+
+		Response.ResponseBuilder builder = null;
+		
+		try {
+		//Contract out = service.counterSign(contract,id);
+			String docRef = service.counterSign(contract,id);
+			Map<String, String> out = new HashMap<String, String>();
+			out.put("docRef",docRef);
+		builder = Response.status(Response.Status.ACCEPTED).entity(out); //TODO:accepted?
+		} catch (ConstraintViolationException ce) {
+			// Handles bean specific constraint exceptions
+			builder = createViolationResponse(ce.getConstraintViolations());
+		} catch (ValidationException ve) {
+			Map<String, String> responseObj = new HashMap<String, String>(); //TODO:make all like this
+			String message = ve.getMessage();
+			String field = message.substring(0,message.indexOf(':'));
+			String error = message.substring(message.indexOf(':') + 1, message.length());
+				responseObj.put(field, error);
+				builder = Response.status(Response.Status.BAD_REQUEST).entity(responseObj);
+		} catch (Exception e) {
+			// Handle generic exceptions
+			Map<String, String> responseObj = new HashMap<String, String>();
+			responseObj.put("error", e.getMessage());
+			builder = Response.status(Response.Status.BAD_REQUEST).entity(
+					responseObj);
+		}
+		
+		return builder.build();
 	}
 	
 	

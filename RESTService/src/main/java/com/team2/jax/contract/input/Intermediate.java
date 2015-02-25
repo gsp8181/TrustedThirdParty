@@ -8,19 +8,21 @@ import javax.xml.bind.annotation.XmlRootElement;
 public class Intermediate implements Serializable {
 	
 	private static final long serialVersionUID = 1L;
-
-	private String username;
+	
+	private String sender;
 	
 	private String recipient;
 	
-	private String sig;
+	private String sigSender;
+	
+	private String id;
 
 	public String getUsername() {
-		return username;
+		return sender;
 	}
 
 	public void setUsername(String username) {
-		this.username = username;
+		this.sender = username;
 	}
 
 	public String getRecipient() {
@@ -31,11 +33,19 @@ public class Intermediate implements Serializable {
 		this.recipient = recipient;
 	}
 
-	public String getSig() {
-		return sig;
+	public String getSigSender() {
+		return sigSender;
 	}
 
-	public void setSig(String sig) {
-		this.sig = sig;
+	public void setSigSender(String sigSender) {
+		this.sigSender = sigSender;
+	}
+
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
 	}
 }

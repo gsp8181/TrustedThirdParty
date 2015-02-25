@@ -16,4 +16,10 @@ public class ContractRepositoryDynamo implements ContractRepository {
 		return null;
 	}
 
+	@Override
+	public Contract getById(String id) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

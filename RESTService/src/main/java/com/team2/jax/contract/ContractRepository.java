@@ -8,4 +8,5 @@ public interface ContractRepository {
 
 	public List<Contract> getUnsignedContractsByRecipient(String recipient);
 
+	public Contract getById(String id);
 }

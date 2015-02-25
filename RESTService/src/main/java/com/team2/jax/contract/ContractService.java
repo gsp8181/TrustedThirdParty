@@ -3,6 +3,7 @@ package com.team2.jax.contract;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.team2.jax.contract.input.Complete;
 import com.team2.jax.contract.input.Intermediate;
 import com.team2.jax.contract.input.StartSign;
 
@@ -37,8 +38,9 @@ public class ContractService {
 		{
 			Intermediate i = new Intermediate();
 			i.setRecipient(c.getRecipient());
-			i.setUsername(c.getSender()); //TODO: sender
-			i.setSig(c.getIntermediateContract());
+			i.setUsername(c.getSender());
+			i.setSigSender(c.getIntermediateContract());
+			i.setId(c.getId());
 			result.add(i);
 		}
 		
@@ -53,6 +55,15 @@ public class ContractService {
 	private List<Contract> getUnsignedContractsByRecipient(String recipient) {
 		List<Contract> contracts = cod.getUnsignedContractsByRecipient(recipient);
 		return contracts;
+	}
+
+	public String counterSign(Complete completeContract, String id) throws Exception {
+		Contract c = cod.getById(id);
+		validator.validateComplete(completeContract, c);
+		c.setContract(completeContract.getSig());
+		c.setCompleted(true);
+		
+		return c.getDocRef();
 	}
 
 }

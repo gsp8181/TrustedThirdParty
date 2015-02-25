@@ -10,6 +10,7 @@ import javax.ws.rs.WebApplicationException;
 import com.team2.jax.certificates.Certificate;
 import com.team2.jax.certificates.CertificateRepository;
 import com.team2.jax.certificates.CertificateRepositoryMemory;
+import com.team2.jax.contract.input.Complete;
 import com.team2.jax.contract.input.StartSign;
 import com.team2.security.CertificateTools;
 
@@ -27,6 +28,18 @@ public class ContractValidator {
 			
 			if(!CertificateTools.verify(ssPublicKey, ssObj.getDoc(), ssObj.getSig())) //TODO: better signing error
 				throw new ValidationException("Validation of the signature failed, make sure the signing key is the database");
+	}
+
+	public void validateComplete(Complete completeContract, Contract contract) throws Exception {
+		Certificate cert = cs.findByUsername(contract.getRecipient());
+		
+		if(cert == null)
+			throw new ValidationException("certificate:No certificate was found for the designated recipient"); //TODO: spelling
+		
+		PublicKey ssPublicKey = CertificateTools.decodeDSAPub(cert.getPublicKey()); 
+		
+		if(!CertificateTools.verify(ssPublicKey, contract.getIntermediateContract(), completeContract.getSig())) //TODO: better signing error
+			throw new ValidationException("Validation of the signature failed, make sure the signing key is the database");
 	}
 
 }
