@@ -32,6 +32,8 @@ public class ContractRepositoryMemory implements ContractRepository {
 
 	@Override
 	public Contract getById(String id) {
+		if(repo.size() - 1 < Integer.parseInt(id))
+			return null;
 		return repo.get(Integer.parseInt(id));
 	}
 

@@ -70,6 +70,17 @@ public class CertificateTools {
 		return signData(dataToSign, pair);
 	}
 	
+	public static String base64urlencode(String base64)
+	{
+		return base64.replace('/', '.');
+	}
+	
+	public static String base64urldecode(String base64url)
+	{
+		return base64url.replace(' ', '+').replace('.', '/');
+		
+	}
+	
 	
 	/**
 	 * Encodes a Key object with Base64
