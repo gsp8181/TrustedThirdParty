@@ -1,6 +1,7 @@
 build/
 AwsCredentials.properties
 target/
+.idea/
 
 #################
 ## Eclipse
