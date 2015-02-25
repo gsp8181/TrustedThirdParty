@@ -2,6 +2,8 @@
 
 Install Amazon Eclipse Tools (Eclipse Marketplace) to build me!, you WILL need Eclipse for Java EE not just Java
 
+You will also NEED JDK8 and have it set up in the JAVA_HOME environment variable and have maven installed
+
 ##To set up TomEE (Tomcat)
 
 * Download and unzip TomEE somewhere [http://www.apache.org/dyn/closer.cgi/tomee/tomee-1.7.1/apache-tomee-1.7.1-plus.zip](http://www.apache.org/dyn/closer.cgi/tomee/tomee-1.7.1/apache-tomee-1.7.1-plus.zip)
