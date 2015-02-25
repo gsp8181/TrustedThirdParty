@@ -45,7 +45,3 @@ Add to eclipse as a new maven project
     mvn tomcat7:deploy
     mvn tomcat7:undeploy 
     mvn tomcat7:redeploy
-
-##Test Links
-
-[http://localhost:8080/service/rest/hellorest/yourmessage](http://localhost:8080/service/rest/hellorest/yourmessage)

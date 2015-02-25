@@ -17,4 +17,15 @@ public class ContractRepositoryMemory implements ContractRepository {
 		return c;
 	}
 
+	@Override
+	public List<Contract> getUnsignedContractsByRecipient(String recipient) {
+		List<Contract> results = new ArrayList<Contract>();
+		for(Contract c : repo)
+		{
+			if(!c.isCompleted() && c.getRecipient() == recipient)
+				results.add(c);
+		}
+		return results;
+	}
+
 }

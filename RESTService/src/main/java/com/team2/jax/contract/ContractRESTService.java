@@ -1,6 +1,7 @@
 package com.team2.jax.contract;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -12,12 +13,15 @@ import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import com.team2.jax.certificates.Certificate;
 import com.team2.jax.certificates.CertificateService;
+import com.team2.jax.contract.input.Intermediate;
 import com.team2.jax.contract.input.StartSign;
 
 @Path("/contracts")
@@ -65,10 +69,16 @@ public class ContractRESTService {
 	}
 	
 	@GET
-	@Path("/2")
-	public Response startCounterSign()
+	@Path("/2/{username}")
+	public List<Intermediate> startCounterSign(@PathParam("username") String username)
 	{
-		throw new WebApplicationException(Response.Status.BAD_REQUEST);
+		List<Intermediate> intermediates = service.getIntermediates(username);
+		if (intermediates == null)
+			throw new WebApplicationException(Response.Status.NOT_FOUND); // TODO: doesn't display an error message
+
+		
+		return intermediates;
+		//return Response.ok(intermediates).build();
 	}
 	
 	@POST
