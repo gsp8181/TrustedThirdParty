@@ -36,5 +36,61 @@ public class Contract implements Serializable {
     private String contract;
     
     private boolean completed;
+
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
+	}
+
+	public String getSender() {
+		return sender;
+	}
+
+	public void setSender(String sender) {
+		this.sender = sender;
+	}
+
+	public String getRecipient() {
+		return recipient;
+	}
+
+	public void setRecipient(String recipient) {
+		this.recipient = recipient;
+	}
+
+	public String getDocRef() {
+		return docRef;
+	}
+
+	public void setDocRef(String docRef) {
+		this.docRef = docRef;
+	}
+
+	public String getIntermediateContract() {
+		return intermediateContract;
+	}
+
+	public void setIntermediateContract(String intermediateContract) {
+		this.intermediateContract = intermediateContract;
+	}
+
+	public String getContract() {
+		return contract;
+	}
+
+	public void setContract(String contract) {
+		this.contract = contract;
+	}
+
+	public boolean isCompleted() {
+		return completed;
+	}
+
+	public void setCompleted(boolean completed) {
+		this.completed = completed;
+	}
 	
 }

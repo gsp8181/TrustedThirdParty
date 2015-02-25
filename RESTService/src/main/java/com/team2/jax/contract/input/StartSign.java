@@ -9,7 +9,7 @@ public class StartSign implements Serializable {
 
 	private static final long serialVersionUID = 3L;
 
-	private byte[] doc;
+	private String doc;
 	
 	/*
 	 * SigA(h(doc)) in base64 format
@@ -20,11 +20,11 @@ public class StartSign implements Serializable {
 	
 	private String recipient;
 
-	public byte[] getDoc() {
+	public String getDoc() {
 		return doc;
 	}
 
-	public void setDoc(byte[] doc) {
+	public void setDoc(String doc) {
 		this.doc = doc;
 	}
 
