@@ -22,9 +22,6 @@ import javax.ws.rs.core.Response;
 
 import com.team2.jax.certificates.Certificate;
 import com.team2.jax.certificates.CertificateService;
-import com.team2.jax.contract.input.Complete;
-import com.team2.jax.contract.input.Intermediate;
-import com.team2.jax.contract.input.StartSign;
 import com.team2.security.CertificateTools;
 
 @Path("/contracts")
@@ -37,7 +34,7 @@ public class ContractRESTService {
 	
 	@POST
 	@Path("/1")
-	public Response startSign(StartSign ssObj)
+	public Response startSign(ContractStart ssObj)
 	{
 		if (ssObj == null)
 			throw new WebApplicationException(Response.Status.BAD_REQUEST);
@@ -73,9 +70,9 @@ public class ContractRESTService {
 	
 	@GET
 	@Path("/2/{username}")
-	public List<Intermediate> startCounterSign(@PathParam("username") String username) //TODO: USE INTERMEDIATE?
+	public List<ContractIntermediate> startCounterSign(@PathParam("username") String username) //TODO: USE INTERMEDIATE?
 	{
-		List<Intermediate> intermediates = service.getIntermediates(username); //TODO: hashmap?
+		List<ContractIntermediate> intermediates = service.getIntermediates(username); //TODO: hashmap?
 		if (intermediates == null)
 			throw new WebApplicationException(Response.Status.NOT_FOUND); // TODO: doesn't display an error message
 
@@ -86,7 +83,7 @@ public class ContractRESTService {
 	
 	@POST //TODO: PUT
 	@Path("/3/{id}")
-	public Response counterSign(@PathParam("id") String id, Complete contract) //TODO: id -> int
+	public Response counterSign(@PathParam("id") String id, ContractComplete contract) //TODO: id -> int
 	{
 		if (contract == null)
 			throw new WebApplicationException(Response.Status.BAD_REQUEST);

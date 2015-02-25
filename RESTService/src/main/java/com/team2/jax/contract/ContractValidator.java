@@ -11,8 +11,6 @@ import javax.ws.rs.core.Response;
 import com.team2.jax.certificates.Certificate;
 import com.team2.jax.certificates.CertificateRepository;
 import com.team2.jax.certificates.CertificateRepositoryMemory;
-import com.team2.jax.contract.input.Complete;
-import com.team2.jax.contract.input.StartSign;
 import com.team2.security.CertificateTools;
 
 public class ContractValidator {
@@ -20,7 +18,7 @@ public class ContractValidator {
 	private CertificateRepository cs = new CertificateRepositoryMemory();
 
 	
-	public void validate(StartSign ssObj) throws Exception {
+	public void validate(ContractStart ssObj) throws Exception {
 		Certificate cert = cs.findByUsername(ssObj.getUsername()); //TODO: if intermediate is NOT already in the database
 		
 		if(cert == null)
@@ -32,7 +30,7 @@ public class ContractValidator {
 				throw new ValidationException("Validation of the signature failed, make sure the signing key is the database");
 	}
 
-	public void validateComplete(Complete completeContract, Contract contract) throws Exception {
+	public void validateComplete(ContractComplete completeContract, Contract contract) throws Exception {
 		Certificate cert = cs.findByUsername(contract.getRecipient()); //TODO: If the contract is already signed throw and error
 		
 		if(cert == null)

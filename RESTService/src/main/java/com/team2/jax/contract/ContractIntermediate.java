@@ -1,11 +1,11 @@
-package com.team2.jax.contract.input;
+package com.team2.jax.contract;
 
 import java.io.Serializable;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement
-public class Intermediate implements Serializable {
+public class ContractIntermediate implements Serializable {
 	
 	private static final long serialVersionUID = 1L;
 	

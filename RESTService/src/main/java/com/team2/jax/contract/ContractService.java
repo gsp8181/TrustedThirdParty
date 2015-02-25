@@ -3,10 +3,6 @@ package com.team2.jax.contract;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.team2.jax.contract.input.Complete;
-import com.team2.jax.contract.input.Intermediate;
-import com.team2.jax.contract.input.StartSign;
-
 
 public class ContractService {
 
@@ -14,7 +10,7 @@ public class ContractService {
 	
 	private static ContractRepository cod = new ContractRepositoryMemory();
 	
-	public Contract start(StartSign ssObj) throws Exception {
+	public Contract start(ContractStart ssObj) throws Exception {
 		validator.validate(ssObj);
 		
 		Contract c = new Contract();
@@ -30,13 +26,13 @@ public class ContractService {
 		
 	}
 
-	public List<Intermediate> getIntermediates(String recipient) {
+	public List<ContractIntermediate> getIntermediates(String recipient) {
 		List<Contract> contracts = getUnsignedContractsByRecipient(recipient);
 		
-		List<Intermediate> result = new ArrayList<Intermediate>();
+		List<ContractIntermediate> result = new ArrayList<ContractIntermediate>();
 		for(Contract c : contracts)
 		{
-			Intermediate i = new Intermediate();
+			ContractIntermediate i = new ContractIntermediate();
 			i.setRecipient(c.getRecipient());
 			i.setUsername(c.getSender());
 			i.setSigSender(c.getIntermediateContract());
@@ -57,7 +53,7 @@ public class ContractService {
 		return contracts;
 	}
 
-	public String counterSign(Complete completeContract, String id) throws Exception {
+	public String counterSign(ContractComplete completeContract, String id) throws Exception {
 		Contract c = cod.getById(id);
 		validator.validateComplete(completeContract, c);
 		c.setContract(completeContract.getSig());
