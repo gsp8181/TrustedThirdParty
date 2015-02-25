@@ -13,6 +13,7 @@ import java.security.SecureRandom;
 import java.security.Signature;
 import java.security.SignatureException;
 import java.security.spec.InvalidKeySpecException;
+import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.Base64;
 import java.util.Base64.Decoder;
@@ -50,6 +51,25 @@ public class CertificateTools {
 		return out;
 	}
 	
+	public static String signData(String dataToSign, KeyPair pair) throws InvalidKeyException, SignatureException, NoSuchAlgorithmException
+	{
+		Signature dsa = Signature.getInstance("SHA1withDSA");
+		
+		PrivateKey priv = pair.getPrivate();
+		dsa.initSign(priv);
+		dsa.update(dataToSign.getBytes());
+		byte[] sig = dsa.sign();
+		
+		return encodeBase64(sig);
+		
+	}
+	
+	public static String signData(String dataToSign, PrivateKey priv, PublicKey pub) throws InvalidKeyException, SignatureException, NoSuchAlgorithmException
+	{
+		KeyPair pair = new KeyPair(pub,priv);
+		return signData(dataToSign, pair);
+	}
+	
 	
 	/**
 	 * Encodes a Key object with Base64
@@ -62,13 +82,21 @@ public class CertificateTools {
 		return encodeBase64(array);
 	}
 
-	public static PublicKey decodeDSAPub(String key) throws NoSuchAlgorithmException, InvalidKeySpecException{
+	public static PrivateKey decodeDSAPriv(String key) throws NoSuchAlgorithmException, InvalidKeySpecException{
 	        byte[] byteKey = decodeBase64(key);
-	        X509EncodedKeySpec X509publicKey = new X509EncodedKeySpec(byteKey);
+	        PKCS8EncodedKeySpec pkcs8Private = new PKCS8EncodedKeySpec(byteKey);
 	        KeyFactory kf = KeyFactory.getInstance("DSA");
 
-	        return kf.generatePublic(X509publicKey);
+	        return kf.generatePrivate(pkcs8Private);
 	}
+	
+	public static PublicKey decodeDSAPub(String key) throws NoSuchAlgorithmException, InvalidKeySpecException{
+        byte[] byteKey = decodeBase64(key);
+        X509EncodedKeySpec X509publicKey = new X509EncodedKeySpec(byteKey);
+        KeyFactory kf = KeyFactory.getInstance("DSA");
+
+        return kf.generatePublic(X509publicKey);
+}
 	
 	/**
 	 * Decodes a base64 encoded string to a byte array
