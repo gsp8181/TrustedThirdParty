@@ -22,7 +22,7 @@ public class ContractRepositoryMemory implements ContractRepository {
 		List<Contract> results = new ArrayList<Contract>();
 		for(Contract c : repo)
 		{
-			if(!c.isCompleted() && c.getRecipient() == recipient)
+			if(!c.isCompleted() && c.getRecipient().equals(recipient))
 				results.add(c);
 		}
 		return results;
