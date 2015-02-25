@@ -9,7 +9,10 @@ import com.amazonaws.AmazonServiceException;
 import com.amazonaws.ClientConfiguration;
 import com.amazonaws.Protocol;
 import com.amazonaws.auth.AWSCredentials;
+import com.amazonaws.auth.AWSCredentialsProviderChain;
 import com.amazonaws.auth.BasicAWSCredentials;
+import com.amazonaws.auth.ClasspathPropertiesFileCredentialsProvider;
+import com.amazonaws.auth.InstanceProfileCredentialsProvider;
 import com.amazonaws.regions.Region;
 import com.amazonaws.regions.Regions;
 import com.amazonaws.services.s3.AmazonS3;
@@ -27,7 +30,7 @@ import com.amazonaws.services.s3.model.S3Object;
  */
 public class S3StoringByteStream {
 	
-	private static AWSCredentials credentials = null;
+	private static AWSCredentialsProviderChain credentials = null;
 	private static AmazonS3 s3 = null;
 	
 	public static void main(String [] args) throws IOException {
@@ -58,7 +61,9 @@ public class S3StoringByteStream {
 	 */
 	@SuppressWarnings("unused")
 	private static void clientConfiguration() throws IOException {
-		AWSCredentials credentials = new BasicAWSCredentials("AKIAICWFMOMXI6XUVHWQ", "dMqfZh46ExeUzLsqA41jtd0hV0xlQxoptdrBwuWa");
+		AWSCredentialsProviderChain credentials = new AWSCredentialsProviderChain(
+                new InstanceProfileCredentialsProvider(),
+                new ClasspathPropertiesFileCredentialsProvider());
 		
 		ClientConfiguration clientConfig = new ClientConfiguration();
 		clientConfig.setProtocol(Protocol.HTTP);
@@ -72,10 +77,10 @@ public class S3StoringByteStream {
 	 */
 	private static void connCreation() throws IOException {
 		System.out.println("Create connection...");
-		String accessKey = "AKIAICWFMOMXI6XUVHWQ";
-		String secretKey = "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";
 		
-		credentials = new BasicAWSCredentials(accessKey, secretKey);
+		credentials = new AWSCredentialsProviderChain(
+                new InstanceProfileCredentialsProvider(),
+                new ClasspathPropertiesFileCredentialsProvider());
 		s3 = new AmazonS3Client(credentials);
 		Region euIreland = Region.getRegion(Regions.EU_WEST_1);
 		s3.setRegion(euIreland);

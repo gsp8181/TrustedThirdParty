@@ -20,7 +20,10 @@ import com.amazonaws.AmazonServiceException;
 import com.amazonaws.ClientConfiguration;
 import com.amazonaws.Protocol;
 import com.amazonaws.auth.AWSCredentials;
+import com.amazonaws.auth.AWSCredentialsProviderChain;
 import com.amazonaws.auth.BasicAWSCredentials;
+import com.amazonaws.auth.ClasspathPropertiesFileCredentialsProvider;
+import com.amazonaws.auth.InstanceProfileCredentialsProvider;
 import com.amazonaws.regions.Region;
 import com.amazonaws.regions.Regions;
 import com.amazonaws.services.s3.AmazonS3;
@@ -29,10 +32,12 @@ import com.amazonaws.services.s3.AmazonS3EncryptionClient;
 import com.amazonaws.services.s3.model.Bucket;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.EncryptionMaterials;
+import com.amazonaws.services.s3.model.EncryptionMaterialsProvider;
 import com.amazonaws.services.s3.model.GetObjectRequest;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.amazonaws.services.s3.model.S3Object;
+import com.amazonaws.services.s3.model.SimpleMaterialProvider;
 
 /**
  * Storing document of type bytearrayinputstream into amazonS3
@@ -41,7 +46,7 @@ import com.amazonaws.services.s3.model.S3Object;
  */
 public class S3StoringByteStream {
 	
-	private static AWSCredentials credentials = null;
+	private static AWSCredentialsProviderChain credentials = null;
 	private static AmazonS3EncryptionClient s3 = null;
 	
 	public static void main(String [] args) throws IOException, NoSuchAlgorithmException, NoSuchProviderException {
@@ -80,16 +85,19 @@ public class S3StoringByteStream {
 	 */
 	private static void encyrptedConnCreation() throws IOException, NoSuchAlgorithmException, NoSuchProviderException {
 		System.out.println("Create connection...");
-		String accessKey = "AKIAICWFMOMXI6XUVHWQ";
-		String secretKey = "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";
+
 		
 		// Randomly generated keyPair - TODO: create a key pair and store it somewhere
 		// so it wont lost when JVM exits.
 		KeyPairGenerator keyGenerator = KeyPairGenerator.getInstance("RSA");
 		KeyPair myKeyPair = keyGenerator.generateKeyPair();
 		
-		credentials = new BasicAWSCredentials(accessKey, secretKey);
-		EncryptionMaterials encryptionMaterials = new EncryptionMaterials(myKeyPair);
+		
+		// To set this on a non EC2 instance, run http://docs.aws.amazon.com/cli/latest/userguide/cli-chap-getting-started.html
+		credentials = new AWSCredentialsProviderChain(
+                new InstanceProfileCredentialsProvider(),
+                new ClasspathPropertiesFileCredentialsProvider());
+		EncryptionMaterialsProvider encryptionMaterials =  new SimpleMaterialProvider().addMaterial(new EncryptionMaterials(myKeyPair));
 		s3 = new AmazonS3EncryptionClient(credentials, encryptionMaterials);
 		Region euIreland = Region.getRegion(Regions.EU_WEST_1);
 		s3.setRegion(euIreland);
