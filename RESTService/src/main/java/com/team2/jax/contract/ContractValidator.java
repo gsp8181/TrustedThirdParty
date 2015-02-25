@@ -31,7 +31,7 @@ public class ContractValidator {
 	}
 
 	public void validateComplete(Complete completeContract, Contract contract) throws Exception {
-		Certificate cert = cs.findByUsername(contract.getRecipient());
+		Certificate cert = cs.findByUsername(contract.getRecipient()); //TODO: If the contract is already signed throw and error
 		
 		if(cert == null)
 			throw new ValidationException("certificate:No certificate was found for the designated recipient"); //TODO: spelling

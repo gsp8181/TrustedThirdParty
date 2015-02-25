@@ -43,19 +43,19 @@ public class ContractRESTService {
 		Response.ResponseBuilder builder = null;
 		
 		try {
-		Contract out = service.start(ssObj);
+		Contract out = service.start(ssObj);//TODO: hashmap?
 		builder = Response.status(Response.Status.CREATED).entity(out);
 		} catch (ConstraintViolationException ce) {
 			// Handles bean specific constraint exceptions
-			builder = createViolationResponse(ce.getConstraintViolations());
+			builder = createViolationResponse(ce.getConstraintViolations()); 
 		} catch (ValidationException ve) {
 			Map<String, String> responseObj = new HashMap<String, String>();
 			if (ve.getMessage().startsWith("No certificate was found for the designated sender")) {
-				responseObj.put("username", "No certificate was found for the designated sender"); //TODO: ve.getMessage()
+				responseObj.put("username", "No certificate was found for the designated sender");
 				builder = Response.status(Response.Status.BAD_REQUEST).entity(responseObj);
 			}	
 			if(ve.getMessage().startsWith("Validation of the signature failed, make sure the signing key is the database")) {
-				responseObj.put("sig", "Validation of the signature failed, make sure the signing key is the database"); //TODO: ve.getMessage() TODO:correct sig not is in database
+				responseObj.put("sig", "Validation of the signature failed, make sure the signing key is the database");// TODO:correct sig not is in database
 				builder = Response.status(Response.Status.BAD_REQUEST).entity(responseObj);
 			}
 		} catch (Exception e) {
@@ -73,7 +73,7 @@ public class ContractRESTService {
 	@Path("/2/{username}")
 	public List<Intermediate> startCounterSign(@PathParam("username") String username) //TODO: USE INTERMEDIATE?
 	{
-		List<Intermediate> intermediates = service.getIntermediates(username);
+		List<Intermediate> intermediates = service.getIntermediates(username); //TODO: hashmap?
 		if (intermediates == null)
 			throw new WebApplicationException(Response.Status.NOT_FOUND); // TODO: doesn't display an error message
 
