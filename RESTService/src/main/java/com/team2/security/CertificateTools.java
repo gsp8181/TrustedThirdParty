@@ -51,6 +51,18 @@ public class CertificateTools {
 		return out;
 	}
 	
+	/*
+	 * mvn exec:java -Dexec.mainClass="com.team2.security.CertificateTools" -Dexec.args="priv pub data"
+	 */
+	public static void main(String[] args) throws Exception
+	{
+		PrivateKey priv = decodeDSAPriv(args[0]);
+		PublicKey pub = decodeDSAPub(args[1]);
+		KeyPair pubpriv = new KeyPair(pub,priv);
+		
+		System.out.println(signData(args[2],pubpriv));
+	}
+	
 	public static String signData(String dataToSign, KeyPair pair) throws InvalidKeyException, SignatureException, NoSuchAlgorithmException
 	{
 		Signature dsa = Signature.getInstance("SHA1withDSA");
