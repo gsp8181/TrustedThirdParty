@@ -63,7 +63,7 @@
 			<artifactId>jmxri</artifactId> </exclusion> </exclusions> </dependency> -->
 		<!-- END TESTING -->
 
-		<!-- JERSEY (Server container) -->
+		<!-- JERSEY (Server container), use provided scope? -->
 		<!-- Disabled as TomEE comes with its own jersey implementation -->
 		<!-- <dependency> <groupId>com.sun.jersey</groupId> <artifactId>jersey-server</artifactId> 
 			<version>1.8</version> </dependency> -->

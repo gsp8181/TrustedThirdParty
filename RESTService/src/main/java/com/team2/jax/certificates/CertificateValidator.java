@@ -21,12 +21,12 @@ public class CertificateValidator {
         }*/ //TODO: Broke
         
         if (certAlreadyExists(cert.getUsername())) {
-            throw new ValidationException("Username Already Exists");
+            throw new ValidationException("username:Username Already Exists");
         }
         
         if(!verifyCert(cert))
         {
-        	throw new ValidationException("Certificate verification failed");
+        	throw new ValidationException("signedData:Certificate verification failed");
         }
 	}
 
