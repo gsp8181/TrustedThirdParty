@@ -22,12 +22,12 @@ public class ContractValidator {
 		Certificate cert = cs.findByUsername(ssObj.getUsername()); //TODO: if intermediate is NOT already in the database
 		
 		if(cert == null)
-			throw new ValidationException("No certificate was found for the designated sender");
+			throw new ValidationException("username:No certificate was found for the designated sender");
 		
 			PublicKey ssPublicKey = CertificateTools.decodeDSAPub(cert.getPublicKey()); 
 			
 			if(!CertificateTools.verify(ssPublicKey, ssObj.getDoc(), ssObj.getSig())) //TODO: better signing error
-				throw new ValidationException("Validation of the signature failed, make sure the signing key is the database");
+				throw new ValidationException("sig:Validation of the signature failed, make sure the signing key is the database");
 	}
 
 	public void validateComplete(ContractComplete completeContract, Contract contract) throws Exception {

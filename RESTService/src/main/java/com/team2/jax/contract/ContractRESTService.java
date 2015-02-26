@@ -48,15 +48,7 @@ public class ContractRESTService {
 			// Handles bean specific constraint exceptions
 			builder = createViolationResponse(ce.getConstraintViolations()); 
 		} catch (ValidationException ve) {
-			Map<String, String> responseObj = new HashMap<String, String>();
-			if (ve.getMessage().startsWith("No certificate was found for the designated sender")) {
-				responseObj.put("username", "No certificate was found for the designated sender");
-				builder = Response.status(Response.Status.BAD_REQUEST).entity(responseObj);
-			}	
-			if(ve.getMessage().startsWith("Validation of the signature failed, make sure the signing key is the database")) {
-				responseObj.put("sig", "Validation of the signature failed, make sure the signing key is the database");// TODO:correct sig not is in database
-				builder = Response.status(Response.Status.BAD_REQUEST).entity(responseObj);
-			}
+			builder = createValidationViolationResponse(ve);
 		} catch (Exception e) {
 			// Handle generic exceptions
 			Map<String, String> responseObj = new HashMap<String, String>();
@@ -100,12 +92,7 @@ public class ContractRESTService {
 			// Handles bean specific constraint exceptions
 			builder = createViolationResponse(ce.getConstraintViolations());
 		} catch (ValidationException ve) {
-			Map<String, String> responseObj = new HashMap<String, String>(); //TODO:make all like this
-			String message = ve.getMessage();
-			String field = message.substring(0,message.indexOf(':'));
-			String error = message.substring(message.indexOf(':') + 1, message.length());
-				responseObj.put(field, error);
-				builder = Response.status(Response.Status.BAD_REQUEST).entity(responseObj);
+			builder = createValidationViolationResponse(ve);
 		} catch (Exception e) {
 			// Handle generic exceptions
 			Map<String, String> responseObj = new HashMap<String, String>();
@@ -170,6 +157,31 @@ public class ContractRESTService {
 		}
 
 		return Response.status(Response.Status.BAD_REQUEST).entity(responseObj);
+	}
+	
+	/**
+	 * <p>
+	 * Creates a JAX-RS "Bad Request" response including a map of all validation
+	 * violation fields, and their message. This can be used by calling client
+	 * applications to display violations to users. The validation violation
+	 * message will typically take the form of "field:message"
+	 * <p/>
+	 * 
+	 * @param violations
+	 *            A Set of violations that need to be reported in the Response
+	 *            body
+	 * @return A Bad Request (400) Response containing all violation messages
+	 */
+	private Response.ResponseBuilder createValidationViolationResponse(
+			ValidationException ve) {
+		Response.ResponseBuilder builder;
+		Map<String, String> responseObj = new HashMap<String, String>();
+		String message = ve.getMessage();
+		String field = message.substring(0,message.indexOf(':'));
+		String error = message.substring(message.indexOf(':') + 1, message.length());
+			responseObj.put(field, error);
+			builder = Response.status(Response.Status.BAD_REQUEST).entity(responseObj);
+		return builder;
 	}
 	
 }
