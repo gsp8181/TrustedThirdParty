@@ -14,7 +14,6 @@ public class ContractRepositoryMemory implements ContractRepository {
 	@Override
 	public Contract create(Contract c) {
 		c.setId(String.valueOf(repo.size()));
-		c.setDocRef("http://www.google.co.uk/");
 		repo.add(c);
 		return c;
 	}

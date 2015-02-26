@@ -16,6 +16,8 @@ public class ContractIntermediate implements Serializable {
 	private String sigSender;
 	
 	private String id;
+	
+    private String docName;
 
 	public String getUsername() {
 		return sender;
@@ -47,5 +49,13 @@ public class ContractIntermediate implements Serializable {
 
 	public void setId(String id) {
 		this.id = id;
+	}
+
+	public String getDocName() {
+		return docName;
+	}
+
+	public void setDocName(String docName) {
+		this.docName = docName;
 	}
 }

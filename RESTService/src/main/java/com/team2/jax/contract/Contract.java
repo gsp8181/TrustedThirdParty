@@ -25,6 +25,8 @@ public class Contract implements Serializable {
     
     private String docRef;
     
+    private String docName;
+    
 	/*
 	 * SigA(h(doc)) in base64 format
 	 */
@@ -67,6 +69,14 @@ public class Contract implements Serializable {
 
 	public void setDocRef(String docRef) {
 		this.docRef = docRef;
+	}
+
+	public String getDocName() {
+		return docName;
+	}
+
+	public void setDocName(String docName) {
+		this.docName = docName;
 	}
 
 	public String getIntermediateContract() {

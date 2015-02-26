@@ -26,7 +26,7 @@ public class ContractValidator {
 		
 			PublicKey ssPublicKey = CertificateTools.decodeDSAPub(cert.getPublicKey()); 
 			
-			if(!CertificateTools.verify(ssPublicKey, ssObj.getDoc(), ssObj.getSig())) //TODO: better signing error
+			if(!CertificateTools.verify(ssPublicKey, ssObj.getDocData(), ssObj.getSig())) //TODO: better signing error
 				throw new ValidationException("sig:Validation of the signature failed, make sure the signing key is the database");
 	}
 

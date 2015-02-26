@@ -33,7 +33,7 @@ public class CertificateValidator {
         
         // If yes continue
         
-        //If not send verification email
+        //If not send verification email AND fail this and discard all data
         
         //verifyEmail(String cert.getUsername());
 	}

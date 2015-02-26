@@ -9,7 +9,15 @@ public class ContractStart implements Serializable {
 
 	private static final long serialVersionUID = 3L;
 
-	private String doc;
+	/*
+	 * Base 64 encoded (UTF-8) document
+	 */
+	private String docData;
+	
+	/*
+	 * File name
+	 */
+	private String docName;
 	
 	/*
 	 * SigA(h(doc)) in base64 format
@@ -20,12 +28,21 @@ public class ContractStart implements Serializable {
 	
 	private String recipient;
 
-	public String getDoc() {
-		return doc;
+
+	public String getDocData() {
+		return docData;
 	}
 
-	public void setDoc(String doc) {
-		this.doc = doc;
+	public void setDocData(String docData) {
+		this.docData = docData;
+	}
+
+	public String getDocName() {
+		return docName;
+	}
+
+	public void setDocName(String docName) {
+		this.docName = docName;
 	}
 
 	public String getSig() {
