@@ -24,6 +24,9 @@ public class ContractValidator {
 		if(cert == null)
 			throw new ValidationException("username:No certificate was found for the designated sender");
 		
+		if(cs.findByUsername(ssObj.getRecipient()) == null)
+				throw new ValidationException("recipient:No certificate was found for the designated recipient, please check the name or tell them to register with the service");
+		
 			PublicKey ssPublicKey = CertificateTools.decodeDSAPub(cert.getPublicKey()); 
 			
 			if(!CertificateTools.verify(ssPublicKey, ssObj.getDocData(), ssObj.getSig())) //TODO: better signing error
