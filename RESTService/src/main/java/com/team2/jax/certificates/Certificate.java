@@ -28,6 +28,8 @@ public class Certificate implements Serializable {
     
     //@Column(unique=true, nullable=false)
     private String publicKey;
+    
+    //private boolean active; TODO: implement
 
 	public String getPublicKey() {
 		return publicKey;
