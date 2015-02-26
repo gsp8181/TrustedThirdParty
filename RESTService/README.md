@@ -8,6 +8,12 @@ You will also NEED JDK8 and have it set up in the JAVA_HOME environment variable
 
 * Download and unzip TomEE somewhere [http://www.apache.org/dyn/closer.cgi/tomee/tomee-1.7.1/apache-tomee-1.7.1-plus.zip](http://www.apache.org/dyn/closer.cgi/tomee/tomee-1.7.1/apache-tomee-1.7.1-plus.zip)
 
+* In Tomcat installation directory, find conf/tomcat-users.xml
+
+* Add the following between the `<tomcat-users>...</tomcat-users>` tags
+
+`<user username="tomcat" password="tomcat" roles="manager-script,manager-gui" />`
+
 * Go to the server management pane (Window->Show View->Server->Servers)
 
 * Right click->New->Server
@@ -21,12 +27,6 @@ You will also NEED JDK8 and have it set up in the JAVA_HOME environment variable
 * Double click on the tomcat server in the server management pane
 
 * Check use tomcat installation and hit finish
-
-* In Tomcat installation directory, find conf/tomcat-users.xml
-
-* Add the following between the `<tomcat-users>...</tomcat-users>` tags
-
-`<user username="tomcat" password="tomcat" roles="manager-script,manager-gui" />`
     
 * Start tomcat in eclipse
 
