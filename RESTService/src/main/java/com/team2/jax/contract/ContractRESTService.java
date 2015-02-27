@@ -58,7 +58,7 @@ public class ContractRESTService {
 		Response.ResponseBuilder builder = null;
 		
 		try {
-		Contract out = service.start(ssObj);//TODO: hashmap?
+		Contract out = service.start(ssObj);//TODO: hashmap? TODO: dont return contract
 		builder = Response.status(Response.Status.CREATED).entity(out);
 		} catch (ConstraintViolationException ce) {
 			// Handles bean specific constraint exceptions
