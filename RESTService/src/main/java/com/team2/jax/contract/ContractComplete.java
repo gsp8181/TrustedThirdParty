@@ -2,6 +2,7 @@ package com.team2.jax.contract;
 
 import java.io.Serializable;
 
+import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement
@@ -9,6 +10,7 @@ public class ContractComplete implements Serializable {
 	
 	private static final long serialVersionUID = 1L;
 	
+	@NotNull
 	private String sig;
 
 	public String getSig() {

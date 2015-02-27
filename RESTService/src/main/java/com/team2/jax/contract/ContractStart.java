@@ -2,6 +2,7 @@ package com.team2.jax.contract;
 
 import java.io.Serializable;
 
+import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement
@@ -12,20 +13,25 @@ public class ContractStart implements Serializable {
 	/*
 	 * Base 64 encoded (UTF-8) document
 	 */
+	@NotNull
 	private String docData;
 	
 	/*
 	 * File name
 	 */
+	@NotNull
 	private String docName;
 	
 	/*
 	 * SigA(h(doc)) in base64 format
 	 */
+	@NotNull
 	private String sig;
 	
+	@NotNull
 	private String username;
 	
+	@NotNull
 	private String recipient;
 
 

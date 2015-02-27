@@ -17,7 +17,7 @@ public class CertificateIn implements Serializable {
      * The public key is the DSA public key in base64 format
      */
 	@NotNull
-    private String publicKey; //TODO: NOT NULL
+    private String publicKey;
     
     /**
      * The signed data is the DSA signed username in base64 format

@@ -29,12 +29,16 @@ public class ContractValidator {
 		
 			PublicKey ssPublicKey = CertificateTools.decodeDSAPub(cert.getPublicKey()); 
 			
-			if(!CertificateTools.verify(ssPublicKey, ssObj.getDocData(), ssObj.getSig())) //TODO: better signing error
+			if(!CertificateTools.verify(ssPublicKey, ssObj.getDocData(), ssObj.getSig()))
 				throw new ValidationException("sig:Validation of the signature failed, make sure the signing key is the database");
 	}
 
 	public void validateComplete(ContractComplete completeContract, Contract contract) throws Exception {
-		Certificate cert = cs.findByUsername(contract.getRecipient()); //TODO: If the contract is already signed throw and error
+		
+		if(contract.isCompleted())
+			throw new WebApplicationException(Response.Status.BAD_REQUEST);
+		
+		Certificate cert = cs.findByUsername(contract.getRecipient());
 		
 		if(cert == null)
 			throw new ValidationException("certificate:No certificate was found for the designated recipient");

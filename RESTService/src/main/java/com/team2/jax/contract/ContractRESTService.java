@@ -82,7 +82,7 @@ public class ContractRESTService {
 	{
 		List<ContractIntermediate> intermediates = service.getIntermediates(username); //TODO: hashmap?
 		if (intermediates == null)
-			throw new WebApplicationException(Response.Status.NOT_FOUND); // TODO: doesn't display an error message
+			throw new WebApplicationException(Response.Status.NOT_FOUND);
 
 		
 		return intermediates;
@@ -127,7 +127,7 @@ public class ContractRESTService {
 	{
 		String docRef = service.getDoc(id, CertificateTools.base64urldecode(signedId)); //TODO: hashmap?
 		if (docRef == null)
-			throw new WebApplicationException(Response.Status.NOT_FOUND); // TODO: doesn't display an error message
+			throw new WebApplicationException(Response.Status.NOT_FOUND);
 
 		Map<String, String> out = new HashMap<String, String>();
 		out.put("docRef",docRef);
