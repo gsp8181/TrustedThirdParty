@@ -52,7 +52,7 @@ public class CertificateRESTService {
 	 * Retrieve a certificate by associated username
 	 * </p>
 	 * 
-	 * @param username The username of the desired certificate
+	 * @param email The email of the desired certificate
 	 * @return The certificate object
 	 * @see Certificate
 	 */
