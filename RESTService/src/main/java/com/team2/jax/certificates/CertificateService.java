@@ -17,22 +17,20 @@ public class CertificateService {
 	
 	//@Inject
     //private CertificateRepositoryTest crud; TODO: figure out
-	private static CertificateRepository crud = new CertificateRepositoryMemory();
+	
+	
+	private static CertificateRepository crud = new CertificateRepositoryDynamo();
 	
 	private static CertificateValidator validator = new CertificateValidator();
 
-	public Certificate findByUsername(String username) {
-		return crud.findByUsername(username);
+	public Certificate findByEmail(String email) {
+		return crud.findByEmail(email);
 	}
 
-	public Certificate create(CertificateIn cert) throws ConstraintViolationException, ValidationException, Exception {
-		validator.validateCertificate(cert);
+	public Certificate create(Certificate cert) throws ConstraintViolationException, ValidationException, Exception {
 		
-		Certificate newCert = new Certificate();
-		newCert.setUsername(cert.getUsername());
-		newCert.setPublicKey(cert.getPublicKey());
-		
-		return crud.create(newCert);
+		validator.validateCertificate(cert);		
+		return crud.create(cert);
 		
 	}
 	

@@ -1,54 +1,36 @@
 package com.team2.jax.certificates;
 
-import java.io.Serializable;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Lob;
-import javax.persistence.Table;
+
+import javax.validation.constraints.Pattern;
 import javax.xml.bind.annotation.XmlRootElement;
 
-@Entity
+import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBAttribute;
+import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBHashKey;
+import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBRangeKey;
+import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBTable;
+
 @XmlRootElement
-//@Table(name = "certificate")
-public class Certificate implements Serializable {
+@DynamoDBTable(tableName="Certificate")
+public class Certificate {
 
-	//Default uid
-	private static final long serialVersionUID = 1L;
-	
-    @Id
-    @GeneratedValue(strategy=GenerationType.AUTO)
-    private String id;
-
-    //@Column(unique=true, nullable=false)
-    private String username;
-    
-    //@Column(unique=true, nullable=false)
+	private String email;
     private String publicKey;
+    private long time;
     
-    //private boolean active; TODO: implement
-
-	public String getPublicKey() {
-		return publicKey;
-	}
-
-	public void setPublicKey(String publicKey) {
-		this.publicKey = publicKey;
-	}
-
-	public String getUsername() {
-		return username;
-	}
-
-	public void setUsername(String username) {
-		this.username = username;
-	}
+    @DynamoDBHashKey(attributeName="Email")  
+    public String getEmail() { return email;}
+    public void setEmail(String email) {this.email = email;}
+    
+   
+    @DynamoDBRangeKey(attributeName="Time")  
+    public long getTime(){return time;}
+    public void setTime(long time){this.time=time;}
+   
+    @DynamoDBAttribute(attributeName="PublicKey")
+    public String getPublicKey(){return publicKey;}
+    public void setPublicKey(String publicKey){this.publicKey=publicKey;}
+    
 	
-	public String getId()
-	{
-		return id;
-	}
+   
 }

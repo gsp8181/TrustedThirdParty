@@ -57,14 +57,14 @@ public class CertificateRESTService {
 	 * @see Certificate
 	 */
 	@GET
-	@Path("/{username}")
-	public Certificate /*Response*/ getCertByUsername(@PathParam("username") String username) {
-		Certificate cert = service.findByUsername(username);
+	@Path("/{email}")
+	public Response getCertByUsername(@PathParam("email") String email) {
+		Certificate cert = service.findByEmail(email);
 		if (cert == null)
 			throw new WebApplicationException(Response.Status.NOT_FOUND);
 
-		return cert;
-		//return Response.ok(cert).build();
+		
+		return Response.ok(cert).build();
 	}
 
 	/**
@@ -74,7 +74,7 @@ public class CertificateRESTService {
 	 * @see CertificateIn
 	 */
 	@POST
-	public Response sendCert(CertificateIn cert) {
+	public Response sendCert(Certificate cert) {
 
 		if (cert == null)
 			throw new WebApplicationException(Response.Status.BAD_REQUEST);

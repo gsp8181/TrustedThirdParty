@@ -26,7 +26,7 @@ public interface CertificateRepository {
 	 *            The email address associated with the certificate
 	 * @return The Certificate object if found, else null
 	 */
-	public Certificate findByUsername(String email);
+	public Certificate findByEmail(String email);
 
 	/**
 	 * <p>

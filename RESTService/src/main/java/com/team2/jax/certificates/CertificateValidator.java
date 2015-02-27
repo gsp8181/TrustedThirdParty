@@ -1,60 +1,41 @@
 package com.team2.jax.certificates;
 
+import java.util.HashSet;
+import java.util.Set;
+
+import javax.validation.ConstraintViolation;
+import javax.validation.ConstraintViolationException;
 import javax.validation.ValidationException;
 import javax.validation.Validator;
-import javax.ws.rs.WebApplicationException;
-import javax.ws.rs.core.Response;
 
-import com.team2.security.CertificateTools;
 
 public class CertificateValidator {
 
-	private static CertificateRepository cr = new CertificateRepositoryMemory();
+	private static CertificateRepository cr = new CertificateRepositoryDynamo();
 	
-	private static Validator validator;
+//	private static Validator validator;
 	
-	public void validateCertificate(CertificateIn cert) {
-		/*Set<ConstraintViolation<Certificate>> violations = validator.validate(cert);
-
-        if (!violations.isEmpty()) {
-            throw new ConstraintViolationException(new HashSet<ConstraintViolation<?>>(violations));
-        }*/ //TODO: Broke
+	public void validateCertificate(Certificate cert) {
+//		Set<ConstraintViolation<Certificate>> violations = validator.validate(cert);
+//
+//        if (!violations.isEmpty()) {
+//            throw new ConstraintViolationException(new HashSet<ConstraintViolation<?>>(violations));
+//        }
         
-        if (certAlreadyExists(cert.getUsername())) {
-            throw new ValidationException("username:Username Already Exists");
+        if (certAlreadyExists(cert)) {
+            throw new ValidationException("Certificate Already Exists:"+cert.getEmail() + " " + cert.getPublicKey());
         }
         
-        if(!verifyCert(cert))
-        {
-        	throw new ValidationException("signedData:Certificate verification failed");
-        }
         
-        //Can cert user recieve emails from SNS?
-        
-        // If yes continue
-        
-        //If not send verification email AND fail this and discard all data
-        
-        //verifyEmail(String cert.getUsername());
 	}
 
-	private boolean certAlreadyExists(String username) {
-		if(cr.findByUsername(username) != null)
-		{
-			return true;
-		} else
-		{
-			return false;
-		}
+	private boolean certAlreadyExists(Certificate newCert) {
+		Certificate oldCert=cr.findByEmail(newCert.getEmail());
+		if(oldCert==null||!oldCert.getPublicKey().equals(newCert.getPublicKey())){return false;}
+		return true;
+		
 	}
 	
-	private boolean verifyCert(CertificateIn cert)
-	{
-		try {
-			return CertificateTools.verify(CertificateTools.decodeDSAPub(cert.getPublicKey()), cert.getUsername(), cert.getSignedData());
-		} catch (Exception e) {
-			throw new WebApplicationException(Response.Status.INTERNAL_SERVER_ERROR);
-		}
-	}
+	
 
 }

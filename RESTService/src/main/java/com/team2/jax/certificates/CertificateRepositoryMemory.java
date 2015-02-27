@@ -7,7 +7,7 @@ public class CertificateRepositoryMemory implements CertificateRepository {
 
 	private static Map<String, Certificate> repo = new HashMap<String, Certificate>();
 
-	public Certificate findByUsername(String username) {
+	public Certificate findByEmail(String username) {
 		if (repo.containsKey(username)) {
 			return repo.get(username);
 		} else {
@@ -16,12 +16,14 @@ public class CertificateRepositoryMemory implements CertificateRepository {
 	}
 
 	public Certificate create(Certificate certificate) {
-		if (repo.containsKey(certificate.getUsername())) {
-			return null; // todo: should be not created
-		} else {
-			repo.put(certificate.getUsername(),certificate);
-			return certificate;
-		}
+//		if (repo.containsKey(certificate.getUsername())) {
+//			return null; // todo: should be not created
+//		} else {
+//			repo.put(certificate.getUsername(),certificate);
+//			return certificate;
+//		}
+		return null;
+		
 	}
 
 }

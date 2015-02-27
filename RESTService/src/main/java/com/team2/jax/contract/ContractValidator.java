@@ -19,12 +19,12 @@ public class ContractValidator {
 
 	
 	public void validate(ContractStart ssObj) throws Exception {
-		Certificate cert = cs.findByUsername(ssObj.getUsername()); //TODO: if intermediate is NOT already in the database
+		Certificate cert = cs.findByEmail(ssObj.getUsername()); //TODO: if intermediate is NOT already in the database
 		
 		if(cert == null)
 			throw new ValidationException("username:No certificate was found for the designated sender");
 		
-		if(cs.findByUsername(ssObj.getRecipient()) == null)
+		if(cs.findByEmail(ssObj.getRecipient()) == null)
 				throw new ValidationException("recipient:No certificate was found for the designated recipient, please check the name or tell them to register with the service");
 		
 			PublicKey ssPublicKey = CertificateTools.decodeDSAPub(cert.getPublicKey()); 
@@ -34,11 +34,15 @@ public class ContractValidator {
 	}
 
 	public void validateComplete(ContractComplete completeContract, Contract contract) throws Exception {
+<<<<<<< HEAD
+		Certificate cert = cs.findByEmail(contract.getRecipient()); //TODO: If the contract is already signed throw and error
+=======
 		
 		if(contract.isCompleted())
 			throw new WebApplicationException(Response.Status.BAD_REQUEST);
 		
 		Certificate cert = cs.findByUsername(contract.getRecipient());
+>>>>>>> origin/HEAD
 		
 		if(cert == null)
 			throw new ValidationException("certificate:No certificate was found for the designated recipient");
@@ -57,7 +61,7 @@ public class ContractValidator {
 		if(!c.isCompleted())
 			throw new WebApplicationException(Response.Status.FORBIDDEN);
 		
-		Certificate cert = cs.findByUsername(c.getRecipient());
+		Certificate cert = cs.findByEmail(c.getRecipient());
 		
 		if(cert == null)
 			throw new WebApplicationException(Response.Status.UNAUTHORIZED);
@@ -76,7 +80,7 @@ public class ContractValidator {
 		if(!c.isCompleted())
 			throw new WebApplicationException(Response.Status.FORBIDDEN);
 		
-		Certificate cert = cs.findByUsername(c.getSender());
+		Certificate cert = cs.findByEmail(c.getSender());
 		
 		if(cert == null)
 			throw new WebApplicationException(Response.Status.UNAUTHORIZED);
