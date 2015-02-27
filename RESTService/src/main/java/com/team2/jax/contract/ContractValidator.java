@@ -18,7 +18,7 @@ public class ContractValidator {
 	private CertificateRepository cs = new CertificateRepositoryMemory();
 
 	
-	public void validate(ContractStart ssObj) throws Exception {
+	public void validate(ContractStart ssObj) throws Exception { //TODO: all fields need to be in place
 		Certificate cert = cs.findByEmail(ssObj.getUsername()); //TODO: if intermediate is NOT already in the database
 		
 		if(cert == null)
