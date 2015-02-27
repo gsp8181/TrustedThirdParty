@@ -19,7 +19,7 @@ public class CertificateService {
     //private CertificateRepositoryTest crud; TODO: figure out
 	
 	
-	private static CertificateRepository crud = new CertificateRepositoryMemory();
+	private static CertificateRepository crud = new CertificateRepositoryDynamo();
 	
 	private static CertificateValidator validator = new CertificateValidator();
 

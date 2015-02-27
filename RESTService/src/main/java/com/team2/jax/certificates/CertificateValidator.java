@@ -9,7 +9,7 @@ import com.team2.security.CertificateTools;
 
 public class CertificateValidator {
 
-	private static CertificateRepository cr = new CertificateRepositoryMemory();
+	private static CertificateRepository cr = new CertificateRepositoryDynamo();
 	
 	private static Validator validator;
 	
