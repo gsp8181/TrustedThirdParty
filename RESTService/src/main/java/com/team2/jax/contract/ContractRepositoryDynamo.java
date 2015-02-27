@@ -1,10 +1,12 @@
 package com.team2.jax.contract;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.amazonaws.auth.profile.ProfileCredentialsProvider;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClient;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
+import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBQueryExpression;
 import com.amazonaws.services.dynamodbv2.document.DynamoDB;
 import com.amazonaws.services.dynamodbv2.document.Table;
 import com.amazonaws.services.dynamodbv2.model.AttributeDefinition;
@@ -17,6 +19,7 @@ import com.amazonaws.services.dynamodbv2.model.ProjectionType;
 import com.amazonaws.services.dynamodbv2.model.ProvisionedThroughput;
 import com.amazonaws.services.dynamodbv2.model.ScalarAttributeType;
 import com.amazonaws.services.dynamodbv2.model.TableDescription;
+import com.team2.jax.certificates.Certificate;
 
 public class ContractRepositoryDynamo implements ContractRepository {
 
@@ -50,8 +53,7 @@ public class ContractRepositoryDynamo implements ContractRepository {
         .withTableName(CONTRACT)
         .withAttributeDefinitions(
         		new AttributeDefinition(ID,ScalarAttributeType.S),
-        		new AttributeDefinition(RECIPIENT,ScalarAttributeType.S),
-        		new AttributeDefinition(STATUS, ScalarAttributeType.B))
+        		new AttributeDefinition(RECIPIENT,ScalarAttributeType.S))
         .withKeySchema(
         		new KeySchemaElement(ID,KeyType.HASH))
         .withProvisionedThroughput(THRUPUT)
@@ -59,8 +61,7 @@ public class ContractRepositoryDynamo implements ContractRepository {
         		new GlobalSecondaryIndex()
         		   .withIndexName(RECIPIENT)
         		   .withKeySchema(
-        				   new KeySchemaElement(RECIPIENT,KeyType.HASH),
-        				   new KeySchemaElement(STATUS,KeyType.RANGE))
+        				   new KeySchemaElement(RECIPIENT,KeyType.HASH))
         			.withProjection(PROJECTION)
         			.withProvisionedThroughput(THRUPUT));
         				   
@@ -94,8 +95,22 @@ public class ContractRepositoryDynamo implements ContractRepository {
 
 	@Override
 	public List<Contract> getUnsignedContractsByRecipient(String recipient) {
-		// TODO Auto-generated method stub
-		return null;
+		List<Contract> list= new ArrayList<Contract>();
+		Contract c = new Contract();
+		c.setRecipient(recipient);	
+		c.setId("de18ad16-1fd0-4c4e-87d1-ccc11581f76f");
+		DynamoDBQueryExpression<Contract> queryExpression = new DynamoDBQueryExpression<Contract>().withHashKeyValues(c);
+			    
+		List<Contract> itemList = mapper.query(Contract.class, queryExpression);
+//		
+//		for(Contract i:itemList)
+//		{
+//			if(i.isCompleted()==false){list.add(i);}
+//			System.out.println(i.getId());
+//		}
+		
+		
+		return list;
 	}
 
 	@Override

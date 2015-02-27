@@ -16,10 +16,13 @@ public class Test {
 //		c.setContract("");
 //		c.setDocName("");
 //		c.setDocRef("");
-//		c.setRecipient("");
+//		c.setRecipient("123");
 //		c.setIntermediateContract("");
 //		c.setRecipient("");
 //		tt.create(c);	
+		
+//		tt.getUnsignedContractsByRecipient("de18ad16-1fd0-4c4e-87d1-ccc11581f76f");
+		
 		
 		
 		
