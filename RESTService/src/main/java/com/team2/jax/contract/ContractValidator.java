@@ -15,7 +15,7 @@ import com.team2.security.CertificateTools;
 
 public class ContractValidator {
 
-	private CertificateRepository cs = new CertificateRepositoryMemory();
+	private CertificateRepository cs = new CertificateRepositoryDynamo();
 
 	
 	public void validate(ContractStart ssObj) throws Exception { //TODO: all fields need to be in place
