@@ -78,17 +78,14 @@
 		<!-- END Jackson -->
 
 		<!-- JAVAX (for JPA) -->
-		<!-- <dependency>
-			<groupId>javax</groupId>
-			<artifactId>javaee-api</artifactId>
-			<version>7.0</version>
-		</dependency> -->
+		<!-- <dependency> <groupId>javax</groupId> <artifactId>javaee-api</artifactId> 
+			<version>7.0</version> </dependency> -->
 		<dependency>
-  <groupId>org.apache.openejb</groupId>
-  <artifactId>javaee-api</artifactId>
-  <version>6.0-6</version>
-  <scope>provided</scope>
-</dependency>
+			<groupId>org.apache.openejb</groupId>
+			<artifactId>javaee-api</artifactId>
+			<version>6.0-6</version>
+			<scope>provided</scope>
+		</dependency>
 		<!-- END JAVAX -->
 
 		<!-- Hibernate (Validation annotations) -->
@@ -113,19 +110,18 @@
 		</dependency>
 		<!-- END AWS -->
 	</dependencies>
-
 	<build>
 		<finalName>RESTService</finalName>
 		<plugins>
-		    <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-compiler-plugin</artifactId>
-        <version>3.1</version>
-        <configuration>
-            <source>1.8</source>
-            <target>1.8</target>
-        </configuration>
-    </plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.1</version>
+				<configuration>
+					<source>1.8</source>
+					<target>1.8</target>
+				</configuration>
+			</plugin>
 			<plugin>
 				<groupId>org.apache.tomcat.maven</groupId>
 				<artifactId>tomcat7-maven-plugin</artifactId>
