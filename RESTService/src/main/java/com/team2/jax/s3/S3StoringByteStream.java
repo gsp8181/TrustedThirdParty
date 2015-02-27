@@ -23,6 +23,7 @@ import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.auth.AWSCredentialsProviderChain;
 import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.auth.ClasspathPropertiesFileCredentialsProvider;
+import com.amazonaws.auth.DefaultAWSCredentialsProviderChain;
 import com.amazonaws.auth.InstanceProfileCredentialsProvider;
 import com.amazonaws.regions.Region;
 import com.amazonaws.regions.Regions;
@@ -94,9 +95,8 @@ public class S3StoringByteStream {
 		
 		
 		// To set this on a non EC2 instance, run http://docs.aws.amazon.com/cli/latest/userguide/cli-chap-getting-started.html
-		credentials = new AWSCredentialsProviderChain(
-                new InstanceProfileCredentialsProvider(),
-                new ClasspathPropertiesFileCredentialsProvider());
+		//credentials = new AWSCredentialsProviderChain(new InstanceProfileCredentialsProvider(),new ClasspathPropertiesFileCredentialsProvider());
+		credentials = new AWSCredentialsProviderChain(new DefaultAWSCredentialsProviderChain());
 		EncryptionMaterialsProvider encryptionMaterials =  new SimpleMaterialProvider().addMaterial(new EncryptionMaterials(myKeyPair));
 		s3 = new AmazonS3EncryptionClient(credentials, encryptionMaterials);
 		Region euIreland = Region.getRegion(Regions.EU_WEST_1);

@@ -15,7 +15,7 @@ public class ContractFileStoreLocal implements ContractFileStore {
 	 * @see com.team2.jax.contract.ContractFileStore#saveFile(java.lang.String, byte[])
 	 */
 	@Override
-	public String saveFile(String fileName, byte[] doc) {
+	public String saveFile(String docName, byte[] doc) {
 		//String fileName = TMP_DIR + docName;
 		
 		OutputStream out;
@@ -55,7 +55,7 @@ public class ContractFileStoreLocal implements ContractFileStore {
 		return f;
 	}
 	
-	private String getLink(String identifier)
+	public String getTempLink(String identifier)
 	{
 		return identifier;
 	}

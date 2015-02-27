@@ -12,6 +12,7 @@ import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.auth.AWSCredentialsProviderChain;
 import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.auth.ClasspathPropertiesFileCredentialsProvider;
+import com.amazonaws.auth.DefaultAWSCredentialsProviderChain;
 import com.amazonaws.auth.InstanceProfileCredentialsProvider;
 import com.amazonaws.regions.Region;
 import com.amazonaws.regions.Regions;
@@ -61,9 +62,8 @@ public class S3StoringByteStream {
 	 */
 	@SuppressWarnings("unused")
 	private static void clientConfiguration() throws IOException {
-		AWSCredentialsProviderChain credentials = new AWSCredentialsProviderChain(
-                new InstanceProfileCredentialsProvider(),
-                new ClasspathPropertiesFileCredentialsProvider());
+		//credentials = new AWSCredentialsProviderChain(new InstanceProfileCredentialsProvider(),new ClasspathPropertiesFileCredentialsProvider());
+		credentials = new AWSCredentialsProviderChain(new DefaultAWSCredentialsProviderChain());
 		
 		ClientConfiguration clientConfig = new ClientConfiguration();
 		clientConfig.setProtocol(Protocol.HTTP);
@@ -78,9 +78,8 @@ public class S3StoringByteStream {
 	private static void connCreation() throws IOException {
 		System.out.println("Create connection...");
 		
-		credentials = new AWSCredentialsProviderChain(
-                new InstanceProfileCredentialsProvider(),
-                new ClasspathPropertiesFileCredentialsProvider());
+		//credentials = new AWSCredentialsProviderChain(new InstanceProfileCredentialsProvider(),new ClasspathPropertiesFileCredentialsProvider());
+		credentials = new AWSCredentialsProviderChain(new DefaultAWSCredentialsProviderChain());
 		s3 = new AmazonS3Client(credentials);
 		Region euIreland = Region.getRegion(Regions.EU_WEST_1);
 		s3.setRegion(euIreland);
