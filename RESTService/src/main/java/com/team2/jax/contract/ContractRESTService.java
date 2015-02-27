@@ -58,7 +58,7 @@ public class ContractRESTService {
 		Response.ResponseBuilder builder = null;
 		
 		try {
-		Contract out = service.start(ssObj);//TODO: hashmap? TODO: dont return contract
+		ContractIntermediate out = service.start(ssObj);//TODO: hashmap?
 		builder = Response.status(Response.Status.CREATED).entity(out);
 		} catch (ConstraintViolationException ce) {
 			// Handles bean specific constraint exceptions
@@ -78,7 +78,7 @@ public class ContractRESTService {
 	
 	@GET
 	@Path("/2/{username}")
-	public List<ContractIntermediate> startCounterSign(@PathParam("username") String username) //TODO: USE INTERMEDIATE?
+	public List<ContractIntermediate> startCounterSign(@PathParam("username") String username)
 	{
 		List<ContractIntermediate> intermediates = service.getIntermediates(username); //TODO: hashmap?
 		if (intermediates == null)

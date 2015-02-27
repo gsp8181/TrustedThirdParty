@@ -19,7 +19,7 @@ public class ContractValidator {
 
 	
 	public void validate(ContractStart ssObj) throws Exception { //TODO: all fields need to be in place
-		Certificate cert = cs.findByEmail(ssObj.getUsername()); //TODO: if intermediate is NOT already in the database
+		Certificate cert = cs.findByEmail(ssObj.getEmail()); //TODO: if intermediate is NOT already in the database
 		
 		if(cert == null)
 			throw new ValidationException("username:No certificate was found for the designated sender");

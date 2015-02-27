@@ -20,7 +20,7 @@ public class ContractService {
 	
 	private static ContractFileStore cfs = new ContractFileStoreLocal();
 	
-	public Contract start(ContractStart ssObj) throws Exception {
+	public ContractIntermediate start(ContractStart ssObj) throws Exception {
 		validator.validate(ssObj);
 		Contract c = new Contract();
 		
@@ -31,12 +31,21 @@ public class ContractService {
 		c.setDocRef(cfs.saveFile(ssObj.getDocName(), doc));
 		
 		c.setIntermediateContract(ssObj.getSig());
-		c.setSender(ssObj.getUsername());
+		c.setSender(ssObj.getEmail());
 		c.setRecipient(ssObj.getRecipient());
 		
 		// SEND B AN EMAIL TELLING HIM HE HAS A DOCUMENT WAITING FROM A
 		
-		return cod.create(c);
+		c = cod.create(c);
+		
+		ContractIntermediate i = new ContractIntermediate();
+		i.setRecipient(c.getRecipient());
+		i.setUsername(c.getSender());
+		i.setDocName(c.getDocName());
+		i.setSigSender(c.getIntermediateContract());
+		i.setId(c.getId());
+		
+		return i;
 		
 		
 	}
