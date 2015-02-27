@@ -7,6 +7,8 @@ import java.io.Serializable;
 import javax.validation.constraints.Pattern;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.hibernate.validator.constraints.Email;
+
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBAttribute;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBHashKey;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBRangeKey;
@@ -21,7 +23,8 @@ public class Certificate implements Serializable  {
     private String publicKey;
     private long time;
     
-    @DynamoDBHashKey(attributeName="Email")  
+    @DynamoDBHashKey(attributeName="Email")
+    @Email(message = "The email address must be in the format of name@domain.com")
     public String getEmail() { return email;}
     public void setEmail(String email) {this.email = email;}
     
