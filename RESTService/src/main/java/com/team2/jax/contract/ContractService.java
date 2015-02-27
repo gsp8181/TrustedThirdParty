@@ -18,6 +18,8 @@ public class ContractService {
 	
 	private static ContractRepository cod = new ContractRepositoryMemory();
 	
+	private static ContractFileStore cfs = new ContractFileStoreLocal();
+	
 	public Contract start(ContractStart ssObj) throws Exception {
 		validator.validate(ssObj);
 		Contract c = new Contract();
@@ -26,7 +28,7 @@ public class ContractService {
 		
 		byte[] doc = CertificateTools.decodeBase64(ssObj.getDocData());
 		
-		c.setDocRef(new ContractTempFileStore().save(ssObj.getDocName(), doc)); //TODO: S3 instead
+		c.setDocRef(cfs.saveFile(ssObj.getDocName(), doc));
 		
 		c.setIntermediateContract(ssObj.getSig());
 		c.setSender(ssObj.getUsername());

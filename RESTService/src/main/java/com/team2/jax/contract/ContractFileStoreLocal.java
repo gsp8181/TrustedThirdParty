@@ -7,11 +7,15 @@ import java.io.OutputStream;
 import java.net.URL;
 import java.net.URLDecoder;
 
-public class ContractTempFileStore {
+public class ContractFileStoreLocal implements ContractFileStore {
 
-	public static final String TMP_DIR = System.getProperty("java.io.tmpdir");
+	private static final String TMP_DIR = System.getProperty("java.io.tmpdir");
 	
-	public String save(String docName, byte[] doc) {
+	/* (non-Javadoc)
+	 * @see com.team2.jax.contract.ContractFileStore#saveFile(java.lang.String, byte[])
+	 */
+	@Override
+	public String saveFile(String fileName, byte[] doc) {
 		//String fileName = TMP_DIR + docName;
 		
 		OutputStream out;
@@ -34,7 +38,7 @@ public class ContractTempFileStore {
 		return null;
 	}
 	
-	public File getFile(String name) throws Exception
+	private File getFile(String name) throws Exception
 	{
 		// URL returned "/C:/Program%20Files/Tomcat%206.0/webapps/myapp/WEB-INF/classes/"
 		URL r = this.getClass().getResource("/");
@@ -49,6 +53,11 @@ public class ContractTempFileStore {
 		File f = new File(decoded, name);
 		
 		return f;
+	}
+	
+	private String getLink(String identifier)
+	{
+		return identifier;
 	}
 
 }
