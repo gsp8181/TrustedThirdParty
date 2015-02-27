@@ -55,7 +55,8 @@ public class Contract {
 		this.sender = sender;
 	}
 
-	@DynamoDBIndexHashKey(attributeName="Recipient")
+	
+	@DynamoDBIndexHashKey(globalSecondaryIndexName="Receiver",attributeName="Recipient")
 	public String getRecipient() {
 		return recipient;
 	}

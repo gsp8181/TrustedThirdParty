@@ -11,6 +11,10 @@ import javax.ws.rs.core.Response;
 import com.team2.jax.certificates.Certificate;
 import com.team2.jax.certificates.CertificateRepository;
 import com.team2.jax.certificates.CertificateRepositoryDynamo;
+<<<<<<< HEAD
+import com.team2.jax.certificates.CertificateRepositoryMemory;
+=======
+>>>>>>> 03fa5b63b614ba0221bf30adbbfa7457701cf4d0
 import com.team2.security.CertificateTools;
 
 public class ContractValidator {

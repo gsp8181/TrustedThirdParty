@@ -1,6 +1,7 @@
 package com.team2.jax.contract;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import com.amazonaws.auth.profile.ProfileCredentialsProvider;
@@ -8,6 +9,11 @@ import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClient;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBQueryExpression;
 import com.amazonaws.services.dynamodbv2.document.DynamoDB;
+import com.amazonaws.services.dynamodbv2.document.Index;
+import com.amazonaws.services.dynamodbv2.document.Item;
+import com.amazonaws.services.dynamodbv2.document.ItemCollection;
+import com.amazonaws.services.dynamodbv2.document.QueryOutcome;
+import com.amazonaws.services.dynamodbv2.document.RangeKeyCondition;
 import com.amazonaws.services.dynamodbv2.document.Table;
 import com.amazonaws.services.dynamodbv2.model.AttributeDefinition;
 import com.amazonaws.services.dynamodbv2.model.CreateTableRequest;
@@ -27,10 +33,11 @@ public class ContractRepositoryDynamo implements ContractRepository {
 	private final static DynamoDBMapper mapper = new DynamoDBMapper(client);	
 	private final static String ID="Id";
 	private final static String RECIPIENT="Recipient";
-	private final static String STATUS="Status";
+	private final static String INDEX="Receiver";
 	private final static Projection PROJECTION = new Projection().withProjectionType(ProjectionType.ALL);
 	private final static String CONTRACT = "Contract";	
 	private final static ProvisionedThroughput THRUPUT = new ProvisionedThroughput(5L, 6L);	
+	
 	
 	private static DynamoDB dynamo;
 	static {
@@ -59,7 +66,7 @@ public class ContractRepositoryDynamo implements ContractRepository {
         .withProvisionedThroughput(THRUPUT)
         .withGlobalSecondaryIndexes(
         		new GlobalSecondaryIndex()
-        		   .withIndexName(RECIPIENT)
+        		   .withIndexName(INDEX)
         		   .withKeySchema(
         				   new KeySchemaElement(RECIPIENT,KeyType.HASH))
         			.withProjection(PROJECTION)
@@ -85,6 +92,12 @@ public class ContractRepositoryDynamo implements ContractRepository {
        }       
         
         }   
+	
+	private final static Table table = dynamo.getTable("Contract");
+	private final static Index index = table.getIndex(INDEX);
+	
+	
+	
 	@Override
 	public Contract create(Contract c) {
 		c.setCompleted(false);
@@ -95,26 +108,21 @@ public class ContractRepositoryDynamo implements ContractRepository {
 
 	@Override
 	public List<Contract> getUnsignedContractsByRecipient(String recipient) {
-		List<Contract> list= new ArrayList<Contract>();
-		Contract c = new Contract();
-		c.setRecipient(recipient);	
-		c.setId("de18ad16-1fd0-4c4e-87d1-ccc11581f76f");
-		DynamoDBQueryExpression<Contract> queryExpression = new DynamoDBQueryExpression<Contract>().withHashKeyValues(c);
-			    
-		List<Contract> itemList = mapper.query(Contract.class, queryExpression);
-//		
-//		for(Contract i:itemList)
-//		{
-//			if(i.isCompleted()==false){list.add(i);}
-//			System.out.println(i.getId());
-//		}
+		List<Contract> list = new ArrayList<Contract>();
 		
+		ItemCollection<QueryOutcome> items = index.query(RECIPIENT,recipient);
 		
+		for(Item i:items)
+		{
+			if(i.getString("Status").equals("0")){list.add(getById(i.getString("Id")));}
+		}		
+				
 		return list;
 	}
 
 	@Override
-	public Contract getById(String id) {
+	public Contract getById(String id) {		
+
 		return mapper.load(Contract.class, id);
 	}
 
