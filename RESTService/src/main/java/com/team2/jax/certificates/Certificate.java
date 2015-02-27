@@ -2,6 +2,8 @@ package com.team2.jax.certificates;
 
 
 
+import java.io.Serializable;
+
 import javax.validation.constraints.Pattern;
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -12,7 +14,8 @@ import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBTable;
 
 @XmlRootElement
 @DynamoDBTable(tableName="Certificate")
-public class Certificate {
+public class Certificate implements Serializable  {
+
 
 	private String email;
     private String publicKey;

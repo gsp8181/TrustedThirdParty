@@ -34,15 +34,10 @@ public class ContractValidator {
 	}
 
 	public void validateComplete(ContractComplete completeContract, Contract contract) throws Exception {
-<<<<<<< HEAD
-		Certificate cert = cs.findByEmail(contract.getRecipient()); //TODO: If the contract is already signed throw and error
-=======
-		
 		if(contract.isCompleted())
 			throw new WebApplicationException(Response.Status.BAD_REQUEST);
 		
-		Certificate cert = cs.findByUsername(contract.getRecipient());
->>>>>>> origin/HEAD
+		Certificate cert = cs.findByEmail(contract.getRecipient());
 		
 		if(cert == null)
 			throw new ValidationException("certificate:No certificate was found for the designated recipient");

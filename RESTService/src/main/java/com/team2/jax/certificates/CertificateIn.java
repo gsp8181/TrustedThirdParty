@@ -11,7 +11,7 @@ public class CertificateIn implements Serializable {
 	private static final long serialVersionUID = 1L;
 	
 	@NotNull
-    private String username;
+    private String email;
     
     /**
      * The public key is the DSA public key in base64 format
@@ -41,11 +41,11 @@ public class CertificateIn implements Serializable {
 		this.publicKey = publicKey;
 	}
 
-	public String getUsername() {
-		return username;
+	public String getEmail() {
+		return email;
 	}
 
-	public void setUsername(String username) {
-		this.username = username;
+	public void setEmail(String email) {
+		this.email = email;
 	}
 }

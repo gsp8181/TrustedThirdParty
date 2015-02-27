@@ -27,10 +27,14 @@ public class CertificateService {
 		return crud.findByEmail(email);
 	}
 
-	public Certificate create(Certificate cert) throws ConstraintViolationException, ValidationException, Exception {
+	public Certificate create(CertificateIn cert) throws ConstraintViolationException, ValidationException, Exception {
 		
-		validator.validateCertificate(cert);		
-		return crud.create(cert);
+		validator.validateCertificate(cert);	
+		
+		Certificate newCert = new Certificate();
+		newCert.setEmail(cert.getEmail());
+		newCert.setPublicKey(cert.getPublicKey());
+		return crud.create(newCert);
 		
 	}
 	

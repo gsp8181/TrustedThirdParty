@@ -16,13 +16,12 @@ public class CertificateRepositoryMemory implements CertificateRepository {
 	}
 
 	public Certificate create(Certificate certificate) {
-//		if (repo.containsKey(certificate.getUsername())) {
-//			return null; // todo: should be not created
-//		} else {
-//			repo.put(certificate.getUsername(),certificate);
-//			return certificate;
-//		}
-		return null;
+		if (repo.containsKey(certificate.getEmail())) {
+			return null; // todo: should be not created
+		} else {
+			repo.put(certificate.getEmail(),certificate);
+			return certificate;
+		}
 		
 	}
 
