@@ -16,7 +16,7 @@ public class ContractService {
 
 	private static ContractValidator validator = new ContractValidator();
 	
-	private static ContractRepository cod = new ContractRepositoryMemory();
+	private static ContractRepository cod = new ContractRepositoryDynamo();
 	
 	private static ContractFileStore cfs = new ContractFileStoreLocal();
 	

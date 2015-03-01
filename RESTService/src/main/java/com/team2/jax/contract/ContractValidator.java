@@ -12,8 +12,6 @@ import com.team2.jax.certificates.Certificate;
 import com.team2.jax.certificates.CertificateRepository;
 import com.team2.jax.certificates.CertificateRepositoryDynamo;
 
-import com.team2.jax.certificates.CertificateRepositoryMemory;
-
 
 import com.team2.security.CertificateTools;
 
