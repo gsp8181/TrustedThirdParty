@@ -5,6 +5,8 @@ import java.util.Iterator;
 import java.util.List;
 
 import com.amazonaws.auth.profile.ProfileCredentialsProvider;
+import com.amazonaws.regions.Region;
+import com.amazonaws.regions.Regions;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClient;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBQueryExpression;
@@ -30,6 +32,7 @@ import com.team2.jax.certificates.Certificate;
 public class ContractRepositoryDynamo implements ContractRepository {
 
 	private final static AmazonDynamoDBClient client = new AmazonDynamoDBClient(new ProfileCredentialsProvider());
+	private final static Region euIreland = Region.getRegion(Regions.EU_WEST_1);
 	private final static DynamoDBMapper mapper = new DynamoDBMapper(client);	
 	private final static String ID="Id";
 	private final static String RECIPIENT="Recipient";
@@ -43,6 +46,7 @@ public class ContractRepositoryDynamo implements ContractRepository {
 	static {
        try{
         
+       	client.setRegion(euIreland);
         dynamo= new DynamoDB(client);
         
         Table table = dynamo.getTable(CONTRACT);

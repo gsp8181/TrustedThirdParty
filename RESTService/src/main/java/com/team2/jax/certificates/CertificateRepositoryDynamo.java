@@ -2,14 +2,14 @@ package com.team2.jax.certificates;
 
 
 import java.util.Date;
-
 import java.util.List;
 
 import com.amazonaws.auth.profile.ProfileCredentialsProvider;
+import com.amazonaws.regions.Region;
+import com.amazonaws.regions.Regions;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClient;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBQueryExpression;
-
 import com.amazonaws.services.dynamodbv2.document.DynamoDB;
 import com.amazonaws.services.dynamodbv2.document.Table;
 import com.amazonaws.services.dynamodbv2.model.AttributeDefinition;
@@ -25,6 +25,7 @@ import com.amazonaws.services.dynamodbv2.model.TableDescription;
 public class CertificateRepositoryDynamo implements CertificateRepository{
 	
 	private final static AmazonDynamoDBClient client = new AmazonDynamoDBClient(new ProfileCredentialsProvider());
+	private final static Region euIreland = Region.getRegion(Regions.EU_WEST_1);
 	private final static DynamoDBMapper mapper = new DynamoDBMapper(client);	
 	private final static String EMAIL="Email";
 	private final static String TIME="Time"; 
@@ -35,6 +36,7 @@ public class CertificateRepositoryDynamo implements CertificateRepository{
 	static {
        try{
         
+    	client.setRegion(euIreland);
         dynamo= new DynamoDB(client);
         
         Table table = dynamo.getTable(CERTIFICATE);
