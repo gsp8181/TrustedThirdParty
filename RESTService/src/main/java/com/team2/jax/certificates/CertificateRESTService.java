@@ -11,9 +11,11 @@ import javax.validation.ValidationException;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.WebApplicationException;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -103,6 +105,28 @@ public class CertificateRESTService {
 
 		return builder.build();
 
+	}
+	
+	@PUT
+	@Path("/verify")
+	public Response verifyEmail(@QueryParam("email") String email, @QueryParam("code") String code)
+	{
+		boolean verified = service.verify(email,code);
+		
+		
+		if(verified)
+		{
+			Map<String, String> responseObj = new HashMap<String, String>();
+			responseObj.put("success", "email verified");
+			return Response.status(Response.Status.OK).entity(responseObj).build();
+		}
+		else
+		{
+			Map<String, String> responseObj = new HashMap<String, String>();
+			responseObj.put("error", "verification failed, are you sure you have the right email?");
+			return Response.status(Response.Status.BAD_REQUEST).entity(responseObj).build();
+		}
+		
 	}
 	
 	/**

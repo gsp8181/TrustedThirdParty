@@ -37,5 +37,9 @@ public class CertificateService {
 		return crud.create(newCert);
 		
 	}
+
+	public boolean verify(String email, String code) {
+		return true;
+	}
 	
 }
