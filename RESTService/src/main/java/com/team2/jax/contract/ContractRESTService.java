@@ -91,7 +91,7 @@ public class ContractRESTService {
 	
 	@POST //TODO: PUT
 	@Path("/3/{id}")
-	public Response counterSign(@PathParam("id") String id, ContractComplete contract) //TODO: id -> int
+	public Response counterSign(@PathParam("id") String id, ContractComplete contract)
 	{
 		if (contract == null)
 			throw new WebApplicationException(Response.Status.BAD_REQUEST);
@@ -122,7 +122,7 @@ public class ContractRESTService {
 	
 	
 	@GET
-	@Path("/4/{id : \\d+}")
+	@Path("/4/{id}")
 	public Response getDoc(@PathParam("id") String id, @QueryParam("signedId") String signedId) throws Exception//TODO: better handle
 	{
 		String docRef = service.getDoc(id, CertificateTools.base64urldecode(signedId)); //TODO: hashmap?
@@ -158,7 +158,7 @@ public class ContractRESTService {
 	 * @throws Exception
 	 */
 	@GET
-	@Path("/5/{id : \\d+}") //TODO: signedId should include a timestamp
+	@Path("/5/{id}") //TODO: signedId should include a timestamp
 	public Response getContract(@PathParam("id") String id, @QueryParam("signedId") String signedId) throws Exception //TODO: better handle TODO:change response to an actual type
 	{
 		String docRef = service.getContract(id, CertificateTools.base64urldecode(signedId)); //TODO: hashmap?
