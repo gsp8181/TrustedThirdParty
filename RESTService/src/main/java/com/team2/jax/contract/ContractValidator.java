@@ -36,6 +36,9 @@ public class ContractValidator {
 	}
 
 	public void validateComplete(ContractComplete completeContract, Contract contract) throws Exception {
+		if(contract == null)
+			throw new WebApplicationException(Response.Status.NOT_FOUND);
+		
 		if(contract.isCompleted())
 			throw new WebApplicationException(Response.Status.BAD_REQUEST);
 		

@@ -76,6 +76,13 @@ public class ContractRESTService {
 		return builder.build();
 	}
 	
+	/**
+	 * <p>
+	 * 
+	 * </p>
+	 * @param username
+	 * @return
+	 */
 	@GET
 	@Path("/2/{username}")
 	public List<ContractIntermediate> startCounterSign(@PathParam("username") String username)
@@ -89,6 +96,20 @@ public class ContractRESTService {
 		//return Response.ok(intermediates).build();
 	}
 	
+	/**
+	 * <p>
+	 * Step 3 - Counter Sign (and implied step 4)
+	 * </p>
+	 * <p>
+	 * This method takes an ID of a contract (from step 4) and a ContractComplete object which is just really a fancy POJO that is {"sig":"base64sig"} and the sig parameter is the sigSender from the contract object signed with the users public key. It will return the docRef object (see step 4) aswell
+	 * </p>
+	 * <p>
+	 * Will give a BAD_REQUEST if the contract is completed or a {"field":"message"} exception if there is a slight problem and obviously a 404 if a contract cannot be found on the specified ID.
+	 * </p>
+	 * @param id The ID of the contract to be signed
+	 * @param contract A {"sig":"base64sig"} object which is the signed signature from the ContractIntermediate object gotten from part 3
+	 * @return The {"docRef":"URL"} object where the user can retrieve the document from
+	 */
 	@POST //TODO: PUT
 	@Path("/3/{id}")
 	public Response counterSign(@PathParam("id") String id, ContractComplete contract)
@@ -103,7 +124,7 @@ public class ContractRESTService {
 			String docRef = service.counterSign(contract,id);
 			Map<String, String> out = new HashMap<String, String>();
 			out.put("docRef",docRef);
-		builder = Response.status(Response.Status.ACCEPTED).entity(out); //TODO:accepted?
+			builder = Response.status(Response.Status.ACCEPTED).entity(out); //TODO:accepted?
 		} catch (ConstraintViolationException ce) {
 			// Handles bean specific constraint exceptions
 			builder = createViolationResponse(ce.getConstraintViolations());
@@ -121,6 +142,25 @@ public class ContractRESTService {
 	}
 	
 	
+	/**
+	 * <p>
+	 * Step 4 - Fetch Contract URL
+	 * </p>
+	 * <p>
+	 * Returns the URL to the contract that is valid for a set amount of time if the user has been successfully verified. This verification happens by the user signing the ID with their own private key.
+	 * </p>
+	 * <p>
+	 * If the contract is not found a 404 will be returned, if the contract
+	 * is not completed then a 403 forbidden will be returned. If the cert 
+	 * cannot be found in the database then a 401 unauthorised will be returned 
+	 * and a 401 unauthorised will be returned if signedId fails to verify
+	 * with the sender.
+	 * </p>
+	 * @param id The id of the contract data to be returned
+	 * @param signedId id signed with the key of the sender
+	 * @return The JSON object containing the temp URL of the document for instance {"docRef":"http://s3.com/doc55.txt"}
+	 * @throws Exception 
+	 */
 	@GET
 	@Path("/4/{id}")
 	public Response getDoc(@PathParam("id") String id, @QueryParam("signedId") String signedId) throws Exception//TODO: better handle
@@ -143,7 +183,7 @@ public class ContractRESTService {
 	 * <p>
 	 * Returns a correctly signed contract to the initial sender
 	 * of the contract. The request will need to be correctly signed
-	 * and verified to prove the identity of the sending user.
+	 * and verified to prove the identity of the sending user. The signed request is currently a signed version of the ID but my include timestamps in the future.
 	 * </p>
 	 * <p>
 	 * If the contract is not found a 404 will be returned, if the contract
@@ -154,7 +194,7 @@ public class ContractRESTService {
 	 * </p>
 	 * @param id The id of the contract to be returned
 	 * @param signedId id signed with the key of the sender
-	 * @return The contract in the form of SigB(SigA(H(doc))) as a JSON object for example {@code {"contract":"abcdefg=="}}
+	 * @return The contract in the form of SigB(SigA(H(doc))) as a JSON object for example {"contract":"abcdefg=="}
 	 * @throws Exception
 	 */
 	@GET
