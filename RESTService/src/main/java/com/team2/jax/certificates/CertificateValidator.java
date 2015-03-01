@@ -1,7 +1,14 @@
 package com.team2.jax.certificates;
 
+import java.util.HashSet;
+import java.util.Set;
+
+import javax.validation.ConstraintViolation;
+import javax.validation.ConstraintViolationException;
+import javax.validation.Validation;
 import javax.validation.ValidationException;
 import javax.validation.Validator;
+import javax.validation.ValidatorFactory;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 
@@ -11,14 +18,14 @@ public class CertificateValidator {
 
 	private static CertificateRepository cr = new CertificateRepositoryDynamo();
 	
-	private static Validator validator;
+	 private static Validator validator=Validation.buildDefaultValidatorFactory().getValidator();
 	
 	public void validateCertificate(CertificateIn cert) {
-		/*Set<ConstraintViolation<Certificate>> violations = validator.validate(cert);
+		Set<ConstraintViolation<CertificateIn>> violations = validator.validate(cert);
 
         if (!violations.isEmpty()) {
             throw new ConstraintViolationException(new HashSet<ConstraintViolation<?>>(violations));
-        }*/ //TODO: Broke
+        }
         
         if (certAlreadyExists(cert)) {
             throw new ValidationException("username:Username Already Exists");

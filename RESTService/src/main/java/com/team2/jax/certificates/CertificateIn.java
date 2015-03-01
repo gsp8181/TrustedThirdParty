@@ -5,12 +5,15 @@ import java.io.Serializable;
 import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.hibernate.validator.constraints.Email;
+
 @XmlRootElement
 public class CertificateIn implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 	
 	@NotNull
+    @Email(message = "The email address must be in the format of name@domain.com")
     private String email;
     
     /**

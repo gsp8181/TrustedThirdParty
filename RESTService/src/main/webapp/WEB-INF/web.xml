@@ -25,4 +25,9 @@
 		<servlet-name>RESTService</servlet-name>
 		<url-pattern>/rest/*</url-pattern>
 	</servlet-mapping> -->
+	<listener>
+    <listener-class>
+        com.team2.jax.AwsDestroy
+    </listener-class>
+</listener>
 </web-app>
