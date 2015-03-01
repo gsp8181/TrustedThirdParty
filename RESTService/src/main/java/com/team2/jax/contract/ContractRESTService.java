@@ -98,10 +98,10 @@ public class ContractRESTService {
 	
 	/**
 	 * <p>
-	 * Step 3 - Counter Sign (and implied step 4)
+	 * Step 3 - Counter Sign (and implied step 4).
 	 * </p>
 	 * <p>
-	 * This method takes an ID of a contract (from step 4) and a ContractComplete object which is just really a fancy POJO that is {"sig":"base64sig"} and the sig parameter is the sigSender from the contract object signed with the users public key. It will return the docRef object (see step 4) aswell
+	 * This method takes an ID of a contract (from step 4) and a ContractComplete object which is just really a fancy POJO that is {"sig":"base64sig"} and the sig parameter is the sigSender from the contract object signed with the users public key. It will return the docRef object (see step 4) aswell.
 	 * </p>
 	 * <p>
 	 * Will give a BAD_REQUEST if the contract is completed or a {"field":"message"} exception if there is a slight problem and obviously a 404 if a contract cannot be found on the specified ID.
@@ -144,7 +144,7 @@ public class ContractRESTService {
 	
 	/**
 	 * <p>
-	 * Step 4 - Fetch Contract URL
+	 * Step 4 - Fetch Contract URL.
 	 * </p>
 	 * <p>
 	 * Returns the URL to the contract that is valid for a set amount of time if the user has been successfully verified. This verification happens by the user signing the ID with their own private key.
@@ -178,7 +178,7 @@ public class ContractRESTService {
 	
 	/**
 	 * <p>
-	 * Step 5 - Return Contract
+	 * Step 5 - Return Contract.
 	 * </p>
 	 * <p>
 	 * Returns a correctly signed contract to the initial sender
@@ -194,21 +194,18 @@ public class ContractRESTService {
 	 * </p>
 	 * @param id The id of the contract to be returned
 	 * @param signedId id signed with the key of the sender
-	 * @return The contract in the form of SigB(SigA(H(doc))) as a JSON object for example {"contract":"abcdefg=="}
+	 * @return The contract in the form of SigB(SigA(H(doc))) as a JSON object for example {"sig":"abcdefg=="}
 	 * @throws Exception
 	 */
 	@GET
 	@Path("/5/{id}") //TODO: signedId should include a timestamp
-	public Response getContract(@PathParam("id") String id, @QueryParam("signedId") String signedId) throws Exception //TODO: better handle TODO:change response to an actual type
+	public ContractComplete getContract(@PathParam("id") String id, @QueryParam("signedId") String signedId) throws Exception //TODO: better handle TODO:change response to an actual type
 	{
-		String docRef = service.getContract(id, CertificateTools.base64urldecode(signedId)); //TODO: hashmap?
-		if (docRef == null)
+		ContractComplete out = service.getContract(id, CertificateTools.base64urldecode(signedId));
+		if (out == null)
 			throw new WebApplicationException(Response.Status.NOT_FOUND); // TODO: doesn't display an error message
-
-		Map<String, String> out = new HashMap<String, String>();
-		out.put("contract",docRef);
 		
-		return Response.status(Response.Status.OK).entity(out).build();
+		return out;
 	}
 	
 	/**

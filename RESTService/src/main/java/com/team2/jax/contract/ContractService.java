@@ -95,12 +95,17 @@ public class ContractService {
 		return c.getDocRef();
 	}
 
-	public String getContract(String id, String signedId) throws Exception {//TODO: better handle
+	public ContractComplete getContract(String id, String signedId) throws Exception {//TODO: better handle
 		Contract c = cod.getById(id);
 		
 		validator.validateContractRequest(id,signedId,c);
 		
-		return c.getContract();
+		String contract = c.getContract();
+		
+		ContractComplete rObj = new ContractComplete(); 
+		rObj.setSig(contract);
+		
+		return rObj;
 	}
 
 }
