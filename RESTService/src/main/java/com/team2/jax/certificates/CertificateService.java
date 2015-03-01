@@ -8,15 +8,7 @@ import javax.inject.Named;
 import javax.validation.ConstraintViolationException;
 import javax.validation.ValidationException;
 
-//@Dependent TODO: figure out
 public class CertificateService {
-
-	
-	//@Inject
-    //private @Named("logger") Logger log;
-	
-	//@Inject
-    //private CertificateRepositoryTest crud; TODO: figure out
 	
 	
 	private static CertificateRepository crud = new CertificateRepositoryDynamo();

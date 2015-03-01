@@ -162,7 +162,7 @@ public class ContractRESTService {
 	 * @throws Exception 
 	 */
 	@GET
-	@Path("/4/{id}")
+	@Path("/4/{id}") //TODO: signedId should include a timestamp
 	public Response getDoc(@PathParam("id") String id, @QueryParam("signedId") String signedId) throws Exception//TODO: better handle
 	{
 		String docRef = service.getDoc(id, CertificateTools.base64urldecode(signedId)); //TODO: hashmap?
@@ -199,7 +199,7 @@ public class ContractRESTService {
 	 */
 	@GET
 	@Path("/5/{id}") //TODO: signedId should include a timestamp
-	public ContractComplete getContract(@PathParam("id") String id, @QueryParam("signedId") String signedId) throws Exception //TODO: better handle TODO:change response to an actual type
+	public ContractComplete getContract(@PathParam("id") String id, @QueryParam("signedId") String signedId) throws Exception //TODO: better handle
 	{
 		ContractComplete out = service.getContract(id, CertificateTools.base64urldecode(signedId));
 		if (out == null)

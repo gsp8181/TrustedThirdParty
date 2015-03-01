@@ -3,12 +3,17 @@ package com.team2.jax.contract;
 import java.security.NoSuchAlgorithmException;
 import java.security.PublicKey;
 import java.security.spec.InvalidKeySpecException;
+import java.util.Set;
 
+import javax.validation.ConstraintViolation;
+import javax.validation.Validation;
 import javax.validation.ValidationException;
+import javax.validation.Validator;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 
 import com.team2.jax.certificates.Certificate;
+import com.team2.jax.certificates.CertificateIn;
 import com.team2.jax.certificates.CertificateRepository;
 import com.team2.jax.certificates.CertificateRepositoryDynamo;
 
@@ -22,6 +27,11 @@ public class ContractValidator {
 	
 	public void validate(ContractStart ssObj) throws Exception { //TODO: all fields need to be in place
 		Certificate cert = cs.findByEmail(ssObj.getEmail()); //TODO: if intermediate is NOT already in the database
+		
+		 //private static Validator validator=Validation.buildDefaultValidatorFactory().getValidator();
+			
+			//public void validateCertificate(CertificateIn cert) { TODO: <-
+			//	Set<ConstraintViolation<CertificateIn>> violations = validator.validate(cert);
 		
 		if(cert == null)
 			throw new ValidationException("username:No certificate was found for the designated sender");
