@@ -10,4 +10,6 @@ public interface ContractRepository {
 
 	public Contract getById(String id);
 	
+	public Contract deleteById(String id);
+	
 }

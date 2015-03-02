@@ -94,6 +94,27 @@ public class CertificateRepositoryDynamo implements CertificateRepository{
 			    .withHashKeyValues(user).withScanIndexForward(false);
 		List<Certificate> itemList = mapper.query(Certificate.class, queryExpression);
 		
+		if(!itemList.isEmpty())
+		{
+			for(Certificate c:itemList)
+			{
+				if(c.getStatus()==true){return c;}
+			}
+		}
+
+        return null;
+		
+	}
+	
+	
+	public Certificate findLatestByEmail(String email)
+	{
+		Certificate user = new Certificate();
+		user.setEmail(email);
+		DynamoDBQueryExpression<Certificate> queryExpression = new DynamoDBQueryExpression<Certificate>()
+			    .withHashKeyValues(user).withScanIndexForward(false);
+		List<Certificate> itemList = mapper.query(Certificate.class, queryExpression);
+		
 		if(itemList.isEmpty()){return null;}
 
         return itemList.get(0);
@@ -101,7 +122,7 @@ public class CertificateRepositoryDynamo implements CertificateRepository{
 	}
 
 	public Certificate create(Certificate cert) {
-		cert.setTime(new Date().getTime());
+		
 		mapper.save(cert);
 		return cert;
 	}
@@ -130,6 +151,21 @@ public class CertificateRepositoryDynamo implements CertificateRepository{
 		
 			    
 			    
+	}
+	
+	
+	public boolean verify(String email, String code)
+	{
+		Certificate latest = findLatestByEmail(email);
+		if(latest!=null&&latest.getCode().equals(code))
+		{
+			latest.setStatus(true);
+			mapper.save(latest);
+			return true;			
+		}
+		
+		return false;
+		
 	}
 
 	
