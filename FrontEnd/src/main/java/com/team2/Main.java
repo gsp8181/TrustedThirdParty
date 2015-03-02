@@ -16,6 +16,11 @@ import java.util.Base64.Encoder;
 import java.net.URL;
 import sun.net.www.http.HttpClient;
 import com.sun.jmx.snmp.tasks.ThreadService;
+import org.apache.commons.cli.CommandLineParser;
+import org.apache.commons.cli.GnuParser;
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.ParseException;
+import org.apache.commons.cli.HelpFormatter;
 
 
 public class Main {
@@ -28,10 +33,64 @@ public class Main {
 	
 
 	public static void main(String[] args) {
+		
+		
+		// If there are no args, return;
+		if(args.length < 1)
+		{
+			printHelp();
+	    	return;
+		}
+		String command = args[0];
+		
+		switch(command)
+		{
+		case "countersign":
+			//countersign();
+			break;
+		case "gensig":
+			genSig(args);
+			break;
+		case "getcompleted":
+			//getcompleted();
+			break;
+		case "getcontracts":
+			//getcontracts();
+			break;
+		case "sign":
+			//sign();
+			break;
+		default:
+			printHelp();
+			return;
+		}
+		
+	    // create the parser
+	    CommandLineParser parser = new GnuParser();
+	    try {
+	        // parse the command line arguments
+	        CommandLine line = parser.parse( OptionsFactory.allOptions(), args );
+	    }
+	    catch( ParseException exp ) {
+	        // oops, something went wrong
+	    	HelpFormatter formatter = new HelpFormatter();
+	    	formatter.printHelp( "ttp", OptionsFactory.returnOptions() );
+	    	return;
+	    }
+	    
+	    
+	    
+	    
+	    
+
+	}
+
+
+	private static void genSig(String[] args) {
 		// TODO Auto-generated method stub
 			System.out.println("Hi, i am front end.");
 			
-			  /* Generate a DSA signature */
+			  // Generate a DSA signature 
 
 	        if (args.length != 1) {
 	            System.out.println("Usage: GenSig username");
@@ -58,6 +117,16 @@ public class Main {
 	        } catch (Exception e) {
 	            System.err.println("Caught exception " + e.toString());
 	        }
+	}
+
+
+	private static void printHelp() {
+		System.out.println("usage: ttp <command>");
+		System.out.println("countersign:	Countersigns a document");
+		System.out.println("gensig:			Generates a signature for use in the program");
+		System.out.println("getcompleted:	Returns the receipt signature of a remote document");
+		System.out.println("getcontracts:	Returns all contracts waiting to be signed");
+		System.out.println("sign:			Signs a document and submits it with the current");
 	}
 	
 	
