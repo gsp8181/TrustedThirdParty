@@ -8,6 +8,9 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.Response;
+
 import com.sun.jersey.core.header.FormDataContentDisposition;
 import com.team2.jax.certificates.CertificateRepository;
 import com.team2.jax.certificates.CertificateRepositoryDynamo;
@@ -22,7 +25,7 @@ public class ContractService {
 	
 	private static ContractRepository cod = new ContractRepositoryDynamo();
 	
-	private static ContractFileStore cfs = new ContractFileStoreLocal();
+	private static ContractFileStoreS3 cfs = new ContractFileStoreS3();
 	
 	public ContractIntermediate start(ContractStart ssObj) throws Exception {
 		validator.validate(ssObj);
@@ -84,24 +87,40 @@ public class ContractService {
 		return contracts;
 	}
 
-	public String counterSign(ContractComplete completeContract, String id) throws Exception {
+	public ContractDoc counterSign(ContractComplete completeContract, String id) {
 		Contract c = cod.getById(id);
-		validator.validateComplete(completeContract, c);
+		try {
+			validator.validateComplete(completeContract, c);
+		} catch (Exception e) {
+			throw new WebApplicationException(Response.Status.INTERNAL_SERVER_ERROR);
+		}
 		c.setContract(completeContract.getSig());
 		c.setCompleted(true);
 		cod.create(c);
-		return c.getDocRef();
+		ContractDoc out = new ContractDoc();
+		
+		out.setDocRef(cfs.getTempLink(c.getDocRef()));
+		
+		return out;
 	}
 
-	public String getDoc(String id, String signedId) throws Exception { //TODO: better handle
+	public ContractDoc getDoc(String id, String signedId) {
 		Contract c = cod.getById(id);
 		
-		validator.validateDocRequest(id,signedId,c);
+		try {
+			validator.validateDocRequest(id,signedId,c);
+		} catch (Exception e) {
+			throw new WebApplicationException(Response.Status.INTERNAL_SERVER_ERROR);
+		}
 		
-		return c.getDocRef();
+		ContractDoc out = new ContractDoc();
+		
+		out.setDocRef(cfs.getTempLink(c.getDocRef()));
+		
+		return out;
 	}
 
-	public ContractComplete getContract(String id, String signedId) throws Exception {//TODO: better handle
+	public ContractComplete getContract(String id, String signedId) {
 		Contract c = cod.getById(id);
 		
 		validator.validateContractRequest(id,signedId,c);

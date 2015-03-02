@@ -45,55 +45,66 @@ public class ContractRESTService {
 	private static ContractService service = new ContractService();
 	
 	/**
-	 * @param ssObj
-	 * @return
+	 * <p>
+	 * Step 1 - Start Signing.
+	 * </p>
+	 * <p>
+	 * Will take an entity of the document (in base64 format) and the signed reference
+	 *  and add it to the database. Also verified if both signatures are in the database
+	 *   and verified otherwise an error will be thrown telling the user to either verify their 
+	 *   own email or tell the remote user to verify theirs
+	 * @param ssObj The object containing the contract information
+	 * @return The dispatched contract
 	 */
 	@POST
 	@Path("/1")
-	public Response startSign(ContractStart ssObj)
+	public ContractIntermediate startSign(ContractStart ssObj)
 	{
 		if (ssObj == null)
 			throw new WebApplicationException(Response.Status.BAD_REQUEST);
 
-		Response.ResponseBuilder builder = null;
 		
 		try {
 		ContractIntermediate out = service.start(ssObj);//TODO: hashmap?
-		builder = Response.status(Response.Status.CREATED).entity(out);
+		return out;
+		//builder = Response.status(Response.Status.CREATED).entity(out);
 		} catch (ConstraintViolationException ce) {
 			// Handles bean specific constraint exceptions
-			builder = createViolationResponse(ce.getConstraintViolations()); 
+			throw new WebApplicationException(createViolationResponse(ce.getConstraintViolations())); 
 		} catch (ValidationException ve) {
-			builder = createValidationViolationResponse(ve);
+			throw new WebApplicationException(createValidationViolationResponse(ve));
 		} catch (Exception e) {
 			// Handle generic exceptions
 			Map<String, String> responseObj = new HashMap<String, String>();
 			responseObj.put("error", e.getMessage());
-			builder = Response.status(Response.Status.BAD_REQUEST).entity(
-					responseObj);
+			throw new WebApplicationException(Response.status(Response.Status.BAD_REQUEST).entity(
+					responseObj).build());
 		}
-		
-		return builder.build();
 	}
 	
 	/**
 	 * <p>
-	 * 
+	 * Step 2 - Get available contracts to sign.
 	 * </p>
-	 * @param username
+	 * <p>
+	 * The user will provide their details and will have returned a list of contracts they can sign. If there is none (or the user does not exist) then a 404 will be returned
+	 * </p>
+	 * <p>
+	 * TODO: in the future this will also take a signed parameter to authenticate
+	 * </p>
+	 * @param email
 	 * @return
 	 */
 	@GET
-	@Path("/2/{username}")
-	public List<ContractIntermediate> startCounterSign(@PathParam("username") String username)
+	@Path("/2/{email}")
+	public List<ContractIntermediate> startCounterSign(@PathParam("email") String email) //TODO: stop access from anyone
 	{
-		List<ContractIntermediate> intermediates = service.getIntermediates(username); //TODO: hashmap?
+		List<ContractIntermediate> intermediates = service.getIntermediates(email);
 		if (intermediates == null)
 			throw new WebApplicationException(Response.Status.NOT_FOUND);
 
 		
 		return intermediates;
-		//return Response.ok(intermediates).build();
 	}
 	
 	/**
@@ -112,33 +123,28 @@ public class ContractRESTService {
 	 */
 	@POST //TODO: PUT
 	@Path("/3/{id}")
-	public Response counterSign(@PathParam("id") String id, ContractComplete contract)
+	public ContractDoc counterSign(@PathParam("id") String id, ContractComplete contract)
 	{
 		if (contract == null)
 			throw new WebApplicationException(Response.Status.BAD_REQUEST);
 
-		Response.ResponseBuilder builder = null;
 		
 		try {
-		//Contract out = service.counterSign(contract,id);
-			String docRef = service.counterSign(contract,id);
-			Map<String, String> out = new HashMap<String, String>();
-			out.put("docRef",docRef);
-			builder = Response.status(Response.Status.ACCEPTED).entity(out); //TODO:accepted?
+			ContractDoc docRef = service.counterSign(contract,id);
+			return docRef;
 		} catch (ConstraintViolationException ce) {
 			// Handles bean specific constraint exceptions
-			builder = createViolationResponse(ce.getConstraintViolations());
+			throw new WebApplicationException(createViolationResponse(ce.getConstraintViolations()));
 		} catch (ValidationException ve) {
-			builder = createValidationViolationResponse(ve);
+			throw new WebApplicationException(createValidationViolationResponse(ve));
 		} catch (Exception e) {
 			// Handle generic exceptions
 			Map<String, String> responseObj = new HashMap<String, String>();
 			responseObj.put("error", e.getMessage());
-			builder = Response.status(Response.Status.BAD_REQUEST).entity(
-					responseObj);
+			throw new WebApplicationException(Response.status(Response.Status.BAD_REQUEST).entity(
+					responseObj).build());
 		}
 		
-		return builder.build();
 	}
 	
 	
@@ -159,21 +165,14 @@ public class ContractRESTService {
 	 * @param id The id of the contract data to be returned
 	 * @param signedId id signed with the key of the sender
 	 * @return The JSON object containing the temp URL of the document for instance {"docRef":"http://s3.com/doc55.txt"}
-	 * @throws Exception 
 	 */
 	@GET
 	@Path("/4/{id}") //TODO: signedId should include a timestamp
-	public Response getDoc(@PathParam("id") String id, @QueryParam("signedId") String signedId) throws Exception//TODO: better handle
+	public ContractDoc getDoc(@PathParam("id") String id, @QueryParam("signedId") String signedId)
 	{
-		String docRef = service.getDoc(id, CertificateTools.base64urldecode(signedId)); //TODO: hashmap?
-		if (docRef == null)
-			throw new WebApplicationException(Response.Status.NOT_FOUND);
-
-		Map<String, String> out = new HashMap<String, String>();
-		out.put("docRef",docRef);
+		ContractDoc docRef = service.getDoc(id, CertificateTools.base64urldecode(signedId));
 		
-		
-		return Response.status(Response.Status.OK).entity(out).build();
+		return docRef;
 	}
 	
 	/**
@@ -195,15 +194,12 @@ public class ContractRESTService {
 	 * @param id The id of the contract to be returned
 	 * @param signedId id signed with the key of the sender
 	 * @return The contract in the form of SigB(SigA(H(doc))) as a JSON object for example {"sig":"abcdefg=="}
-	 * @throws Exception
 	 */
 	@GET
 	@Path("/5/{id}") //TODO: signedId should include a timestamp
-	public ContractComplete getContract(@PathParam("id") String id, @QueryParam("signedId") String signedId) throws Exception //TODO: better handle
+	public ContractComplete getContract(@PathParam("id") String id, @QueryParam("signedId") String signedId)
 	{
 		ContractComplete out = service.getContract(id, CertificateTools.base64urldecode(signedId));
-		if (out == null)
-			throw new WebApplicationException(Response.Status.NOT_FOUND); // TODO: doesn't display an error message
 		
 		return out;
 	}
@@ -220,7 +216,7 @@ public class ContractRESTService {
 	 *            body
 	 * @return A Bad Request (400) Response containing all violation messages
 	 */
-	private Response.ResponseBuilder createViolationResponse(
+	private Response createViolationResponse(
 			Set<ConstraintViolation<?>> violations) {
 
 		Map<String, String> responseObj = new HashMap<String, String>();
@@ -230,7 +226,7 @@ public class ContractRESTService {
 					violation.getMessage());
 		}
 
-		return Response.status(Response.Status.BAD_REQUEST).entity(responseObj);
+		return Response.status(Response.Status.BAD_REQUEST).entity(responseObj).build();
 	}
 	
 	/**
@@ -246,7 +242,7 @@ public class ContractRESTService {
 	 *            body
 	 * @return A Bad Request (400) Response containing all violation messages
 	 */
-	private Response.ResponseBuilder createValidationViolationResponse(
+	private Response createValidationViolationResponse(
 			ValidationException ve) {
 		Response.ResponseBuilder builder;
 		Map<String, String> responseObj = new HashMap<String, String>();
@@ -255,7 +251,7 @@ public class ContractRESTService {
 		String error = message.substring(message.indexOf(':') + 1, message.length());
 			responseObj.put(field, error);
 			builder = Response.status(Response.Status.BAD_REQUEST).entity(responseObj);
-		return builder;
+		return builder.build();
 	}
 	
 }

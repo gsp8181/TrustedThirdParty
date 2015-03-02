@@ -85,13 +85,10 @@ public class CertificateRESTService {
 	 */
 	@POST
 	public Certificate sendCert(CertificateIn cert) {
-
-		try {
 		if (cert == null)
-		{
-			throw new Exception("Certificate was not in an expected format");
-		}
-
+			throw new WebApplicationException(Response.Status.BAD_REQUEST);
+		
+		try {
 			Certificate out = service.create(cert); //TODO: this shows the user their ID
 
 			//return Response.status(Response.Status.CREATED).entity(out).build();
