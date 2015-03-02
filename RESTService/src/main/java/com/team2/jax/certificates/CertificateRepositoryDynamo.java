@@ -14,6 +14,9 @@ import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBQueryExpression;
 import com.amazonaws.services.dynamodbv2.document.DynamoDB;
 import com.amazonaws.services.dynamodbv2.document.Table;
 import com.amazonaws.services.dynamodbv2.model.AttributeDefinition;
+import com.amazonaws.services.dynamodbv2.model.AttributeValue;
+import com.amazonaws.services.dynamodbv2.model.ComparisonOperator;
+import com.amazonaws.services.dynamodbv2.model.Condition;
 import com.amazonaws.services.dynamodbv2.model.CreateTableRequest;
 import com.amazonaws.services.dynamodbv2.model.KeySchemaElement;
 import com.amazonaws.services.dynamodbv2.model.KeyType;
@@ -92,7 +95,8 @@ public class CertificateRepositoryDynamo implements CertificateRepository{
 		List<Certificate> itemList = mapper.query(Certificate.class, queryExpression);
 		
 		if(itemList.isEmpty()){return null;}
-		else {return itemList.get(0);}
+
+        return itemList.get(0);
 		
 	}
 
@@ -100,6 +104,32 @@ public class CertificateRepositoryDynamo implements CertificateRepository{
 		cert.setTime(new Date().getTime());
 		mapper.save(cert);
 		return cert;
+	}
+	
+	
+	
+	public Certificate findCertificate(String email, long time)
+	{
+		Certificate user = new Certificate();
+		user.setEmail(email);
+		
+		Condition condition = new Condition()
+		        .withComparisonOperator(ComparisonOperator.EQ.toString())
+		        .withAttributeValueList(new AttributeValue().withN(String.valueOf(time)));
+		
+		
+		DynamoDBQueryExpression<Certificate> queryExpression = new DynamoDBQueryExpression<Certificate>()
+			    .withHashKeyValues(user)
+			    .withRangeKeyCondition("Time", condition);
+		
+		List<Certificate> list = mapper.query(Certificate.class, queryExpression);
+		
+		if(list.isEmpty()){return null;}
+		
+		return list.get(0);
+		
+			    
+			    
 	}
 
 	

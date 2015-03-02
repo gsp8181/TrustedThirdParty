@@ -9,11 +9,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.sun.jersey.core.header.FormDataContentDisposition;
+import com.team2.jax.certificates.CertificateRepository;
+import com.team2.jax.certificates.CertificateRepositoryDynamo;
 import com.team2.security.CertificateTools;
 
 
 public class ContractService {
 
+	private CertificateRepository cs = new CertificateRepositoryDynamo();
+	
 	private static ContractValidator validator = new ContractValidator();
 	
 	private static ContractRepository cod = new ContractRepositoryDynamo();
@@ -29,10 +33,12 @@ public class ContractService {
 		byte[] doc = CertificateTools.decodeBase64(ssObj.getDocData());
 		
 		c.setDocRef(cfs.saveFile(ssObj.getDocName(), doc));
-		
+		c.setCompleted(false);
 		c.setIntermediateContract(ssObj.getSig());
 		c.setSender(ssObj.getEmail());
 		c.setRecipient(ssObj.getRecipient());
+		c.setSenderTime(cs.findByEmail(ssObj.getEmail()).getTime());
+		c.setRecipientTime(cs.findByEmail(ssObj.getRecipient()).getTime());
 		
 		// SEND B AN EMAIL TELLING HIM HE HAS A DOCUMENT WAITING FROM A
 		
@@ -83,7 +89,7 @@ public class ContractService {
 		validator.validateComplete(completeContract, c);
 		c.setContract(completeContract.getSig());
 		c.setCompleted(true);
-		
+		cod.create(c);
 		return c.getDocRef();
 	}
 

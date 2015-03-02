@@ -18,7 +18,11 @@ public class Contract {
     
     private String sender;
     
+    private long senderTime;
+    
     private String recipient;
+    
+    private long recipientTime;
     
     private String docRef;
     
@@ -110,4 +114,20 @@ public class Contract {
 		this.completed = completed;
 	}
 	
+    @DynamoDBAttribute(attributeName="senderTime")
+    public void setSenderTime(long senderTime){
+    	this.senderTime=senderTime;
+    }
+    
+    public long getSenderTime(){
+    	return senderTime;
+    }
+    
+    @DynamoDBAttribute(attributeName="recipientTime")
+    public void setRecipientTime(long recipientTime){
+    	this.recipientTime=recipientTime;
+    }
+    public long getRecipientTime(){
+    	return recipientTime;
+    }
 }

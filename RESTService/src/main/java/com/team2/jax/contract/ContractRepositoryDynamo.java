@@ -105,9 +105,8 @@ public class ContractRepositoryDynamo implements ContractRepository {
 	
 	@Override
 	public Contract create(Contract c) {
-		c.setCompleted(false);
-		mapper.save(c);
-		System.out.println(c.getId());
+		
+		mapper.save(c);		
 		return c;
 	}
 
