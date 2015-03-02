@@ -44,6 +44,22 @@ public interface CertificateRepository {
 	 */
 	public Certificate create(Certificate certificate);
 	
+	/**
+	 * <p>
+	 * Verifies whether the latest Certificate associated with the provided email 
+	 * address has the given verification code	  
+	 * </p>
+	 * <p>	
+	 * </p>
+	 * 
+	 * @param email
+	 *            The email address associated with the certificate
+	 * @param code 
+	 *            The verification code given from the user
+	 * @return true if verification succeeds, else false
+	 */
+	public boolean verify(String email, String code);
+	
 	
 	
 }

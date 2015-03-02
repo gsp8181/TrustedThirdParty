@@ -1,5 +1,7 @@
 package com.team2.jax.certificates;
 
+import java.util.Date;
+import java.util.UUID;
 import java.util.logging.Logger;
 
 import javax.enterprise.context.Dependent;
@@ -26,12 +28,15 @@ public class CertificateService {
 		Certificate newCert = new Certificate();
 		newCert.setEmail(cert.getEmail());
 		newCert.setPublicKey(cert.getPublicKey());
+		newCert.setTime(new Date().getTime());
+		newCert.setStatus(false);	
+		newCert.setCode(UUID.randomUUID().toString());
 		return crud.create(newCert);
 		
 	}
 
 	public boolean verify(String email, String code) {
-		return true;
+		return crud.verify(email, code);
 	}
 	
 }
