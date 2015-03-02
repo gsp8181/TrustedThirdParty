@@ -13,14 +13,30 @@ import java.security.Signature;
 import java.security.SignatureException;
 import java.util.Base64;
 import java.util.Base64.Encoder;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
+
 import sun.net.www.http.HttpClient;
+
 import com.sun.jmx.snmp.tasks.ThreadService;
+
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.GnuParser;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.ParseException;
 import org.apache.commons.cli.HelpFormatter;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.utils.URIBuilder;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.util.EntityUtils;
+import org.json.JSONObject;
 
 
 public class Main {
@@ -135,62 +151,62 @@ public class Main {
 		
 	}
 	
-	public static void sendRequest() throws Exception{
-		SendPostRequest post;
-		try {
-			post = new SendPostRequest();
-			post.send();
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 
+	
+	/**
+	 * Builds a URI object from the variables provided
+	 * @param hostname The hostname for example www.google.co.uk
+	 * @param path The path of the request for example /service/rest/contracts/0
+	 * @param port The port of the host
+	 * @param secure True to use https and false to use http
+	 * @param query If using a query param for example login=true&things=this then set otherwise leave as null
+	 * @return A URI object
+	 * @throws URISyntaxException
+	 */
+	@SuppressWarnings("deprecation")
+	public static URI buildUri(String hostname, String path, int port, boolean secure, String query) throws URISyntaxException
+	{
+		URIBuilder uri = new URIBuilder();
+		if(secure)
+			uri.setScheme("https");
+		else
+			uri.setScheme("http");
 		
+		uri.setHost(hostname);
+		uri.setPath(path);
+		uri.setPort(port);
+		if(query != null || !query.isEmpty())
+			uri.setQuery(query);
+		
+		return uri.build();
 	}
 	
-	public static void  sendpostjson(){
+	public static JSONObject  sendgetjson(URI endpoint) throws Exception{
+		CloseableHttpClient  httpClient = HttpClients.createDefault();
 		
+			HttpGet req = new HttpGet(endpoint);
+			CloseableHttpResponse response = httpClient.execute(req);
+			String responseBody = EntityUtils.toString(response.getEntity());
+			if(!response.getStatusLine().toString().startsWith("20"))
+				throw new Exception("Failed to GET : error " + response.getStatusLine().toString());
+			return new JSONObject(responseBody); //responseJson.getLong("id"); example
+		}
+	
+	public static JSONObject  sendpostjson(URI endpoint, String message) throws Exception{
+		CloseableHttpClient  httpClient = HttpClients.createDefault();
 		
-//		URI uri = new URIBuilder().setScheme("http")
-//                .setHost("jbosscontactsangularjs-110060653.rhcloud.com")
-//                .setPath("/rest/bookings").build();
-//        HttpPost req = new HttpPost(uri);
-//        StringEntity params = new StringEntity("{\"customerId\":\""
-//                + travelAgentTaxi.toString() + "\",\"taxiId\":\""
-//                + travelSketch.getTaxiId().toString() + "\",\"bookingDate\":\""
-//                + travelSketch.getBookingDate() + "\"}");
-//        req.addHeader("Content-Type", "application/json");
-//        req.setEntity(params);
-//        CloseableHttpResponse response = httpClient.execute(req);
-//        if (response.getStatusLine().getStatusCode() != 201) {
-//            throw new Exception("Failed to create a flight booking");
-//        }
-//        String responseBody = EntityUtils.toString(response.getEntity());
-//        JSONObject responseJson = new JSONObject(responseBody);
-//        long rtn = responseJson.getLong("id");
-//        HttpClientUtils.closeQuietly(response);
-//        return rtn;
-//		
-//		
-		
-//		
-//
-//	    HttpClient httpClient = new DefaultHttpClient();
-//
-//	    try {
-//	        HttpPost request = new HttpPost("http://yoururl");
-//	        StringEntity params =new StringEntity("details={\"name\":\"myname\",\"age\":\"20\"} ");
-//	        request.addHeader("content-type", "application/x-www-form-urlencoded");
-//	        request.setEntity(params);
-//	        HttpResponse response = httpClient.execute(request);
-//
-//	        // handle response here...
-//	    }catch (Exception ex) {
-//	        // handle exception here
-//	    } finally {
-//	        httpClient.getConnectionManager().shutdown();
-//	    }
-	}
+		StringEntity params = new StringEntity(message);
+			HttpPost req = new HttpPost(endpoint);
+			
+			req.addHeader("Content-Type", "application/json");
+			req.setEntity(params);
+			CloseableHttpResponse response = httpClient.execute(req);
+			String responseBody = EntityUtils.toString(response.getEntity());
+			if(!response.getStatusLine().toString().startsWith("20"))
+				throw new Exception("Failed to POST : error " + response.getStatusLine().toString());
+			return new JSONObject(responseBody); //responseJson.getLong("id"); example
+		}
+
 	
 	public static void saveToFile() {
 		CreateXML creates = new CreateXML();
