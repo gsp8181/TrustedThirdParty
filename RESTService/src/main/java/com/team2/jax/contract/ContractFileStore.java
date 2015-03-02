@@ -1,5 +1,9 @@
 package com.team2.jax.contract;
 
+import java.io.IOException;
+import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
+
 public interface ContractFileStore {
 
 	/**
@@ -9,8 +13,11 @@ public interface ContractFileStore {
 	 * @param fileName The name of the file and extension to save
 	 * @param doc The contents of the file
 	 * @return An identifier that can be used with getTempLink to generate a unique download link
+	 * @throws IOException 
+	 * @throws NoSuchProviderException 
+	 * @throws NoSuchAlgorithmException 
 	 */
-	public String saveFile(String fileName, byte[] doc);
+	public String saveFile(String fileName, byte[] doc) throws NoSuchAlgorithmException, NoSuchProviderException, IOException;
 	
 	/**
 	 * <p>
