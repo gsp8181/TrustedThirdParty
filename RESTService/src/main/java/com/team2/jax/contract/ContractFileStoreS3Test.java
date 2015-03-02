@@ -11,6 +11,7 @@ public class ContractFileStoreS3Test {
 	public static void main (String [] args) throws NoSuchAlgorithmException, NoSuchProviderException, IOException {
 		byte[] doc = "0000".getBytes();
 		String fileName = "fileName";
+		
 		String identifier = test.saveFile(fileName, doc);
 		System.out.println("Temporary URL: "+test.getTempLink(identifier));
 	}
