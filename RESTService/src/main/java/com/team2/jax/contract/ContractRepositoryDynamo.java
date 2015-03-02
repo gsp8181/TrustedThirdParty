@@ -129,5 +129,12 @@ public class ContractRepositoryDynamo implements ContractRepository {
 
 		return mapper.load(Contract.class, id);
 	}
+	
+	@Override
+	public Contract deleteById(String id){
+		Contract c = mapper.load(Contract.class, id);
+		if(c!=null){	mapper.delete(c);   }
+		return c;
+	}
 
 }
