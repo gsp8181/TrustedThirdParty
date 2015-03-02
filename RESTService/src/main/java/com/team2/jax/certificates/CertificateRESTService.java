@@ -22,6 +22,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
 
 /**
  * <p>
@@ -46,9 +47,11 @@ public class CertificateRESTService {
 
 	/**
 	 * <p>
-	 * Retrieve a certificate by associated username
+	 * Retrieve a certificate by associated username.
 	 * </p>
-	 * 
+	 * <p>
+	 * If the certificate has not been verified by email then it will not display
+	 * </p>
 	 * @param email The email of the desired certificate
 	 * @return The certificate object
 	 * @see Certificate
@@ -66,43 +69,65 @@ public class CertificateRESTService {
 	}
 
 	/**
-	 * @param cert
-	 * @return
+	 * <p>
+	 * Save a certificate to the service.
+	 * </p>
+	 * <p>
+	 * The certificate should have a valid email, the base64 encoded public key and a signed field which is the email signed using the key
+	 * </p>
+	 * <p>
+	 * Errors will return in the form of {field:error}. If the email has not yet been validated then it prompt the user to verify their email before using the system
+	 * </p>
+	 * @param cert The certificate object to put into the database
+	 * @return The certificate object added to the database
 	 * @see Certificate
 	 * @see CertificateIn
 	 */
 	@POST
-	public Response sendCert(CertificateIn cert) {
-
-		if (cert == null)
-			throw new WebApplicationException(Response.Status.BAD_REQUEST);
-
-		Response.ResponseBuilder builder = null;
+	public Certificate sendCert(CertificateIn cert) {
 
 		try {
-			Certificate out = service.create(cert);
+		if (cert == null)
+		{
+			throw new Exception("Certificate was not in an expected format");
+		}
 
-			builder = Response.status(Response.Status.CREATED).entity(out);
+			Certificate out = service.create(cert); //TODO: this shows the user their ID
+
+			//return Response.status(Response.Status.CREATED).entity(out).build();
+			return out;
 
 		} catch (ConstraintViolationException ce) {
 			// Handles bean specific constraint exceptions
-			builder = createViolationResponse(ce.getConstraintViolations());
+			throw new WebApplicationException(createViolationResponse(ce.getConstraintViolations()));
 		} catch (ValidationException ve) {
 			// Handles CertificateValidatior thrown exception
-			builder = createValidationViolationResponse(ve);
+			throw new WebApplicationException(createValidationViolationResponse(ve));
 		} catch (Exception e) {
 			// Handle generic exceptions
 			Map<String, String> responseObj = new HashMap<String, String>();
 			responseObj.put("error", e.getMessage());
-			builder = Response.status(Response.Status.BAD_REQUEST).entity(
-					responseObj);
+			throw new WebApplicationException(Response.status(Status.BAD_REQUEST).entity(responseObj).build());
 		}
 
-		return builder.build();
 
 	}
 	
-	@PUT
+	/**
+	 * <p>
+	 * Verify a certificate.
+	 * </p>
+	 * <p>
+	 * When a user creates a certificate, its verified status is initially set to false. The user will be prompted via email with a unique verification code which will trigger this method. If the verification code matches then the certificate can be used
+	 * </p>
+	 * <p>
+	 * For example http://server/endpoint/rest/certificates/verify/test@email.com?code=123bgaaf
+	 * </p>
+	 * @param email Email of the user to verify
+	 * @param code The unique generated code
+	 * @return {"success":message} or {"error":message}
+	 */
+	@GET
 	@Path("/verify")
 	public Response verifyEmail(@QueryParam("email") String email, @QueryParam("code") String code)
 	{
@@ -137,7 +162,7 @@ public class CertificateRESTService {
 	 *            body
 	 * @return A Bad Request (400) Response containing all violation messages
 	 */
-	private Response.ResponseBuilder createValidationViolationResponse(
+	private Response createValidationViolationResponse(
 			ValidationException ve) {
 		Response.ResponseBuilder builder;
 		Map<String, String> responseObj = new HashMap<String, String>();
@@ -146,7 +171,7 @@ public class CertificateRESTService {
 		String error = message.substring(message.indexOf(':') + 1, message.length());
 			responseObj.put(field, error);
 			builder = Response.status(Response.Status.BAD_REQUEST).entity(responseObj);
-		return builder;
+		return builder.build();
 	}
 
 	/**
@@ -161,7 +186,7 @@ public class CertificateRESTService {
 	 *            body
 	 * @return A Bad Request (400) Response containing all violation messages
 	 */
-	private Response.ResponseBuilder createViolationResponse(
+	private Response createViolationResponse(
 			Set<ConstraintViolation<?>> violations) {
 
 		Map<String, String> responseObj = new HashMap<String, String>();
@@ -171,7 +196,7 @@ public class CertificateRESTService {
 					violation.getMessage());
 		}
 
-		return Response.status(Response.Status.BAD_REQUEST).entity(responseObj);
+		return Response.status(Response.Status.BAD_REQUEST).entity(responseObj).build();
 	}
 
 }
