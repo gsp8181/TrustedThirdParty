@@ -96,7 +96,6 @@ public class ContractFileStoreS3 implements ContractFileStore {
 	
 	public String saveFile(String fileName, byte[] doc) throws NoSuchAlgorithmException, NoSuchProviderException, IOException {
 		encyrptedConnCreation();
-		
 		System.out.println("Store document " + fileName + ".");
 
 		byte[] contentBytes = null;
