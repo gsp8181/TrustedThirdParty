@@ -20,6 +20,7 @@ import com.amazonaws.services.s3.model.Bucket;
 import com.amazonaws.services.s3.model.GeneratePresignedUrlRequest;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
+import com.amazonaws.util.IOUtils;
 
 public class ContractFileStoreS3 implements ContractFileStore {
 	
@@ -95,15 +96,30 @@ public class ContractFileStoreS3 implements ContractFileStore {
 	
 	public String saveFile(String fileName, byte[] doc) throws NoSuchAlgorithmException, NoSuchProviderException, IOException {
 		encyrptedConnCreation();
-		System.out.println("Store document " + fileName + ".");
 		
+		System.out.println("Store document " + fileName + ".");
+
+		byte[] contentBytes = null;
 		String bucketName = bucketManagement();
-		// Convert byte to InputStream to store to s3
+		
+		try {
+			// Convert byte to InputStream to store to s3
+			InputStream is = new ByteArrayInputStream(doc);
+			contentBytes = IOUtils.toByteArray(is);
+		} catch (IOException e) {
+			System.err.printf("Failed while reading bytes from %s", e.getMessage());
+		}
+		
+		Long contentLength = Long.valueOf(contentBytes.length);
+		
+		ObjectMetadata metadata = new ObjectMetadata();
+		metadata.setContentLength(contentLength);
+		
 		InputStream stream = new ByteArrayInputStream(doc);
 		
 		try {
 			// Store object into bucket
-			s3.putObject(new PutObjectRequest(bucketName, fileName, stream, new ObjectMetadata()));
+			s3.putObject(new PutObjectRequest(bucketName, fileName, stream, metadata));
 			System.out.println("File saved.");
 			
 		} catch (AmazonServiceException ase) {
@@ -119,6 +135,10 @@ public class ContractFileStoreS3 implements ContractFileStore {
 					+ "a serious internal problem while trying to communicate with S3, "
 					+ "such as not being able to access the network.");
 			System.out.println("Error Message: " + ace.getMessage());
+		} finally {
+			if (stream != null) {
+				stream.close();
+			}
 		}
 		
 		return fileName;
