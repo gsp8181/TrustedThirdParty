@@ -92,16 +92,18 @@ public class ContractRESTService {
 	 * The user will provide their details and will have returned a list of contracts they can sign. If there is none (or the user does not exist) then a 404 will be returned
 	 * </p>
 	 * <p>
-	 * TODO: in the future this will also take a signed parameter to authenticate
+	 *  The signed request is the timestamp signed with the key of the initial reciever (sender of this request) and must be less than 5 minutes old. The signed data must be in base64 format and in URL format
 	 * </p>
-	 * @param email
-	 * @return
+	 * @param email The email of the receiver.
+	 * @param signedStamp timestamp signed with the key of the sender (the initial receiver of the contract) in Base64URL format (CertificateTools.base64urlencode)
+	 * @param ts The UNIX epoch timestamp in seconds, MUST be less than 5 minutes old
+	 * @return A list of contracts that can be signed by the user
 	 */
 	@GET
 	@Path("/2/{email}")
-	public List<ContractIntermediate> startCounterSign(@PathParam("email") String email) //TODO: stop access from anyone
+	public List<ContractIntermediate> startCounterSign(@PathParam("email") String email, @QueryParam("ts") long ts, @QueryParam("signedStamp") String signedStamp)
 	{
-		List<ContractIntermediate> intermediates = service.getIntermediates(email);
+		List<ContractIntermediate> intermediates = service.getIntermediates(email, ts, signedStamp);
 		if (intermediates == null)
 			throw new WebApplicationException(Response.Status.NOT_FOUND);
 
@@ -155,7 +157,7 @@ public class ContractRESTService {
 	 * Step 4 - Fetch Contract URL.
 	 * </p>
 	 * <p>
-	 * Returns the URL to the contract that is valid for a set amount of time if the user has been successfully verified.  The signed request is the timestamp signed with the key of the initial reciever (sender of this request) and must be less than 5 minutes old. The signed data must be in base64 format and additionally URL encoded which just replaces a / with a .
+	 * Returns the URL to the contract that is valid for a set amount of time if the user has been successfully verified. The signed request is the timestamp signed with the key of the initial reciever (sender of this request) and must be less than 5 minutes old. The signed data must be in base64 format and in URL format
 	 * </p>
 	 * <p>
 	 * If the contract is not found a 404 will be returned, if the contract
@@ -186,7 +188,7 @@ public class ContractRESTService {
 	 * <p>
 	 * Returns a correctly signed contract to the initial sender
 	 * of the contract. The request will need to be correctly signed
-	 * and verified to prove the identity of the sending user. The signed request is the timestamp signed with the key of the initial sender and must be less than 5 minutes old. The signed data must be in base64 format and additionally URL encoded which just replaces a / with a .
+	 * and verified to prove the identity of the sending user. The signed request is the timestamp signed with the key of the initial sender and must be less than 5 minutes old. The signed data must be in base64 format and in URL format.
 	 * </p>
 	 * <p>
 	 * If the contract is not found a 404 will be returned, if the contract

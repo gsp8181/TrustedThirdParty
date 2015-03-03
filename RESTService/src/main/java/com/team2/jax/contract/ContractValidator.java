@@ -115,6 +115,24 @@ public class ContractValidator {
 			throw new WebApplicationException(Response.status(Status.INTERNAL_SERVER_ERROR).entity(e).build());
 		}
 	}
+
+	public void validateIntRequest(String recipient, long ts, String signedStamp) {
+		
+		Certificate cert = cs.findByEmail(recipient);
+		
+		if(cert == null)
+			throw new WebApplicationException(Response.Status.UNAUTHORIZED);
+		
+		try {
+		PublicKey ssPublicKey = CertificateTools.decodeDSAPub(cert.getPublicKey());
+		
+		if(!CertificateTools.verifyTimestamp(ssPublicKey, ts, signedStamp))
+			throw new WebApplicationException(Response.Status.UNAUTHORIZED);
+		} catch (Exception e) {
+			throw new WebApplicationException(Response.status(Status.INTERNAL_SERVER_ERROR).entity(e).build());
+		}
+		
+	}
 	
 	
 
