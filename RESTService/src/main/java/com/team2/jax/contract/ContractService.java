@@ -6,6 +6,7 @@ import java.util.UUID;
 
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
 
 import com.team2.jax.certificates.CertificateRepository;
 import com.team2.jax.certificates.CertificateRepositoryDynamo;
@@ -20,7 +21,7 @@ public class ContractService {
 	
 	private static ContractRepository cod = new ContractRepositoryDynamo();
 	
-	private static ContractFileStoreS3 cfs = new ContractFileStoreS3();
+	private static ContractFileStore cfs = new ContractFileStoreS3();
 	
 	public ContractIntermediate start(ContractStart ssObj) {
 		validator.validate(ssObj);
@@ -46,7 +47,7 @@ public class ContractService {
 		try{
 		emailNotifier.sendEmail(ssObj.getEmail(), ssObj.getRecipient(), EmailNotifier.COUNTERSIGN_CONTEXT, c.getId());
 	} catch (Exception e) {
-		throw new WebApplicationException(Response.Status.INTERNAL_SERVER_ERROR);
+		throw new WebApplicationException(Response.status(Status.INTERNAL_SERVER_ERROR).entity(e).build());
 	}
 		
 		c = cod.create(c);
@@ -102,7 +103,7 @@ public class ContractService {
 			//emailNotifier.sendEmail(c.getSender(), c.getRecipient(), EmailNotifier.GETDOC_CONTEXT, c.getId());
 			emailNotifier.sendEmail(c.getRecipient(), c.getSender(), EmailNotifier.GETCONTRACT_CONTEXT, c.getId());
 		} catch (Exception e) {
-			throw new WebApplicationException(Response.Status.INTERNAL_SERVER_ERROR); //TODO: entity
+			throw new WebApplicationException(Response.status(Status.INTERNAL_SERVER_ERROR).entity(e).build());
 		}
 		
 		cod.create(c);

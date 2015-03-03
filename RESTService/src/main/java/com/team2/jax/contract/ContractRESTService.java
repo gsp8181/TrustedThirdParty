@@ -67,7 +67,7 @@ public class ContractRESTService {
 
 		
 		try {
-		ContractIntermediate out = service.start(ssObj);//TODO: hashmap?
+		ContractIntermediate out = service.start(ssObj);
 		return out;
 		//builder = Response.status(Response.Status.CREATED).entity(out);
 		} catch (ConstraintViolationException ce) {

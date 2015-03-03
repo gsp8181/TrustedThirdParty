@@ -11,6 +11,7 @@ import javax.validation.ValidationException;
 import javax.validation.Validator;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
 
 import com.team2.jax.certificates.Certificate;
 import com.team2.jax.certificates.CertificateIn;
@@ -44,7 +45,7 @@ public class ContractValidator {
 			if(!CertificateTools.verify(ssPublicKey, ssObj.getDocData(), ssObj.getSig()))
 				throw new ValidationException("sig:Validation of the signature failed, make sure the signing key is the database");
 		} catch (Exception e) {
-			throw new WebApplicationException(Response.Status.INTERNAL_SERVER_ERROR);
+			throw new WebApplicationException(Response.status(Status.INTERNAL_SERVER_ERROR).entity(e).build());
 		}
 	}
 
@@ -65,7 +66,7 @@ public class ContractValidator {
 		if(!CertificateTools.verify(ssPublicKey, contract.getIntermediateContract(), completeContract.getSig()))
 			throw new ValidationException("certificate:Validation of the signature failed, make sure the signing key is the database");
 		} catch (Exception e) {
-			throw new WebApplicationException(Response.Status.INTERNAL_SERVER_ERROR);
+			throw new WebApplicationException(Response.status(Status.INTERNAL_SERVER_ERROR).entity(e).build());
 		}
 	}
 
@@ -89,7 +90,7 @@ public class ContractValidator {
 		if(!CertificateTools.verifyTimestamp(ssPublicKey, timestamp, signedId))
 			throw new WebApplicationException(Response.Status.UNAUTHORIZED);
 		} catch (Exception e) {
-			throw new WebApplicationException(Response.Status.INTERNAL_SERVER_ERROR);
+			throw new WebApplicationException(Response.status(Status.INTERNAL_SERVER_ERROR).entity(e).build());
 		}
 		
 	}
@@ -111,7 +112,7 @@ public class ContractValidator {
 		if(!CertificateTools.verifyTimestamp(ssPublicKey, timestamp, signedId))
 			throw new WebApplicationException(Response.Status.UNAUTHORIZED);
 		} catch (Exception e) {
-			throw new WebApplicationException(Response.Status.INTERNAL_SERVER_ERROR);
+			throw new WebApplicationException(Response.status(Status.INTERNAL_SERVER_ERROR).entity(e).build());
 		}
 	}
 	
