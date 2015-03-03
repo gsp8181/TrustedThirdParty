@@ -100,12 +100,12 @@ public class CertificateRESTService {
 		} catch (ValidationException ve) {
 			// Handles CertificateValidatior thrown exception
 			throw new WebApplicationException(createValidationViolationResponse(ve));
-		} catch (Exception e) {
+		} /*catch (Exception e) {
 			// Handle generic exceptions
 			Map<String, String> responseObj = new HashMap<String, String>();
 			responseObj.put("error", e.getMessage());
 			throw new WebApplicationException(Response.status(Status.BAD_REQUEST).entity(responseObj).build());
-		}
+		}*/
 
 
 	}
