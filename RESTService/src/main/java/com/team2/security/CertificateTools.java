@@ -83,12 +83,12 @@ public class CertificateTools {
 	
 	public static String base64urlencode(String base64)
 	{
-		return base64.replace('/', '.');
+		return base64.replace('/', '.').replace('=','\\');
 	}
 	
-	public static String base64urldecode(String base64url)
+	public static String base64urldecode(String base64url) //TODO: private
 	{
-		return base64url.replace(' ', '+').replace('.', '/');
+		return base64url.replace(' ', '+').replace('.', '/').replace('\\','=');
 		
 	}
 	
@@ -120,9 +120,9 @@ public class CertificateTools {
 		if (duration > 5)
 			return false;
 		
-		String signedData = String.valueOf(timestamp.getEpochSecond()) + signedStamp;
+		String signedData = String.valueOf(timestamp.getEpochSecond());
 		
-			if(verify(key, signedStamp, signedData))
+			if(verify(key,signedData, signedStamp))
 				return true;
 		return false;
 	}
@@ -138,7 +138,8 @@ public class CertificateTools {
 		Instant timestamp = Instant.now();
 		long timeStampLong = timestamp.getEpochSecond();
 		String signedData = signData(String.valueOf(timeStampLong), key);
-		TimeStampedKey out = new TimeStampedKey(signedData,timeStampLong);
+		String signedDataEncoded = base64urlencode(signedData);
+		TimeStampedKey out = new TimeStampedKey(signedDataEncoded,timeStampLong); 
 		return out;
 	}
 	
