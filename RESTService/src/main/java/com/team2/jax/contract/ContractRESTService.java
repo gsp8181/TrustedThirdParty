@@ -75,13 +75,13 @@ public class ContractRESTService {
 			throw new WebApplicationException(createViolationResponse(ce.getConstraintViolations())); 
 		} catch (ValidationException ve) {
 			throw new WebApplicationException(createValidationViolationResponse(ve));
-		} catch (Exception e) {
+		} /*catch (Exception e) {
 			// Handle generic exceptions
 			Map<String, String> responseObj = new HashMap<String, String>();
 			responseObj.put("error", e.getMessage());
 			throw new WebApplicationException(Response.status(Response.Status.BAD_REQUEST).entity(
 					responseObj).build());
-		}
+		}*/
 	}
 	
 	/**
@@ -141,13 +141,13 @@ public class ContractRESTService {
 			throw new WebApplicationException(createViolationResponse(ce.getConstraintViolations()));
 		} catch (ValidationException ve) {
 			throw new WebApplicationException(createValidationViolationResponse(ve));
-		} catch (Exception e) {
+		} /*catch (Exception e) {
 			// Handle generic exceptions
 			Map<String, String> responseObj = new HashMap<String, String>();
 			responseObj.put("error", e.getMessage());
 			throw new WebApplicationException(Response.status(Response.Status.BAD_REQUEST).entity(
 					responseObj).build());
-		}
+		}*/
 		
 	}
 	

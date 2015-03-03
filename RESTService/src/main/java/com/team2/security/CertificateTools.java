@@ -122,7 +122,7 @@ public class CertificateTools {
 		
 		String signedData = String.valueOf(timestamp.getEpochSecond());
 		
-			if(verify(key,signedData, signedStamp))
+			if(verify(key,signedData, base64urldecode(signedStamp)))
 				return true;
 		return false;
 	}

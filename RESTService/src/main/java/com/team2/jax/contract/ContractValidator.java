@@ -1,7 +1,9 @@
 package com.team2.jax.contract;
 
+import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.PublicKey;
+import java.security.SignatureException;
 import java.security.spec.InvalidKeySpecException;
 import java.util.Set;
 
@@ -44,7 +46,8 @@ public class ContractValidator {
 			
 			if(!CertificateTools.verify(ssPublicKey, ssObj.getDocData(), ssObj.getSig()))
 				throw new ValidationException("sig:Validation of the signature failed, make sure the signing key is the database");
-		} catch (Exception e) {
+		} catch (InvalidKeyException | SignatureException
+				| NoSuchAlgorithmException | InvalidKeySpecException e) {
 			throw new WebApplicationException(Response.status(Status.INTERNAL_SERVER_ERROR).entity(e).build());
 		}
 	}
@@ -65,7 +68,8 @@ public class ContractValidator {
 		
 		if(!CertificateTools.verify(ssPublicKey, contract.getIntermediateContract(), completeContract.getSig()))
 			throw new ValidationException("certificate:Validation of the signature failed, make sure the signing key is the database");
-		} catch (Exception e) {
+		} catch (InvalidKeyException | SignatureException
+				| NoSuchAlgorithmException | InvalidKeySpecException e) {
 			throw new WebApplicationException(Response.status(Status.INTERNAL_SERVER_ERROR).entity(e).build());
 		}
 	}
@@ -83,13 +87,13 @@ public class ContractValidator {
 		if(cert == null)
 			throw new WebApplicationException(Response.Status.UNAUTHORIZED);
 		
+		
 		try {
-		PublicKey ssPublicKey = CertificateTools.decodeDSAPub(cert.getPublicKey());
-		
-		
-		if(!CertificateTools.verifyTimestamp(ssPublicKey, timestamp, signedId))
-			throw new WebApplicationException(Response.Status.UNAUTHORIZED);
-		} catch (Exception e) {
+			PublicKey ssPublicKey = CertificateTools.decodeDSAPub(cert.getPublicKey());
+			if(!CertificateTools.verifyTimestamp(ssPublicKey, timestamp, signedId))
+				throw new WebApplicationException(Response.Status.UNAUTHORIZED);
+		} catch (InvalidKeyException | SignatureException
+				| NoSuchAlgorithmException | InvalidKeySpecException e) {
 			throw new WebApplicationException(Response.status(Status.INTERNAL_SERVER_ERROR).entity(e).build());
 		}
 		
@@ -106,17 +110,18 @@ public class ContractValidator {
 		
 		if(cert == null)
 			throw new WebApplicationException(Response.Status.UNAUTHORIZED);
-		try {
-		PublicKey ssPublicKey = CertificateTools.decodeDSAPub(cert.getPublicKey());
 		
-		if(!CertificateTools.verifyTimestamp(ssPublicKey, timestamp, signedId))
-			throw new WebApplicationException(Response.Status.UNAUTHORIZED);
-		} catch (Exception e) {
+		try {
+			PublicKey ssPublicKey = CertificateTools.decodeDSAPub(cert.getPublicKey());
+			if(!CertificateTools.verifyTimestamp(ssPublicKey, timestamp, signedId))
+				throw new WebApplicationException(Response.Status.UNAUTHORIZED);
+		} catch (InvalidKeyException | SignatureException
+				| NoSuchAlgorithmException | InvalidKeySpecException e) {
 			throw new WebApplicationException(Response.status(Status.INTERNAL_SERVER_ERROR).entity(e).build());
 		}
 	}
 
-	public void validateIntRequest(String recipient, long ts, String signedStamp) {
+	public void validateIntRequest(String recipient, long timestamp, String signedId) {
 		
 		Certificate cert = cs.findByEmail(recipient);
 		
@@ -124,13 +129,14 @@ public class ContractValidator {
 			throw new WebApplicationException(Response.Status.UNAUTHORIZED);
 		
 		try {
-		PublicKey ssPublicKey = CertificateTools.decodeDSAPub(cert.getPublicKey());
-		
-		if(!CertificateTools.verifyTimestamp(ssPublicKey, ts, signedStamp))
-			throw new WebApplicationException(Response.Status.UNAUTHORIZED);
-		} catch (Exception e) {
+			PublicKey ssPublicKey = CertificateTools.decodeDSAPub(cert.getPublicKey());
+			if(!CertificateTools.verifyTimestamp(ssPublicKey, timestamp, signedId))
+				throw new WebApplicationException(Response.Status.UNAUTHORIZED);
+		} catch (InvalidKeyException | SignatureException
+				| NoSuchAlgorithmException | InvalidKeySpecException e) {
 			throw new WebApplicationException(Response.status(Status.INTERNAL_SERVER_ERROR).entity(e).build());
 		}
+
 		
 	}
 	
