@@ -10,6 +10,8 @@ import javax.inject.Named;
 import javax.validation.ConstraintViolationException;
 import javax.validation.ValidationException;
 
+import com.team2.jax.contract.EmailNotifier;
+
 public class CertificateService {
 	
 	
@@ -34,13 +36,14 @@ public class CertificateService {
 		Certificate out = crud.create(newCert);
 		out.setCode("Certificate not verified, check your emails to verify this certificate");
 		
-		//TODO: newCert.getCode() send validation email to guy
+		//TODO: newCert.getCode() send validation email to guy //http://ttp.gsp8181.co.uk/rest/certificates/verify?email="newCert.getEmail()"&code="newCert.getCode()"
+		EmailNotifier.getInstance().sendEmail(newCert.getEmail(), "verification.noreply@gsp8181.co.uk", EmailNotifier.LINK_CONTEXT, newCert.getCode());
 		return out;
 		
 	}
 
 	public boolean verify(String email, String code) {
-		return crud.verify(email, code);
+		return crud.verify(email, code); //TODO: coide goes to nothing
 	}
 	
 }
