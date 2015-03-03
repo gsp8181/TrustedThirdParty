@@ -67,21 +67,13 @@ public class ContractRESTService {
 
 		
 		try {
-		ContractIntermediate out = service.start(ssObj);
-		return out;
-		//builder = Response.status(Response.Status.CREATED).entity(out);
+		return service.start(ssObj);
 		} catch (ConstraintViolationException ce) {
 			// Handles bean specific constraint exceptions
 			throw new WebApplicationException(createViolationResponse(ce.getConstraintViolations())); 
 		} catch (ValidationException ve) {
 			throw new WebApplicationException(createValidationViolationResponse(ve));
-		} /*catch (Exception e) {
-			// Handle generic exceptions
-			Map<String, String> responseObj = new HashMap<String, String>();
-			responseObj.put("error", e.getMessage());
-			throw new WebApplicationException(Response.status(Response.Status.BAD_REQUEST).entity(
-					responseObj).build());
-		}*/
+		} 
 	}
 	
 	/**
@@ -131,23 +123,15 @@ public class ContractRESTService {
 	{
 		if (contract == null)
 			throw new WebApplicationException(Response.Status.BAD_REQUEST);
-
 		
 		try {
-			ContractDoc docRef = service.counterSign(contract,id);
-			return docRef;
+			return service.counterSign(contract,id);
 		} catch (ConstraintViolationException ce) {
 			// Handles bean specific constraint exceptions
 			throw new WebApplicationException(createViolationResponse(ce.getConstraintViolations()));
 		} catch (ValidationException ve) {
 			throw new WebApplicationException(createValidationViolationResponse(ve));
-		} /*catch (Exception e) {
-			// Handle generic exceptions
-			Map<String, String> responseObj = new HashMap<String, String>();
-			responseObj.put("error", e.getMessage());
-			throw new WebApplicationException(Response.status(Response.Status.BAD_REQUEST).entity(
-					responseObj).build());
-		}*/
+		}
 		
 	}
 	
@@ -176,9 +160,7 @@ public class ContractRESTService {
 	@Path("/4/{id}")
 	public ContractDoc getDoc(@PathParam("id") String id, @QueryParam("ts") long ts, @QueryParam("signedStamp") String signedStamp)
 	{
-		ContractDoc docRef = service.getDoc(id, ts, CertificateTools.base64urldecode(signedStamp));
-		
-		return docRef;
+		return service.getDoc(id, ts, CertificateTools.base64urldecode(signedStamp));
 	}
 	
 	/**
@@ -207,9 +189,7 @@ public class ContractRESTService {
 	@Path("/5/{id}")
 	public ContractComplete getContract(@PathParam("id") String id, @QueryParam("ts") long ts, @QueryParam("signedStamp") String signedStamp)
 	{
-		ContractComplete out = service.getContract(id, ts, CertificateTools.base64urldecode(signedStamp));
-		
-		return out;
+		return service.getContract(id, ts, CertificateTools.base64urldecode(signedStamp));
 	}
 	
 	/**

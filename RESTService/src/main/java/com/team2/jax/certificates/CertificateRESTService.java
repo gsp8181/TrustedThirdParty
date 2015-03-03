@@ -60,12 +60,13 @@ public class CertificateRESTService {
 	@Path("/{email}")
 	public Certificate getCertByUsername(@PathParam("email") String email) {
 		Certificate cert = service.findByEmail(email);
+		
 		if (cert == null)
 			throw new WebApplicationException(Response.Status.NOT_FOUND);
 
 		return cert;
 		
-		//return Response.ok(cert).build();
+
 	}
 
 	/**
@@ -89,10 +90,7 @@ public class CertificateRESTService {
 			throw new WebApplicationException(Response.Status.BAD_REQUEST);
 		
 		try {
-			Certificate out = service.create(cert);
-
-			//return Response.status(Response.Status.CREATED).entity(out).build();
-			return out;
+			return service.create(cert);
 
 		} catch (ConstraintViolationException ce) {
 			// Handles bean specific constraint exceptions
@@ -100,12 +98,7 @@ public class CertificateRESTService {
 		} catch (ValidationException ve) {
 			// Handles CertificateValidatior thrown exception
 			throw new WebApplicationException(createValidationViolationResponse(ve));
-		} /*catch (Exception e) {
-			// Handle generic exceptions
-			Map<String, String> responseObj = new HashMap<String, String>();
-			responseObj.put("error", e.getMessage());
-			throw new WebApplicationException(Response.status(Status.BAD_REQUEST).entity(responseObj).build());
-		}*/
+		}
 
 
 	}
