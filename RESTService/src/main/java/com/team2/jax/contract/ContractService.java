@@ -1,17 +1,12 @@
 package com.team2.jax.contract;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 
-import com.sun.jersey.core.header.FormDataContentDisposition;
 import com.team2.jax.certificates.CertificateRepository;
 import com.team2.jax.certificates.CertificateRepositoryDynamo;
 import com.team2.security.CertificateTools;
@@ -31,7 +26,7 @@ public class ContractService {
 		validator.validate(ssObj);
 		Contract c = new Contract();
 		
-		c.setDocName(ssObj.getDocName()); //TODO: plus ID
+		c.setDocName(UUID.randomUUID().toString() + "." + ssObj.getDocName());
 		
 		byte[] doc = CertificateTools.decodeBase64(ssObj.getDocData());
 		
