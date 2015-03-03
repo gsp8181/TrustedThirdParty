@@ -5,9 +5,11 @@ import java.security.NoSuchAlgorithmException;
 import java.security.PublicKey;
 import java.security.SignatureException;
 import java.security.spec.InvalidKeySpecException;
+import java.util.HashSet;
 import java.util.Set;
 
 import javax.validation.ConstraintViolation;
+import javax.validation.ConstraintViolationException;
 import javax.validation.Validation;
 import javax.validation.ValidationException;
 import javax.validation.Validator;
@@ -27,14 +29,16 @@ public class ContractValidator {
 
 	private CertificateRepository cs = new CertificateRepositoryDynamo();
 
+	 private static Validator validator=Validation.buildDefaultValidatorFactory().getValidator();
 	
-	public void validate(ContractStart ssObj) { //TODO: all fields need to be in place
+	public void validate(ContractStart ssObj) {
 		Certificate cert = cs.findByEmail(ssObj.getEmail()); //TODO: if intermediate is NOT already in the database
 		
-		 //private static Validator validator=Validation.buildDefaultValidatorFactory().getValidator();
-			
-			//public void validateCertificate(CertificateIn cert) {
-			//	Set<ConstraintViolation<CertificateIn>> violations = validator.validate(cert);
+		Set<ConstraintViolation<ContractStart>> violations = validator.validate(ssObj);
+
+        if (!violations.isEmpty()) {
+            throw new ConstraintViolationException(new HashSet<ConstraintViolation<?>>(violations));
+        }
 		
 		if(cert == null)
 			throw new ValidationException("username:No certificate was found for the designated sender");
