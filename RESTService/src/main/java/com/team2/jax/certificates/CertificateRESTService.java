@@ -103,6 +103,10 @@ public class CertificateRESTService {
 			throw new WebApplicationException(
 					createValidationViolationResponse(ve));
 		}
+		catch (Exception e){
+			//handles other Exceptions
+			return null;
+		}
 
 	}
 

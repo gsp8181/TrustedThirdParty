@@ -54,7 +54,7 @@ public class ContractService {
 		
 		ContractIntermediate i = new ContractIntermediate();
 		i.setRecipient(c.getRecipient());
-		i.setUsername(c.getSender());
+		i.setSender(c.getSender());
 		i.setDocName(c.getDocName());
 		i.setSigSender(c.getIntermediateContract());
 		i.setId(c.getId());
@@ -74,7 +74,7 @@ public class ContractService {
 		{
 			ContractIntermediate i = new ContractIntermediate();
 			i.setRecipient(c.getRecipient());
-			i.setUsername(c.getSender());
+			i.setSender(c.getSender());
 			i.setDocName(c.getDocName());
 			i.setSigSender(c.getIntermediateContract());
 			i.setId(c.getId());
