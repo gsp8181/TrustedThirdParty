@@ -1,5 +1,6 @@
 package com.team2.jax.contract;
 
+import java.security.PrivateKey;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -23,6 +24,7 @@ import javax.ws.rs.core.Response;
 import com.team2.jax.certificates.Certificate;
 import com.team2.jax.certificates.CertificateService;
 import com.team2.security.CertificateTools;
+import com.team2.security.TimeStampedKey;
 
 /**
  * <p>
@@ -121,7 +123,7 @@ public class ContractRESTService {
 	 * @param contract A {"sig":"base64sig"} object which is the signed signature from the ContractIntermediate object gotten from part 3
 	 * @return The {"docRef":"URL"} object where the user can retrieve the document from
 	 */
-	@POST //TODO: PUT
+	@POST
 	@Path("/3/{id}")
 	public ContractDoc counterSign(@PathParam("id") String id, ContractComplete contract)
 	{
@@ -153,7 +155,7 @@ public class ContractRESTService {
 	 * Step 4 - Fetch Contract URL.
 	 * </p>
 	 * <p>
-	 * Returns the URL to the contract that is valid for a set amount of time if the user has been successfully verified. This verification happens by the user signing the ID with their own private key.
+	 * Returns the URL to the contract that is valid for a set amount of time if the user has been successfully verified.  The signed request is the timestamp signed with the key of the initial reciever (sender of this request) and must be less than 5 minutes old. The signed data must be in base64 format and additionally URL encoded which just replaces a / with a .
 	 * </p>
 	 * <p>
 	 * If the contract is not found a 404 will be returned, if the contract
@@ -163,14 +165,16 @@ public class ContractRESTService {
 	 * with the sender.
 	 * </p>
 	 * @param id The id of the contract data to be returned
-	 * @param signedId id signed with the key of the sender
+	 * @param signedStamp timestamp signed with the key of the sender (the initial receiver of the contract) in Base64URL format (CertificateTools.base64urlencode)
+	 * @param ts The UNIX epoch timestamp in seconds, MUST be less than 5 minutes old
 	 * @return The JSON object containing the temp URL of the document for instance {"docRef":"http://s3.com/doc55.txt"}
+	 * @see com.team2.jax.security.CertificateTools#genTimestamp(PrivateKey key)
 	 */
 	@GET
-	@Path("/4/{id}") //TODO: signedId should include a timestamp
-	public ContractDoc getDoc(@PathParam("id") String id, @QueryParam("signedId") String signedId)
+	@Path("/4/{id}")
+	public ContractDoc getDoc(@PathParam("id") String id, @QueryParam("ts") long ts, @QueryParam("signedStamp") String signedStamp)
 	{
-		ContractDoc docRef = service.getDoc(id, CertificateTools.base64urldecode(signedId));
+		ContractDoc docRef = service.getDoc(id, ts, CertificateTools.base64urldecode(signedStamp));
 		
 		return docRef;
 	}
@@ -182,7 +186,7 @@ public class ContractRESTService {
 	 * <p>
 	 * Returns a correctly signed contract to the initial sender
 	 * of the contract. The request will need to be correctly signed
-	 * and verified to prove the identity of the sending user. The signed request is currently a signed version of the ID but my include timestamps in the future.
+	 * and verified to prove the identity of the sending user. The signed request is the timestamp signed with the key of the initial sender and must be less than 5 minutes old. The signed data must be in base64 format and additionally URL encoded which just replaces a / with a .
 	 * </p>
 	 * <p>
 	 * If the contract is not found a 404 will be returned, if the contract
@@ -192,14 +196,16 @@ public class ContractRESTService {
 	 * with the sender.
 	 * </p>
 	 * @param id The id of the contract to be returned
-	 * @param signedId id signed with the key of the sender
+	 * @param signedStamp timestamp signed with the key of the sender (the initial sender of the contract) in Base64URL format (CertificateTools.base64urlencode)
+	 * @param ts The UNIX epoch timestamp in seconds, MUST be less than 5 minutes old
 	 * @return The contract in the form of SigB(SigA(H(doc))) as a JSON object for example {"sig":"abcdefg=="}
+	 * @see com.team2.jax.security.CertificateTools#genTimestamp(PrivateKey key)
 	 */
 	@GET
-	@Path("/5/{id}") //TODO: signedId should include a timestamp
-	public ContractComplete getContract(@PathParam("id") String id, @QueryParam("signedId") String signedId)
+	@Path("/5/{id}")
+	public ContractComplete getContract(@PathParam("id") String id, @QueryParam("ts") long ts, @QueryParam("signedStamp") String signedStamp)
 	{
-		ContractComplete out = service.getContract(id, CertificateTools.base64urldecode(signedId));
+		ContractComplete out = service.getContract(id, ts, CertificateTools.base64urldecode(signedStamp));
 		
 		return out;
 	}

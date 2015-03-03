@@ -104,11 +104,11 @@ public class ContractService {
 		return out;
 	}
 
-	public ContractDoc getDoc(String id, String signedId) {
+	public ContractDoc getDoc(String id, long ts, String signedId) {
 		Contract c = cod.getById(id);
 		
 		try {
-			validator.validateDocRequest(id,signedId,c);
+			validator.validateDocRequest(id,ts,signedId,c);
 		} catch (Exception e) {
 			throw new WebApplicationException(Response.Status.INTERNAL_SERVER_ERROR);
 		}
@@ -120,10 +120,15 @@ public class ContractService {
 		return out;
 	}
 
-	public ContractComplete getContract(String id, String signedId) {
+	public ContractComplete getContract(String id, long ts, String signedId) {
 		Contract c = cod.getById(id);
 		
-		validator.validateContractRequest(id,signedId,c);
+		try
+		{
+		validator.validateContractRequest(id,ts,signedId,c);
+		} catch (Exception e) {
+			throw new WebApplicationException(Response.Status.INTERNAL_SERVER_ERROR);
+		}
 		
 		String contract = c.getContract();
 		

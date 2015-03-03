@@ -63,7 +63,7 @@ public class ContractValidator {
 			throw new ValidationException("certificate:Validation of the signature failed, make sure the signing key is the database");
 	}
 
-	public void validateDocRequest(String id, String signedId, Contract c) throws Exception {
+	public void validateDocRequest(String id,long timestamp, String signedId, Contract c) throws Exception { //TODO: better errors
 		
 		if (c == null)
 			throw new WebApplicationException(Response.Status.NOT_FOUND);
@@ -78,12 +78,12 @@ public class ContractValidator {
 		
 		PublicKey ssPublicKey = CertificateTools.decodeDSAPub(cert.getPublicKey());
 		
-		if(!CertificateTools.verify(ssPublicKey, id, signedId))
+		if(!CertificateTools.verifyTimestamp(ssPublicKey, timestamp, signedId))
 			throw new WebApplicationException(Response.Status.UNAUTHORIZED);
 		
 	}
 
-	public void validateContractRequest(String id, String signedId, Contract c) throws Exception {
+	public void validateContractRequest(String id,long timestamp, String signedId, Contract c) throws Exception { //TODO: better errors
 		if (c == null)
 			throw new WebApplicationException(Response.Status.NOT_FOUND);
 		
@@ -97,7 +97,7 @@ public class ContractValidator {
 		
 		PublicKey ssPublicKey = CertificateTools.decodeDSAPub(cert.getPublicKey());
 		
-		if(!CertificateTools.verify(ssPublicKey, id, signedId))
+		if(!CertificateTools.verifyTimestamp(ssPublicKey, timestamp, signedId))
 			throw new WebApplicationException(Response.Status.UNAUTHORIZED);
 		
 	}

@@ -15,6 +15,8 @@ import java.security.SignatureException;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
+import java.time.Duration;
+import java.time.Instant;
 import java.util.Base64;
 import java.util.Base64.Decoder;
 import java.util.Base64.Encoder;
@@ -65,21 +67,18 @@ public class CertificateTools {
 	
 	public static String signData(String dataToSign, KeyPair pair) throws InvalidKeyException, SignatureException, NoSuchAlgorithmException
 	{
+		return signData(dataToSign, pair.getPrivate());
+	}
+	
+	public static String signData(String dataToSign, PrivateKey priv) throws InvalidKeyException, SignatureException, NoSuchAlgorithmException
+	{
 		Signature dsa = Signature.getInstance("SHA1withDSA");
 		
-		PrivateKey priv = pair.getPrivate();
 		dsa.initSign(priv);
 		dsa.update(dataToSign.getBytes());
 		byte[] sig = dsa.sign();
 		
 		return encodeBase64(sig);
-		
-	}
-	
-	public static String signData(String dataToSign, PrivateKey priv, PublicKey pub) throws InvalidKeyException, SignatureException, NoSuchAlgorithmException
-	{
-		KeyPair pair = new KeyPair(pub,priv);
-		return signData(dataToSign, pair);
 	}
 	
 	public static String base64urlencode(String base64)
@@ -111,6 +110,36 @@ public class CertificateTools {
 	        KeyFactory kf = KeyFactory.getInstance("DSA");
 
 	        return kf.generatePrivate(pkcs8Private);
+	}
+	
+	public static boolean verifyTimestamp(PublicKey key, Instant timestamp, String signedStamp) throws InvalidKeyException, SignatureException, NoSuchAlgorithmException
+	{
+		Duration between = Duration.between(timestamp,Instant.now());
+		long duration = between.toMinutes();
+		duration = duration < 0 ? -duration : duration; 
+		if (duration > 5)
+			return false;
+		
+		String signedData = String.valueOf(timestamp.getEpochSecond()) + signedStamp;
+		
+			if(verify(key, signedStamp, signedData))
+				return true;
+		return false;
+	}
+	
+	public static boolean verifyTimestamp(PublicKey key, long timestampSeconds, String signedStamp) throws InvalidKeyException, SignatureException, NoSuchAlgorithmException
+	{
+		 Instant timestamp = Instant.ofEpochSecond(timestampSeconds, 0);
+		 return verifyTimestamp(key,timestamp,signedStamp);
+	}
+	
+	public static TimeStampedKey genTimestamp(PrivateKey key) throws InvalidKeyException, SignatureException, NoSuchAlgorithmException
+	{
+		Instant timestamp = Instant.now();
+		long timeStampLong = timestamp.getEpochSecond();
+		String signedData = signData(String.valueOf(timeStampLong), key);
+		TimeStampedKey out = new TimeStampedKey(signedData,timeStampLong);
+		return out;
 	}
 	
 	public static PublicKey decodeDSAPub(String key) throws NoSuchAlgorithmException, InvalidKeySpecException{
