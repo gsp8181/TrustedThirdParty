@@ -37,7 +37,7 @@ public class CertificateService {
 		out.setCode("Certificate not verified, check your emails to verify this certificate");
 		
 		//TODO: newCert.getCode() send validation email to guy //http://ttp.gsp8181.co.uk/rest/certificates/verify?email="newCert.getEmail()"&code="newCert.getCode()"
-		EmailNotifier.getInstance().sendEmail(newCert.getEmail(), "verification.noreply@gsp8181.co.uk", EmailNotifier.LINK_CONTEXT, newCert.getCode());
+		EmailNotifier.getInstance().sendEmail("verification.noreply@gsp8181.co.uk",newCert.getEmail(), EmailNotifier.LINK_CONTEXT, newCert.getCode());
 		return out;
 		
 	}
