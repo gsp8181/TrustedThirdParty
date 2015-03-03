@@ -64,7 +64,9 @@ public class ContractService {
 		
 	}
 
-	public List<ContractIntermediate> getIntermediates(String recipient) {
+	public List<ContractIntermediate> getIntermediates(String recipient, long ts, String signedStamp) {
+		validator.validateIntRequest(recipient,ts,signedStamp);
+		
 		List<Contract> contracts = getUnsignedContractsByRecipient(recipient);
 		
 		List<ContractIntermediate> result = new ArrayList<ContractIntermediate>();
