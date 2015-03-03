@@ -25,7 +25,7 @@ public class EmailNotifier {
 	private final static String VERIFICATION_STATUS_SUCCESS   = "Success";
 	//private final static String VERIFICATION_STATUS_PENDING   = "Pending";
 	
-	private final static String TDS_EMAIL  = "g2awsses@gmail.com";
+	private final static String TDS_EMAIL  = "tds.noreply@gsp8181.co.uk";
 	private final static String SUBJECT = "TDS Notification : Non-Repudiation Receipt from ";
 	
 	/* Set SES Credentials*/
