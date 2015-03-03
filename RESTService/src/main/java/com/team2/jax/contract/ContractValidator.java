@@ -30,7 +30,7 @@ public class ContractValidator {
 		
 		 //private static Validator validator=Validation.buildDefaultValidatorFactory().getValidator();
 			
-			//public void validateCertificate(CertificateIn cert) { TODO: <-
+			//public void validateCertificate(CertificateIn cert) {
 			//	Set<ConstraintViolation<CertificateIn>> violations = validator.validate(cert);
 		
 		if(cert == null)

@@ -89,7 +89,7 @@ public class CertificateRESTService {
 			throw new WebApplicationException(Response.Status.BAD_REQUEST);
 		
 		try {
-			Certificate out = service.create(cert); //TODO: this shows the user their ID
+			Certificate out = service.create(cert);
 
 			//return Response.status(Response.Status.CREATED).entity(out).build();
 			return out;

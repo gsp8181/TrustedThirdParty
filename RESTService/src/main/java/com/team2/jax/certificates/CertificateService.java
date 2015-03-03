@@ -30,9 +30,11 @@ public class CertificateService {
 		newCert.setPublicKey(cert.getPublicKey());
 		newCert.setTime(new Date().getTime());
 		newCert.setStatus(false);	
-		newCert.setCode(UUID.randomUUID().toString());
+		newCert.setCode(UUID.randomUUID().toString());		
 		Certificate out = crud.create(newCert);
 		out.setCode("Certificate not verified, check your emails to verify this certificate");
+		
+		//TODO: newCert.getCode() send validation email to guy
 		return out;
 		
 	}

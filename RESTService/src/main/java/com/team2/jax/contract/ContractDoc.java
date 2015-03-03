@@ -8,7 +8,7 @@ import javax.ws.rs.core.Response;
 import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement
-public class throw new WebApplicationException(Response.Status.INTERNAL_SERVER_ERROR); implements Serializable {
+public class ContractDoc implements Serializable {
 	
 	private static final long serialVersionUID = 1L;
 	
