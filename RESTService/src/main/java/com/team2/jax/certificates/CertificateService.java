@@ -23,7 +23,7 @@ public class CertificateService {
 		return crud.findByEmail(email);
 	}
 
-	public Certificate create(CertificateIn cert) throws ConstraintViolationException, ValidationException, Exception {
+	public Certificate create(CertificateIn cert) throws ConstraintViolationException, ValidationException {
 		
 		validator.validateCertificate(cert);	
 		
