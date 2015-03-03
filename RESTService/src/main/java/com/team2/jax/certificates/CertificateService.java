@@ -43,7 +43,7 @@ public class CertificateService {
 	}
 
 	public boolean verify(String email, String code) {
-		return crud.verify(email, code); //TODO: coide goes to nothing
+		return crud.verify(email, code); 
 	}
 	
 }
