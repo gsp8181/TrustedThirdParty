@@ -95,7 +95,7 @@ public class ContractService {
 	}
 
 	public ContractDoc counterSign(ContractComplete completeContract, String id) {
-		Contract c = cod.getById(id);
+		Contract c = cod.getById(id); //TODO: if there is no id this will fail
 			validator.validateComplete(completeContract, c);
 		c.setContract(completeContract.getSig());
 		c.setCompleted(true);
