@@ -54,7 +54,7 @@ public class CertificateTools {
 	}
 	
 	/*
-	 * mvn exec:java -Dexec.mainClass="com.team2.security.CertificateTools" -Dexec.args="priv pub data"
+	 * mvn exec:java -Dexec.mainClass="com.team2.security.CertificateTools" -Dexec.args="priv pub data" TODO:@END:REMOVE
 	 */
 	public static void main(String[] args) throws Exception
 	{
@@ -81,12 +81,12 @@ public class CertificateTools {
 		return encodeBase64(sig);
 	}
 	
-	public static String base64urlencode(String base64)
+	private static String base64urlencode(String base64)
 	{
 		return base64.replace('/', '.').replace('=','\\');
 	}
 	
-	public static String base64urldecode(String base64url) //TODO: private
+	private static String base64urldecode(String base64url)
 	{
 		return base64url.replace(' ', '+').replace('.', '/').replace('\\','=');
 		
@@ -122,7 +122,7 @@ public class CertificateTools {
 		
 		String signedData = String.valueOf(timestamp.getEpochSecond());
 		
-			if(verify(key,signedData, signedStamp))
+			if(verify(key,signedData, base64urldecode(signedStamp)))
 				return true;
 		return false;
 	}

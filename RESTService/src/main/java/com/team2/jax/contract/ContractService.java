@@ -1,17 +1,13 @@
 package com.team2.jax.contract;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
 
-import com.sun.jersey.core.header.FormDataContentDisposition;
 import com.team2.jax.certificates.CertificateRepository;
 import com.team2.jax.certificates.CertificateRepositoryDynamo;
 import com.team2.security.CertificateTools;
@@ -25,17 +21,21 @@ public class ContractService {
 	
 	private static ContractRepository cod = new ContractRepositoryDynamo();
 	
-	private static ContractFileStoreS3 cfs = new ContractFileStoreS3();
+	private static ContractFileStore cfs = new ContractFileStoreS3();
 	
-	public ContractIntermediate start(ContractStart ssObj) throws Exception {
+	public ContractIntermediate start(ContractStart ssObj) {
 		validator.validate(ssObj);
 		Contract c = new Contract();
 		
-		c.setDocName(ssObj.getDocName());
+		c.setDocName(UUID.randomUUID().toString() + "." + ssObj.getDocName());
 		
 		byte[] doc = CertificateTools.decodeBase64(ssObj.getDocData());
 		
-		c.setDocRef(cfs.saveFile(ssObj.getDocName(), doc));
+		try {
+		c.setDocRef(cfs.saveFile(c.getDocName(), doc));
+		} catch (Exception e) {
+			throw new WebApplicationException(Response.Status.INTERNAL_SERVER_ERROR);
+		}
 		c.setCompleted(false);
 		c.setIntermediateContract(ssObj.getSig());
 		c.setSender(ssObj.getEmail());
@@ -43,7 +43,12 @@ public class ContractService {
 		c.setSenderTime(cs.findByEmail(ssObj.getEmail()).getTime());
 		c.setRecipientTime(cs.findByEmail(ssObj.getRecipient()).getTime());
 		
-		// SEND B AN EMAIL TELLING HIM HE HAS A DOCUMENT WAITING FROM A
+		EmailNotifier emailNotifier = EmailNotifier.getInstance();
+		try{
+		emailNotifier.sendEmail(ssObj.getEmail(), ssObj.getRecipient(), EmailNotifier.COUNTERSIGN_CONTEXT, c.getId());
+	} catch (Exception e) {
+		throw new WebApplicationException(Response.status(Status.INTERNAL_SERVER_ERROR).entity(e).build());
+	}
 		
 		cod.create(c);
 		
@@ -59,7 +64,9 @@ public class ContractService {
 		
 	}
 
-	public List<ContractIntermediate> getIntermediates(String recipient) {
+	public List<ContractIntermediate> getIntermediates(String recipient, long ts, String signedStamp) {
+		validator.validateIntRequest(recipient,ts,signedStamp);
+		
 		List<Contract> contracts = getUnsignedContractsByRecipient(recipient);
 		
 		List<ContractIntermediate> result = new ArrayList<ContractIntermediate>();
@@ -88,14 +95,19 @@ public class ContractService {
 	}
 
 	public ContractDoc counterSign(ContractComplete completeContract, String id) {
-		Contract c = cod.getById(id);
-		try {
+		Contract c = cod.getById(id); //TODO: if there is no id this will fail
 			validator.validateComplete(completeContract, c);
-		} catch (Exception e) {
-			throw new WebApplicationException(Response.Status.INTERNAL_SERVER_ERROR);
-		}
 		c.setContract(completeContract.getSig());
 		c.setCompleted(true);
+		
+		EmailNotifier emailNotifier = EmailNotifier.getInstance();
+		try {
+			//emailNotifier.sendEmail(c.getSender(), c.getRecipient(), EmailNotifier.GETDOC_CONTEXT, c.getId());
+			emailNotifier.sendEmail(c.getRecipient(), c.getSender(), EmailNotifier.GETCONTRACT_CONTEXT, c.getId());
+		} catch (Exception e) {
+			throw new WebApplicationException(Response.status(Status.INTERNAL_SERVER_ERROR).entity(e).build());
+		}
+		
 		cod.create(c);
 		ContractDoc out = new ContractDoc();
 		
@@ -107,11 +119,7 @@ public class ContractService {
 	public ContractDoc getDoc(String id, long ts, String signedId) {
 		Contract c = cod.getById(id);
 		
-		try {
 			validator.validateDocRequest(id,ts,signedId,c);
-		} catch (Exception e) {
-			throw new WebApplicationException(Response.Status.INTERNAL_SERVER_ERROR);
-		}
 		
 		ContractDoc out = new ContractDoc();
 		
@@ -123,12 +131,7 @@ public class ContractService {
 	public ContractComplete getContract(String id, long ts, String signedId) {
 		Contract c = cod.getById(id);
 		
-		try
-		{
 		validator.validateContractRequest(id,ts,signedId,c);
-		} catch (Exception e) {
-			throw new WebApplicationException(Response.Status.INTERNAL_SERVER_ERROR);
-		}
 		
 		String contract = c.getContract();
 		

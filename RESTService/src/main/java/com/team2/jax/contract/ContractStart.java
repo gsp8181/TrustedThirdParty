@@ -5,6 +5,8 @@ import java.io.Serializable;
 import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.hibernate.validator.constraints.Email;
+
 @XmlRootElement
 public class ContractStart implements Serializable {
 
@@ -29,9 +31,11 @@ public class ContractStart implements Serializable {
 	private String sig;
 	
 	@NotNull
+    @Email(message = "The email address must be in the format of name@domain.com")
 	private String email;
 	
 	@NotNull
+    @Email(message = "The email address must be in the format of name@domain.com")
 	private String recipient;
 
 

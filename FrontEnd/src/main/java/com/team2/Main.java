@@ -62,19 +62,19 @@ public class Main {
 		switch(command)
 		{
 		case "countersign":
-			//countersign();
+			countersign();
 			break;
 		case "gensig":
 			genSig(args);
 			break;
 		case "getcompleted":
-			//getcompleted();
+			getcompleted();
 			break;
 		case "getcontracts":
-			//getcontracts();
+			getcontracts();
 			break;
 		case "sign":
-			//sign();
+			sign();
 			break;
 		default:
 			printHelp();
@@ -84,29 +84,43 @@ public class Main {
 	    // create the parser
 	    CommandLineParser parser = new GnuParser();
 	    try {
-	        // parse the command line arguments
-	        CommandLine line = parser.parse( OptionsFactory.allOptions(), args );
+//	        // parse the command line arguments
+	       CommandLine line = parser.parse( OptionsFactory.allOptions(), args );
 	    }
 	    catch( ParseException exp ) {
-	        // oops, something went wrong
+//	        // oops, something went wrong
 	    	HelpFormatter formatter = new HelpFormatter();
 	    	formatter.printHelp( "ttp", OptionsFactory.returnOptions() );
 	    	return;
 	    }
 	    
-	    
-	    
-	    
-	    
-
 	}
+	
+	private static void countersign(){
+		System.out.println("Counter Sign ");
+		
+	}
+	
+	private static void getcompleted(){
+		System.out.println("Get completed");
+		
+	}
+	
+	
+	private static void getcontracts(){
+		System.out.println("Get contract ");
+		
+	}
+	
+	private static void sign(){
+		System.out.println("Sign");
+		
+	}
+	
+	
 
 
 	private static void genSig(String[] args) {
-		// TODO Auto-generated method stub
-			System.out.println("Hi, i am front end.");
-			
-			  // Generate a DSA signature 
 
 	        if (args.length != 1) {
 	            System.out.println("Usage: GenSig username");
@@ -145,13 +159,15 @@ public class Main {
 		System.out.println("sign:			Signs a document and submits it with the current");
 	}
 	
-	
-	public static void test(String username){
-		
-		
+	public static void test(String email){
+		String EMAIL_REGEX = "^[\\w-_\\.+]*[\\w-_\\.]\\@([\\w]+\\.)+[\\w]+[\\w]$";
+		Boolean valid = email.matches(EMAIL_REGEX);
+		if (!valid) {
+			System.err.println("Caught exception " + " Email is not valid : " + email);
+		} else {
+			
+		}
 	}
-	
-
 	
 	/**
 	 * Builds a URI object from the variables provided
@@ -177,7 +193,6 @@ public class Main {
 		uri.setPort(port);
 		if(query != null || !query.isEmpty())
 			uri.setQuery(query);
-		
 		return uri.build();
 	}
 	
@@ -213,6 +228,38 @@ public class Main {
 		creates.create(thepublic, thesign);
 	}
 	
+	
+	
+public static void generatingKeyV2() throws NoSuchAlgorithmException, NoSuchProviderException, InvalidKeyException, SignatureException{
+		
+		KeyPairGenerator keyGen = KeyPairGenerator.getInstance("DSA", "SUN");
+		
+		SecureRandom random = SecureRandom.getInstance("SHA1PRNG", "SUN");
+		
+		keyGen.initialize(1024, random);
+		//generate key
+		KeyPair pair = keyGen.generateKeyPair();
+		//private key object
+		PrivateKey priv = pair.getPrivate();
+		//public key object
+		PublicKey pub = pair.getPublic();
+		//encoded public key
+		String encodedKey = encodeDSA(pub);
+		//encoded private key
+		String encodedKeyPrivate = encodeDSA(priv);
+		
+		Signature dsa = Signature.getInstance("SHA1withDSA");
+		
+		dsa.initSign(priv);
+		dsa.update(username.getBytes());
+		String sig = encodeBase64(dsa.sign());
+		//set the value
+		thepublic = encodedKey;
+		thesign = sig;
+		thePrivate = encodedKeyPrivate;
+		
+		
+	}
 	
 	
 	public static void generatingKeyTest() throws NoSuchAlgorithmException, NoSuchProviderException, InvalidKeyException, SignatureException{

@@ -20,7 +20,7 @@ public class EmailNotifier {
 	public final static String COUNTERSIGN_CONTEXT = "INTERMEDIATE NOTIFICATION";
 	public final static String GETDOC_CONTEXT  = "GET DOCUMENT NOTIFICATION";
 	public final static String GETCONTRACT_CONTEXT   = "GET COMPLETED CONTRACT NOTIFICATION";
-	public final static String LINK_CONTEXT   = "GET COMPLETED CONTRACT NOTIFICATION"; //TODO: <-
+	public final static String LINK_CONTEXT   = "CERTIFICATE VERIFICATION NOTIFICATION"; 
 	
 	private final static String VERIFICATION_STATUS_SUCCESS   = "Success";
 	//private final static String VERIFICATION_STATUS_PENDING   = "Pending";
@@ -37,9 +37,7 @@ public class EmailNotifier {
 		NOTIFICATION_CONTEXT.put(COUNTERSIGN_CONTEXT,"YOUR CONTRACTED DOUCMENT HAS BEEN RECEIVED BY TDS. PLEASE COUNTER SIGN THE DOCUMENT USING CONTRACT ID ");
 		NOTIFICATION_CONTEXT.put(GETDOC_CONTEXT,"COUNER SIGNATURE VERIFIED BY TDS. YOU ARE NOW AUTHORISED TO RETRIEVE THE DOCUMENT FROM TDS USING CONTRACT ID ");
 		NOTIFICATION_CONTEXT.put(GETCONTRACT_CONTEXT,"CONTRACT COMPLETED BY TDS. YOU ARE NOW AUTHORISED TO RETRIEVE THE FINAL CONTRACT FROM TDS USING CONTRACT ID ");
-		NOTIFICATION_CONTEXT.put(LINK_CONTEXT,"http://ttp.gsp8181.co.uk/rest/certificates/verify?email=newCert.getEmail()&code=newCert.getCode()"); //TODO <-
-		
-		
+		NOTIFICATION_CONTEXT.put(LINK_CONTEXT,"http://ttp.gsp8181.co.uk/rest/certificates/verify?");
 	}
 	
 	
@@ -95,8 +93,15 @@ public class EmailNotifier {
 	public SendEmailResult sendEmail(String senderEmail, String receipientMail, String notificationContext, String contractId) throws Exception{	
         Destination destination = new Destination().withToAddresses(new String[]{receipientMail});    
         Content subject = new Content().withData(SUBJECT + senderEmail);
-        Content textBody = new Content().withData(NOTIFICATION_CONTEXT.get(notificationContext) + contractId); 
-        Body body = new Body().withText(textBody);      
+        
+        Content textBody=null;
+        if(notificationContext.equalsIgnoreCase(LINK_CONTEXT))
+        	textBody= new Content().withData(NOTIFICATION_CONTEXT.get(LINK_CONTEXT)+"email="+ receipientMail + "&code=" + contractId);
+        else        	
+        	textBody = new Content().withData(NOTIFICATION_CONTEXT.get(notificationContext) + contractId); 
+        
+        
+        Body body = new Body().withText(textBody);         
         Message message = new Message().withSubject(subject).withBody(body);    
         SendEmailRequest request = new SendEmailRequest().withSource(TDS_EMAIL).withDestination(destination).withMessage(message);
         SendEmailResult mailResult = sesClient.sendEmail(request);
