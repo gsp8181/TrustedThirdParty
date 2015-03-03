@@ -9,6 +9,7 @@ import com.amazonaws.auth.profile.ProfileCredentialsProvider;
 import com.amazonaws.regions.Region;
 import com.amazonaws.regions.Regions;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClient;
+import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBDeleteExpression;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBQueryExpression;
 import com.amazonaws.services.dynamodbv2.document.DynamoDB;
@@ -121,10 +122,10 @@ public class CertificateRepositoryDynamo implements CertificateRepository{
 		
 	}
 
-	public Certificate create(Certificate cert) {
+	public void create(Certificate cert) {
 		
 		mapper.save(cert);
-		return cert;
+		
 	}
 	
 	
@@ -166,6 +167,12 @@ public class CertificateRepositoryDynamo implements CertificateRepository{
 		
 		return false;
 		
+	}
+	
+	
+	public void delete(Certificate c)
+	{
+		mapper.delete(c);
 	}
 
 	

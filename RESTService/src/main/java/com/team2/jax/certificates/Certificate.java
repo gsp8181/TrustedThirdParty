@@ -47,5 +47,8 @@ public class Certificate implements Serializable  {
     @DynamoDBAttribute(attributeName="Code")
     public String getCode(){return code;}
     public void setCode(String code){this.code=code;}
+    
+    
+    
    
 }

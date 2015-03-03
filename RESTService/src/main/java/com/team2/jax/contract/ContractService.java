@@ -45,7 +45,7 @@ public class ContractService {
 		
 		// SEND B AN EMAIL TELLING HIM HE HAS A DOCUMENT WAITING FROM A
 		
-		c = cod.create(c);
+		cod.create(c);
 		
 		ContractIntermediate i = new ContractIntermediate();
 		i.setRecipient(c.getRecipient());
