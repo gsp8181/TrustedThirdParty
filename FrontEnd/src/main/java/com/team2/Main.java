@@ -38,8 +38,10 @@ import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 import org.json.JSONObject;
 
+import com.team2.security.*;
 
-public class Main {
+
+public class Main extends CertificateTools {
 	
 	
 	private static String thepublic = null;
@@ -193,6 +195,7 @@ public class Main {
 		{
 		// TODO Auto-generated method stub
 		System.out.println("User name : " + email);
+		username = email;
 		//generate the key here
 		generatingKeyTest();
 		System.out.println("Public key : " + thepublic);
@@ -200,9 +203,13 @@ public class Main {
 		System.out.println("Private key : " + thePrivate);
 		//save the key
 		saveToFile();
-		//send post request
+		JSONObject send = new JSONObject().put("publicKey",thepublic).put("signedData", thesign).put("email",username);
+		URI uri = buildUri("ttp.gsp8181.co.uk","/rest/certificates/",80,false,null);
+		JSONObject response = sendpostjson(uri, send);
+		System.out.println(response.getString("code"));
 		}	         catch (Exception e) {
             System.err.println("Caught exception " + e.toString());
+            e.printStackTrace();
         }
 	}
 
@@ -248,7 +255,7 @@ public class Main {
 		uri.setHost(hostname);
 		uri.setPath(path);
 		uri.setPort(port);
-		if(query != null || !query.isEmpty())
+		if(query != null && !query.isEmpty())
 			uri.setQuery(query);
 		return uri.build();
 	}
@@ -259,23 +266,23 @@ public class Main {
 			HttpGet req = new HttpGet(endpoint);
 			CloseableHttpResponse response = httpClient.execute(req);
 			String responseBody = EntityUtils.toString(response.getEntity());
-			if(!response.getStatusLine().toString().startsWith("20"))
+			if(!response.getStatusLine().toString().startsWith("HTTP/1.1 2"))
 				throw new Exception("Failed to GET : error " + response.getStatusLine().toString());
 			return new JSONObject(responseBody); //responseJson.getLong("id"); example
 		}
 	
-	public static JSONObject  sendpostjson(URI endpoint, String message) throws Exception{
+	public static JSONObject  sendpostjson(URI endpoint, JSONObject message) throws Exception{
 		CloseableHttpClient  httpClient = HttpClients.createDefault();
 		
-		StringEntity params = new StringEntity(message);
+		StringEntity params = new StringEntity(message.toString());
 			HttpPost req = new HttpPost(endpoint);
 			
 			req.addHeader("Content-Type", "application/json");
 			req.setEntity(params);
 			CloseableHttpResponse response = httpClient.execute(req);
 			String responseBody = EntityUtils.toString(response.getEntity());
-			if(!response.getStatusLine().toString().startsWith("20"))
-				throw new Exception("Failed to POST : error " + response.getStatusLine().toString());
+			if(!response.getStatusLine().toString().startsWith("HTTP/1.1 2"))
+				throw new Exception("Failed to POST : error " + response.getStatusLine().toString() + ", " + responseBody);
 			return new JSONObject(responseBody); //responseJson.getLong("id"); example
 		}
 
@@ -321,7 +328,7 @@ public static void generatingKeyV2() throws NoSuchAlgorithmException, NoSuchProv
 	
 	public static void generatingKeyTest() throws NoSuchAlgorithmException, NoSuchProviderException, InvalidKeyException, SignatureException{
 		
-		KeyPairGenerator keyGen = KeyPairGenerator.getInstance("DSA", "SUN");
+		/*KeyPairGenerator keyGen = KeyPairGenerator.getInstance("DSA", "SUN");
 		
 		SecureRandom random = SecureRandom.getInstance("SHA1PRNG", "SUN");
 		
@@ -345,60 +352,17 @@ public static void generatingKeyV2() throws NoSuchAlgorithmException, NoSuchProv
 		//set the value
 		thepublic = encodedKey;
 		thesign = sig;
-		thePrivate = encodedKeyPrivate;
+		thePrivate = encodedKeyPrivate;*/
 		
 		
-	}
-	
-	/**
-	 * Returns an object containing an example private/public key pair and signed data. 
-	 * Should only be used for testing
-	 * @param dataToSign The data to sign, usually the username
-	 * @return The TestData object with the signed data and the keypair
-	 */
-	public static TestData getTestData(String dataToSign) throws NoSuchAlgorithmException, NoSuchProviderException, InvalidKeyException, SignatureException
-	{
-		KeyPairGenerator keyGen = KeyPairGenerator.getInstance("DSA");
-		SecureRandom random = SecureRandom.getInstance("SHA1PRNG", "SUN");
-		keyGen.initialize(1024, random);
-		KeyPair pair = keyGen.generateKeyPair();
 		
-		Signature dsa = Signature.getInstance("SHA1withDSA");
+		TestData test = getTestData(username);
 		
-		PrivateKey priv = pair.getPrivate();
-		dsa.initSign(priv);
-		dsa.update(dataToSign.getBytes());
-		byte[] sig = dsa.sign();
+		thepublic = test.publicKeyBase64;
+		thePrivate = test.privateKeyBase64;
+		thesign = test.sigBase64;
 		
-		PublicKey pub = pair.getPublic();
 		
-		TestData out = new TestData(encodeDSA(pub), dataToSign, encodeBase64(sig), encodeDSA(priv));
-		
-		return out;
-	}
-	
-	
-	/**
-	 * Encodes a Key object with Base64
-	 * @param key The PublicKey or PrivateKey to encode
-	 * @return The base64 encoded key string
-	 */
-	public static String encodeDSA(Key key)
-	{
-		byte[] array = key.getEncoded();
-		return encodeBase64(array);
-	}
-
-	/**
-	 * Encodes a byte array as Base64 string
-	 * @param bytes The byte array to encode
-	 * @return The base64 encoded string
-	 */
-	public static String encodeBase64(byte[] bytes)
-	{
-		Encoder encoder = Base64.getEncoder();
-		byte[] out = encoder.encode(bytes);
-		return new String(out);
 	}
 	
 }
