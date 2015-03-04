@@ -10,6 +10,7 @@ import javax.ws.rs.core.Response.Status;
 
 import com.team2.jax.certificates.CertificateRepository;
 import com.team2.jax.certificates.CertificateRepositoryDynamo;
+import com.team2.jax.ses.EmailNotifier;
 import com.team2.security.CertificateTools;
 
 
