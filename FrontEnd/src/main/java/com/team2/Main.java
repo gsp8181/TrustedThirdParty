@@ -58,6 +58,12 @@ public class Main {
 	    	return;
 		}
 		String command = args[0];
+		/*if(args.length == 1)
+			args = null;
+		else
+			args = ArrayUtils.removeElement(args,0);
+			*/
+		
 		
 		switch(command)
 		{
@@ -89,6 +95,8 @@ public class Main {
 	    try {
 	        // parse the command line arguments
 	       CommandLine line = parser.parse( OptionsFactory.countersignOptions(), args );
+	       String id = line.getOptionValue("i");
+	       doCounterSign(id);
 	    }
 	    catch( ParseException exp ) {
 	        // oops, something went wrong
@@ -99,12 +107,19 @@ public class Main {
 		
 	}
 	
+	private static void doCounterSign(String id) {
+		// TODO Auto-generated method stub
+		
+	}
+
 	private static void getcompleted(String[] args){
 	    // create the parser
 	    CommandLineParser parser = new GnuParser();
 	    try {
 	        // parse the command line arguments
 	       CommandLine line = parser.parse( OptionsFactory.getcompletedOptions(), args );
+	       String id = line.getOptionValue("i");
+	       doGetCompleted(id);
 	    }
 	    catch( ParseException exp ) {
 	        // oops, something went wrong
@@ -116,19 +131,13 @@ public class Main {
 	}
 	
 	
+	private static void doGetCompleted(String id) {
+		// TODO Auto-generated method stub
+		
+	}
+
 	private static void getcontracts(String[] args){
-	   /* // create the parser
-	    CommandLineParser parser = new GnuParser();
-	    try {
-	        // parse the command line arguments
-	       CommandLine line = parser.parse( OptionsFactory.returnOptions(), args );
-	    }
-	    catch( ParseException exp ) {
-	        // oops, something went wrong
-	    	HelpFormatter formatter = new HelpFormatter();
-	    	formatter.printHelp( "ttp getcontracts", OptionsFactory.returnOptions() );
-	    	return;
-	    }*/
+
 		
 	}
 	
@@ -138,6 +147,9 @@ public class Main {
 	    try {
 	        // parse the command line arguments
 	       CommandLine line = parser.parse( OptionsFactory.signOptions(), args );
+	       String destination = line.getOptionValue("d");
+	       String filename = line.getOptionValue("f");
+	       doSign(destination,filename);
 	    }
 	    catch( ParseException exp ) {
 	        // oops, something went wrong
@@ -151,6 +163,11 @@ public class Main {
 	
 
 
+	private static void doSign(String destination, String filename) {
+		// TODO Auto-generated method stub
+		
+	}
+
 	private static void genSig(String[] args) {
 
 		
@@ -159,6 +176,8 @@ public class Main {
 	    try {
 	        // parse the command line arguments
 	       CommandLine line = parser.parse( OptionsFactory.gensigOptions(), args );
+	       String email = line.getOptionValue("e");
+	       doGenSig(email);
 	    }
 	    catch( ParseException exp ) {
 	        // oops, something went wrong
@@ -167,31 +186,24 @@ public class Main {
 	    	return;
 	    }
 		
-	        if (args.length != 1) {
-	            System.out.println("Usage: GenSig username");
-	        }
-	        else try {
-	        	
-	        	if (args[0] != null) {
-					username = args[0];
-					System.out.println("User name : " + username);
-					//generate the key here
-					generatingKeyTest();
-					System.out.println("Public key : " + thepublic);
-					System.out.println("Signed private key : " + thesign);
-					System.out.println("Private key : " + thePrivate);
-					//save the key
-					saveToFile();
-					//send post request
-				}
-//	        	read user input for username
-	        	test(args[0]);
-//	        	generatingKeyTest();
-	        // the rest of the code goes here
+	}
 
-	        } catch (Exception e) {
-	            System.err.println("Caught exception " + e.toString());
-	        }
+	private static void doGenSig(String email) {
+		try
+		{
+		// TODO Auto-generated method stub
+		System.out.println("User name : " + email);
+		//generate the key here
+		generatingKeyTest();
+		System.out.println("Public key : " + thepublic);
+		System.out.println("Signed private key : " + thesign);
+		System.out.println("Private key : " + thePrivate);
+		//save the key
+		saveToFile();
+		//send post request
+		}	         catch (Exception e) {
+            System.err.println("Caught exception " + e.toString());
+        }
 	}
 
 
