@@ -159,6 +159,7 @@ public class ContractFileStoreS3 implements ContractFileStore {
 		//AmazonS3 s3Client = new AmazonS3Client(new ProfileCredentialsProvider());
 		
 		try {
+			
 			java.util.Date expiration = new java.util.Date();
 			long msec = expiration.getTime();
 			// msec += 1000 * 60 * 1 // 1 minute

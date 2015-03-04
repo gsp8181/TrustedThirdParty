@@ -125,6 +125,7 @@ public class S3StorageTest {
 		S3Object object = null;
 		
 		try {
+			
 			object = s3.getObject(new GetObjectRequest(bucketName, key));
 			output = readDocStream(object.getObjectContent());
 			
