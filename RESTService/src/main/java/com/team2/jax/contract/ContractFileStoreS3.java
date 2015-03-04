@@ -1,8 +1,11 @@
 package com.team2.jax.contract;
 
+import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.URL;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
@@ -18,8 +21,10 @@ import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.Bucket;
 import com.amazonaws.services.s3.model.GeneratePresignedUrlRequest;
+import com.amazonaws.services.s3.model.GetObjectRequest;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
+import com.amazonaws.services.s3.model.S3Object;
 import com.amazonaws.util.IOUtils;
 
 public class ContractFileStoreS3 implements ContractFileStore {
@@ -37,9 +42,8 @@ public class ContractFileStoreS3 implements ContractFileStore {
 	 * @throws NoSuchAlgorithmException 
 	 * @throws NoSuchProviderException 
 	 */
-	private static void encyrptedConnCreation() throws IOException, NoSuchAlgorithmException, NoSuchProviderException {
+	protected static AmazonS3 connCreation() throws IOException, NoSuchAlgorithmException, NoSuchProviderException {
 		System.out.println("Create connection...");
-		
 		
 		// To set this on a non EC2 instance, run http://docs.aws.amazon.com/cli/latest/userguide/cli-chap-getting-started.html
 		//credentials = new AWSCredentialsProviderChain(new InstanceProfileCredentialsProvider(),new ClasspathPropertiesFileCredentialsProvider());
@@ -51,10 +55,13 @@ public class ContractFileStoreS3 implements ContractFileStore {
 		Region euIreland = Region.getRegion(Regions.EU_WEST_1);
 		s3.setRegion(euIreland);
 		System.out.println();
+		
+		return s3;
 	}
 	
 	/**
-	 * Create/list bucket with name of "firsttestedbucket"
+	 * Create/list bucket with name of "contractbucket"
+	 * if already exist then notify.
 	 * @return 
 	 * @throws IOException
 	 */
@@ -95,7 +102,7 @@ public class ContractFileStoreS3 implements ContractFileStore {
 	}
 	
 	public String saveFile(String fileName, byte[] doc) throws NoSuchAlgorithmException, NoSuchProviderException, IOException {
-		encyrptedConnCreation();
+		connCreation();
 		
 		System.out.println("Store document " + fileName + ".");
 
@@ -152,6 +159,7 @@ public class ContractFileStoreS3 implements ContractFileStore {
 		//AmazonS3 s3Client = new AmazonS3Client(new ProfileCredentialsProvider());
 		
 		try {
+			
 			java.util.Date expiration = new java.util.Date();
 			long msec = expiration.getTime();
 			// msec += 1000 * 60 * 1 // 1 minute
@@ -184,4 +192,5 @@ public class ContractFileStoreS3 implements ContractFileStore {
 		return url;
 	}
 
+	
 }

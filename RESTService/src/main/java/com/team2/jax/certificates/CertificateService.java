@@ -9,8 +9,11 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.validation.ConstraintViolationException;
 import javax.validation.ValidationException;
+import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
 
-import com.team2.jax.contract.EmailNotifier;
+import com.team2.jax.ses.EmailNotifier;
 
 public class CertificateService {
 	
@@ -23,22 +26,27 @@ public class CertificateService {
 		return crud.findByEmail(email);
 	}
 
-	public Certificate create(CertificateIn cert) throws ConstraintViolationException, ValidationException, Exception {
+	public Certificate create(CertificateIn cert) throws ConstraintViolationException, ValidationException {
 		
 		validator.validateCertificate(cert);	
 		
 		Certificate newCert = new Certificate();
+		String code = UUID.randomUUID().toString();
 		newCert.setEmail(cert.getEmail());
 		newCert.setPublicKey(cert.getPublicKey());
 		newCert.setTime(new Date().getTime());
 		newCert.setStatus(false);	
-		newCert.setCode(UUID.randomUUID().toString());		
-		Certificate out = crud.create(newCert);
-		out.setCode("Certificate not verified, check your emails to verify this certificate");
+		newCert.setCode(code);		
+		crud.create(newCert);
+		newCert.setCode("Certificate not verified, check your emails to verify this certificate");
 		
 		//TODO: newCert.getCode() send validation email to guy //http://ttp.gsp8181.co.uk/rest/certificates/verify?email="newCert.getEmail()"&code="newCert.getCode()"
-		EmailNotifier.getInstance().sendEmail("verification.noreply@gsp8181.co.uk",newCert.getEmail(), EmailNotifier.LINK_CONTEXT, newCert.getCode());
-		return out;
+		try {
+			EmailNotifier.getInstance().sendEmail("verification.noreply@gsp8181.co.uk",newCert.getEmail(), EmailNotifier.LINK_CONTEXT, code);
+		} catch (Exception e) {
+			throw new WebApplicationException(Response.status(Status.INTERNAL_SERVER_ERROR).entity(e).build());
+		}
+		return newCert;
 		
 	}
 

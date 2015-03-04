@@ -19,12 +19,12 @@ public class ContractIntermediate implements Serializable {
 	
     private String docName;
 
-	public String getUsername() {
+	public String getSender() {
 		return sender;
 	}
 
-	public void setUsername(String username) {
-		this.sender = username;
+	public void setSender(String sender) {
+		this.sender = sender;
 	}
 
 	public String getRecipient() {

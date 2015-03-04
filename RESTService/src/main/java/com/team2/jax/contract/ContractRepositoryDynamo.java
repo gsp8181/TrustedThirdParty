@@ -104,10 +104,8 @@ public class ContractRepositoryDynamo implements ContractRepository {
 	
 	
 	@Override
-	public Contract create(Contract c) {
-		
+	public void create(Contract c) {		
 		mapper.save(c);		
-		return c;
 	}
 
 	@Override

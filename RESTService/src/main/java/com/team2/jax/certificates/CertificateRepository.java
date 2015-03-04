@@ -39,10 +39,8 @@ public interface CertificateRepository {
 	 * 
 	 * @param certificate
 	 *            The Certificate object to be added to the database
-	 * @return The Certificate object's database representation (including the
-	 *         id)
 	 */
-	public Certificate create(Certificate certificate);
+	public void create(Certificate certificate);
 	
 	/**
 	 * <p>

@@ -4,7 +4,7 @@ import java.util.List;
 
 public interface ContractRepository {
 
-	public Contract create(Contract c);
+	public void create(Contract c);
 
 	public List<Contract> getUnsignedContractsByRecipient(String recipient);
 

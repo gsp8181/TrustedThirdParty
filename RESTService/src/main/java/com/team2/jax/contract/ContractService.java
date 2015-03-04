@@ -10,6 +10,7 @@ import javax.ws.rs.core.Response.Status;
 
 import com.team2.jax.certificates.CertificateRepository;
 import com.team2.jax.certificates.CertificateRepositoryDynamo;
+import com.team2.jax.ses.EmailNotifier;
 import com.team2.security.CertificateTools;
 
 
@@ -50,11 +51,11 @@ public class ContractService {
 		throw new WebApplicationException(Response.status(Status.INTERNAL_SERVER_ERROR).entity(e).build());
 	}
 		
-		c = cod.create(c);
+		cod.create(c);
 		
 		ContractIntermediate i = new ContractIntermediate();
 		i.setRecipient(c.getRecipient());
-		i.setUsername(c.getSender());
+		i.setSender(c.getSender());
 		i.setDocName(c.getDocName());
 		i.setSigSender(c.getIntermediateContract());
 		i.setId(c.getId());
@@ -74,7 +75,7 @@ public class ContractService {
 		{
 			ContractIntermediate i = new ContractIntermediate();
 			i.setRecipient(c.getRecipient());
-			i.setUsername(c.getSender());
+			i.setSender(c.getSender());
 			i.setDocName(c.getDocName());
 			i.setSigSender(c.getIntermediateContract());
 			i.setId(c.getId());
@@ -95,7 +96,7 @@ public class ContractService {
 	}
 
 	public ContractDoc counterSign(ContractComplete completeContract, String id) {
-		Contract c = cod.getById(id);
+		Contract c = cod.getById(id); //TODO: if there is no id this will fail
 			validator.validateComplete(completeContract, c);
 		c.setContract(completeContract.getSig());
 		c.setCompleted(true);

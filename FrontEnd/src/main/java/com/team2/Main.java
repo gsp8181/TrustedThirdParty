@@ -62,58 +62,89 @@ public class Main {
 		switch(command)
 		{
 		case "countersign":
-			countersign();
+			countersign(args);
 			break;
 		case "gensig":
 			genSig(args);
 			break;
 		case "getcompleted":
-			getcompleted();
+			getcompleted(args);
 			break;
 		case "getcontracts":
-			getcontracts();
+			getcontracts(args);
 			break;
 		case "sign":
-			sign();
+			sign(args);
 			break;
 		default:
 			printHelp();
 			return;
 		}
-		
-	    // create the parser
-	    CommandLineParser parser = new GnuParser();
-	    try {
-//	        // parse the command line arguments
-	       CommandLine line = parser.parse( OptionsFactory.allOptions(), args );
-	    }
-	    catch( ParseException exp ) {
-//	        // oops, something went wrong
-	    	HelpFormatter formatter = new HelpFormatter();
-	    	formatter.printHelp( "ttp", OptionsFactory.returnOptions() );
-	    	return;
-	    }
 	    
 	}
 	
-	private static void countersign(){
-		System.out.println("Counter Sign ");
+	private static void countersign(String[] args){
+	    // create the parser
+	    CommandLineParser parser = new GnuParser();
+	    try {
+	        // parse the command line arguments
+	       CommandLine line = parser.parse( OptionsFactory.countersignOptions(), args );
+	    }
+	    catch( ParseException exp ) {
+	        // oops, something went wrong
+	    	HelpFormatter formatter = new HelpFormatter();
+	    	formatter.printHelp( "ttp countersign", OptionsFactory.countersignOptions() );
+	    	return;
+	    }
 		
 	}
 	
-	private static void getcompleted(){
-		System.out.println("Get completed");
+	private static void getcompleted(String[] args){
+	    // create the parser
+	    CommandLineParser parser = new GnuParser();
+	    try {
+	        // parse the command line arguments
+	       CommandLine line = parser.parse( OptionsFactory.getcompletedOptions(), args );
+	    }
+	    catch( ParseException exp ) {
+	        // oops, something went wrong
+	    	HelpFormatter formatter = new HelpFormatter();
+	    	formatter.printHelp( "ttp getcompleted", OptionsFactory.getcompletedOptions() );
+	    	return;
+	    }
 		
 	}
 	
 	
-	private static void getcontracts(){
-		System.out.println("Get contract ");
+	private static void getcontracts(String[] args){
+	   /* // create the parser
+	    CommandLineParser parser = new GnuParser();
+	    try {
+	        // parse the command line arguments
+	       CommandLine line = parser.parse( OptionsFactory.returnOptions(), args );
+	    }
+	    catch( ParseException exp ) {
+	        // oops, something went wrong
+	    	HelpFormatter formatter = new HelpFormatter();
+	    	formatter.printHelp( "ttp getcontracts", OptionsFactory.returnOptions() );
+	    	return;
+	    }*/
 		
 	}
 	
-	private static void sign(){
-		System.out.println("Sign");
+	private static void sign(String[] args){
+	    // create the parser
+	    CommandLineParser parser = new GnuParser();
+	    try {
+	        // parse the command line arguments
+	       CommandLine line = parser.parse( OptionsFactory.signOptions(), args );
+	    }
+	    catch( ParseException exp ) {
+	        // oops, something went wrong
+	    	HelpFormatter formatter = new HelpFormatter();
+	    	formatter.printHelp( "ttp sign", OptionsFactory.signOptions() );
+	    	return;
+	    }
 		
 	}
 	
@@ -122,6 +153,20 @@ public class Main {
 
 	private static void genSig(String[] args) {
 
+		
+	    // create the parser
+	    CommandLineParser parser = new GnuParser();
+	    try {
+	        // parse the command line arguments
+	       CommandLine line = parser.parse( OptionsFactory.gensigOptions(), args );
+	    }
+	    catch( ParseException exp ) {
+	        // oops, something went wrong
+	    	HelpFormatter formatter = new HelpFormatter();
+	    	formatter.printHelp( "ttp gensig", OptionsFactory.gensigOptions() );
+	    	return;
+	    }
+		
 	        if (args.length != 1) {
 	            System.out.println("Usage: GenSig username");
 	        }
