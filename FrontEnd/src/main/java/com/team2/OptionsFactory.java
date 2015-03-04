@@ -13,64 +13,54 @@ import org.apache.commons.cli.Options;
  *
  */
 public class OptionsFactory {
-	public static Options returnOptions()
-	{
-		Options options = new Options();
-		options.addOption(new Option("gensig","Generates a signature for use in the program"));
-		options.addOption(new Option("sign","Signs a document and submits it with the current signature"));
-		options.addOption(new Option("getcontracts","Returns all contracts waiting to be signed"));
-		options.addOption(new Option("countersign", "Countersigns a document"));
-		options.addOption(new Option("getcompleted","Returns the receipt signature of a remote document"));
-		//options.addOption(new Option("id","id of the contract to retrieve"));
-		
-		return options;
-	}
 	public static Options gensigOptions()
 	{
 		Options options = new Options();
-		options.addOption(new Option("email","Certificate email"));
+		options.addOption( OptionBuilder.withLongOpt( "email" )
+				.isRequired(true)
+                .withDescription( "Certificate email" )
+                .hasArg()
+                .withArgName("email")
+                .create("e") );
 		return options;
 	}
 	public static Options signOptions()
 	{
 		Options options = new Options();
-		options.addOption(new Option("destination","Recipient of the message"));
-		options.addOption(new Option("file","File to sign"));
+		options.addOption( OptionBuilder.withLongOpt( "destination" )
+				.isRequired(true)
+                .withDescription( "Recipient of the message" )
+                .hasArg()
+                .withArgName("email address")
+                .create("d") );
+		options.addOption( OptionBuilder.withLongOpt( "file" )
+				.isRequired(true)
+                .withDescription( "File to sign" )
+                .hasArg()
+                .withArgName("filename")
+                .create("f") );
 		return options;
 	}
-	//public static Options getcontractsOptions()
-	//{
-	//	Options options = new Options();
-	//	options.addOption(new Option("gensig","Generates a signature for use in the program"));
-	//	return options;
-	//}
 	public static Options countersignOptions()
 	{
 		Options options = new Options();
-		options.addOption(new Option("id","ID of the contract to countersign"));
+		options.addOption( OptionBuilder.withLongOpt( "id" )
+				.isRequired(true)
+                .withDescription( "ID of the contract to countersign" )
+                .hasArg()
+                .withArgName("Contract ID")
+                .create("i") );
 		return options;
 	}
 	public static Options getcompletedOptions()
 	{
 		Options options = new Options();
-		options.addOption(new Option("id","id of the contract to retrieve"));
-		return options;
-	}
-	public static Options allOptions()
-	{
-		Options options = new Options();
-		options.addOption(new Option("gensig","Generates a signature for use in the program"));
-		options.addOption(new Option("sign","Signs a document and submits it with the current signature"));
-		options.addOption(new Option("getcontracts","Returns all contracts waiting to be signed"));
-		options.addOption(new Option("countersign", "Countersigns a document"));
-		options.addOption(new Option("getcompleted","Returns the receipt signature of a remote document"));
-		options.addOption(new Option("email","Certificate email"));
-		options.addOption(new Option("destination","Recipient of the message"));
-		options.addOption(new Option("file","File to sign"));
-		options.addOption(new Option("id","ID of the contract"));
-		options.addOption(new Option("id","id of the contract"));
-		//options.addOption(new Option("id","id of the contract to retrieve"));
-		
+		options.addOption( OptionBuilder.withLongOpt( "id" )
+				.isRequired(true)
+                .withDescription( "ID of the contract to retrieve" )
+                .hasArg()
+                .withArgName("Contract ID")
+                .create("i") );
 		return options;
 	}
 }
