@@ -1,6 +1,6 @@
 package com.team2.jax.contract;
 
-import com.team2.jax.contract.EmailNotifier;
+import com.team2.jax.ses.EmailNotifier;
 
 import static org.junit.Assert.*;
 
