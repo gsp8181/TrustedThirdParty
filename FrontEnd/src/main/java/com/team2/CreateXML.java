@@ -91,6 +91,72 @@ public class CreateXML {
 	
 	}
 	
+
+	public void create(String publicKey, String privateKey, String email, String sign){
+		
+		
+		try {
+			 
+		DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
+		DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
+
+		// root elements
+		Document doc = docBuilder.newDocument();
+		Element rootElement = doc.createElement("document");
+		doc.appendChild(rootElement);
+
+		// staff elements
+		Element transaction = doc.createElement("transaction");
+		rootElement.appendChild(transaction);
+
+		// set attribute to staff element
+		Attr attr = doc.createAttribute("id");
+		attr.setValue("1");
+		transaction.setAttributeNode(attr);
+
+		// Email elements
+		Element emailE = doc.createElement("Email");
+		emailE.appendChild(doc.createTextNode(email));
+		transaction.appendChild(emailE);
+
+		// public key elements
+		Element publicKeyE = doc.createElement("PublicKey");
+		publicKeyE.appendChild(doc.createTextNode(publicKey));
+		transaction.appendChild(publicKeyE);
+		
+		// private key elements
+		Element privateE = doc.createElement("PrivateKey");
+		privateE.appendChild(doc.createTextNode(privateKey));
+		transaction.appendChild(privateE);
+
+		// sign elements
+		Element signed = doc.createElement("sign");
+		signed.appendChild(doc.createTextNode(sign));
+		transaction.appendChild(signed);
+
+		// write the content into xml file
+		String workingDir = System.getProperty("user.dir");
+		TransformerFactory transformerFactory = TransformerFactory.newInstance();
+		Transformer transformer = transformerFactory.newTransformer();
+		DOMSource source = new DOMSource(doc);
+		StreamResult result = new StreamResult(new File(workingDir + "\\tran.xml"));
+
+		// Output to console for testing
+		// StreamResult result = new StreamResult(System.out);
+
+		transformer.transform(source, result);
+
+		System.out.println("File saved!");
+
+	  } catch (ParserConfigurationException pce) {
+		pce.printStackTrace();
+	  } catch (TransformerException tfe) {
+		tfe.printStackTrace();
+	  }
+		
+		}
+		
+	
 	
 	public void create(String publickeys, String sign){
 		
@@ -128,10 +194,12 @@ public class CreateXML {
 		transaction.appendChild(signed);
 
 		// write the content into xml file
+		String workingDir = System.getProperty("user.dir");
+		
 		TransformerFactory transformerFactory = TransformerFactory.newInstance();
 		Transformer transformer = transformerFactory.newTransformer();
 		DOMSource source = new DOMSource(doc);
-		StreamResult result = new StreamResult(new File("D:\\tran.xml"));
+		StreamResult result = new StreamResult(new File(workingDir + "\\tran.xml"));
 
 		// Output to console for testing
 		// StreamResult result = new StreamResult(System.out);
