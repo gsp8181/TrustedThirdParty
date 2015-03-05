@@ -44,10 +44,10 @@ import com.team2.security.*;
 public class Main extends CertificateTools {
 	
 	
-	private static String thepublic = null;
+	private static String thePublic = null;
 	private static String thePrivate = null;
-	private static String username = null;
-	private static String thesign = null;
+	private static String theEmail = null;
+	private static String theSign = null;
 	
 
 	public static void main(String[] args) {
@@ -202,15 +202,17 @@ public class Main extends CertificateTools {
 		{
 		// TODO Auto-generated method stub
 		System.out.println("Email Receipient : " + email);
-		username = email;
+		theEmail = email;
 		//generate the key here
 		generatingKeyTest();
-		System.out.println("Public key : " + thepublic);
-		System.out.println("Signed private key : " + thesign);
+		System.out.println("Public key : " + thePublic);
+		System.out.println("Signed private key : " + theSign);
 		System.out.println("Private key : " + thePrivate);
 		//save the key
-		saveToFile();
-		JSONObject send = new JSONObject().put("publicKey",thepublic).put("signedData", thesign).put("email",username);
+		//saveToFile(); only save 2 parameter
+		saveXML();
+		
+		JSONObject send = new JSONObject().put("publicKey",thePublic).put("signedData", theSign).put("email",theEmail);
 		URI uri = buildUri("ttp.gsp8181.co.uk","/rest/certificates/",80,false,null);
 		JSONObject response = sendpostjson(uri, send);
 		System.out.println(response.getString("code"));
@@ -295,14 +297,14 @@ public class Main extends CertificateTools {
 		}
 
 	
-	public static void saveXML(String publickey, String privateKey, String email, String signDocument) {
+	public static void saveXML() {
 		CreateXML creates = new CreateXML();
-		creates.create(thepublic, thesign);
+		creates.create(thePublic, thePrivate, theEmail, theSign);
 	}
 	
 	public static void saveToFile() {
 		CreateXML creates = new CreateXML();
-		creates.create(thepublic, thesign);
+		creates.create(thePublic, theSign);
 	}
 	
 	
@@ -328,11 +330,11 @@ public static void generatingKeyV2() throws NoSuchAlgorithmException, NoSuchProv
 		Signature dsa = Signature.getInstance("SHA1withDSA");
 		
 		dsa.initSign(priv);
-		dsa.update(username.getBytes());
+		dsa.update(theEmail.getBytes());
 		String sig = encodeBase64(dsa.sign());
 		//set the value
-		thepublic = encodedKey;
-		thesign = sig;
+		thePublic = encodedKey;
+		theSign = sig;
 		thePrivate = encodedKeyPrivate;
 		
 		
@@ -369,11 +371,11 @@ public static void generatingKeyV2() throws NoSuchAlgorithmException, NoSuchProv
 		
 		
 		
-		TestData test = getTestData(username);
+		TestData test = getTestData(theEmail);
 		
-		thepublic = test.publicKeyBase64;
+		thePublic = test.publicKeyBase64;
 		thePrivate = test.privateKeyBase64;
-		thesign = test.sigBase64;
+		theSign = test.sigBase64;
 		
 		
 	}
