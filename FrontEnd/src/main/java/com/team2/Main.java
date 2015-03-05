@@ -48,6 +48,10 @@ public class Main extends CertificateTools {
 	private static String thePrivate = null;
 	private static String theEmail = null;
 	private static String theSign = null;
+	private static String theTime = null;
+	private static String thePublicResponse = null;
+	private static String theCode = null;
+	private static boolean theStatus  = false;
 	
 
 	public static void main(String[] args) {
@@ -216,10 +220,21 @@ public class Main extends CertificateTools {
 		URI uri = buildUri("ttp.gsp8181.co.uk","/rest/certificates/",80,false,null);
 		JSONObject response = sendpostjson(uri, send);
 		System.out.println(response.getString("code"));
+//		System.out.println("Public Key : " + response.getString("publicKey"));
+		storeRespondsGenSig(response);
+		
 		}	         catch (Exception e) {
             System.err.println("Caught exception " + e.toString());
             e.printStackTrace();
         }
+	}
+	
+	
+	public static void storeRespondsGenSig(JSONObject response){
+		theTime = response.getString("time");
+		thePublicResponse = response.getString("publicKey");
+		theCode = response.getString("code");
+		theStatus = response.getBoolean("status");
 	}
 
 
