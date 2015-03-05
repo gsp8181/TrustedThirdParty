@@ -28,6 +28,7 @@ public class CertificateRESTServiceTest {
 		
 		JsonPath jp = new JsonPath(json);
 		
+		
 		assertEquals("rayearly@gmail.com", jp.get("email"));
 	}
 	
