@@ -38,14 +38,16 @@ import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 import org.json.JSONObject;
 
+import com.team2.security.*;
 
-public class Main {
+
+public class Main extends CertificateTools {
 	
 	
-	private static String thepublic = null;
+	private static String thePublic = null;
 	private static String thePrivate = null;
-	private static String username = null;
-	private static String thesign = null;
+	private static String theEmail = null;
+	private static String theSign = null;
 	
 
 	public static void main(String[] args) {
@@ -58,95 +60,166 @@ public class Main {
 	    	return;
 		}
 		String command = args[0];
+		/*if(args.length == 1)
+			args = null;
+		else
+			args = ArrayUtils.removeElement(args,0);
+			*/
+		
 		
 		switch(command)
 		{
 		case "countersign":
-			countersign();
+			countersign(args);
 			break;
 		case "gensig":
 			genSig(args);
 			break;
 		case "getcompleted":
-			getcompleted();
+			getcompleted(args);
 			break;
 		case "getcontracts":
-			getcontracts();
+			getcontracts(args);
 			break;
 		case "sign":
-			sign();
+			sign(args);
 			break;
 		default:
 			printHelp();
 			return;
 		}
+	    
+	}
+	
+	private static void countersign(String[] args){
+	    // create the parser
+	    CommandLineParser parser = new GnuParser();
+	    try {
+	        // parse the command line arguments
+	       CommandLine line = parser.parse( OptionsFactory.countersignOptions(), args );
+	       String id = line.getOptionValue("i");
+	       doCounterSign(id);
+	    }
+	    catch( ParseException exp ) {
+	        // oops, something went wrong
+	    	HelpFormatter formatter = new HelpFormatter();
+	    	formatter.printHelp( "ttp countersign", OptionsFactory.countersignOptions() );
+	    	return;
+	    }
+		
+	}
+	
+	private static void doCounterSign(String id) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	private static void getcompleted(String[] args){
+	    // create the parser
+	    CommandLineParser parser = new GnuParser();
+	    try {
+	        // parse the command line arguments
+	       CommandLine line = parser.parse( OptionsFactory.getcompletedOptions(), args );
+	       String id = line.getOptionValue("i");
+	       doGetCompleted(id);
+	    }
+	    catch( ParseException exp ) {
+	        // oops, something went wrong
+	    	HelpFormatter formatter = new HelpFormatter();
+	    	formatter.printHelp( "ttp getcompleted", OptionsFactory.getcompletedOptions() );
+	    	return;
+	    }
+		
+	}
+	
+	
+	private static void doGetCompleted(String id) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	private static void getcontracts(String[] args){
+
+		
+	}
+	
+	private static void sign(String[] args){
+	    // create the parser
+	    CommandLineParser parser = new GnuParser();
+	    try {
+	        // parse the command line arguments
+	       CommandLine line = parser.parse( OptionsFactory.signOptions(), args );
+	       String destination = line.getOptionValue("d");
+	       String filename = line.getOptionValue("f");
+	       doSign(destination,filename);
+	    }
+	    catch( ParseException exp ) {
+	        // oops, something went wrong
+	    	HelpFormatter formatter = new HelpFormatter();
+	    	formatter.printHelp( "ttp sign", OptionsFactory.signOptions() );
+	    	return;
+	    }
+		
+	}
+	
+	
+
+
+	private static void doSign(String destination, String filename) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	private static void genSig(String[] args) {
+
 		
 	    // create the parser
 	    CommandLineParser parser = new GnuParser();
 	    try {
-//	        // parse the command line arguments
-	       CommandLine line = parser.parse( OptionsFactory.allOptions(), args );
+	        // parse the command line arguments
+	       CommandLine line = parser.parse( OptionsFactory.gensigOptions(), args );
+	       String email = line.getOptionValue("e");
+	       if(isValidEmail(email))
+	       doGenSig(email);
+	       else{
+	    	   System.out.println("Please enter valid email address.");
+	    	   return;
+	       }
+	    	
+	       
 	    }
 	    catch( ParseException exp ) {
-//	        // oops, something went wrong
+	        // oops, something went wrong
 	    	HelpFormatter formatter = new HelpFormatter();
-	    	formatter.printHelp( "ttp", OptionsFactory.returnOptions() );
+	    	formatter.printHelp( "ttp gensig", OptionsFactory.gensigOptions() );
 	    	return;
 	    }
-	    
-	}
-	
-	private static void countersign(){
-		System.out.println("Counter Sign ");
 		
 	}
-	
-	private static void getcompleted(){
-		System.out.println("Get completed");
+
+	private static void doGenSig(String email) {
+		try
+		{
+		// TODO Auto-generated method stub
+		System.out.println("Email Receipient : " + email);
+		theEmail = email;
+		//generate the key here
+		generatingKeyTest();
+		System.out.println("Public key : " + thePublic);
+		System.out.println("Signed private key : " + theSign);
+		System.out.println("Private key : " + thePrivate);
+		//save the key
+		//saveToFile(); only save 2 parameter
+		saveXML();
 		
-	}
-	
-	
-	private static void getcontracts(){
-		System.out.println("Get contract ");
-		
-	}
-	
-	private static void sign(){
-		System.out.println("Sign");
-		
-	}
-	
-	
-
-
-	private static void genSig(String[] args) {
-
-	        if (args.length != 1) {
-	            System.out.println("Usage: GenSig username");
-	        }
-	        else try {
-	        	
-	        	if (args[0] != null) {
-					username = args[0];
-					System.out.println("User name : " + username);
-					//generate the key here
-					generatingKeyTest();
-					System.out.println("Public key : " + thepublic);
-					System.out.println("Signed private key : " + thesign);
-					System.out.println("Private key : " + thePrivate);
-					//save the key
-					saveToFile();
-					//send post request
-				}
-//	        	read user input for username
-	        	test(args[0]);
-//	        	generatingKeyTest();
-	        // the rest of the code goes here
-
-	        } catch (Exception e) {
-	            System.err.println("Caught exception " + e.toString());
-	        }
+		JSONObject send = new JSONObject().put("publicKey",thePublic).put("signedData", theSign).put("email",theEmail);
+		URI uri = buildUri("ttp.gsp8181.co.uk","/rest/certificates/",80,false,null);
+		JSONObject response = sendpostjson(uri, send);
+		System.out.println(response.getString("code"));
+		}	         catch (Exception e) {
+            System.err.println("Caught exception " + e.toString());
+            e.printStackTrace();
+        }
 	}
 
 
@@ -159,13 +232,14 @@ public class Main {
 		System.out.println("sign:			Signs a document and submits it with the current");
 	}
 	
-	public static void test(String email){
+	public static boolean isValidEmail(String email){
 		String EMAIL_REGEX = "^[\\w-_\\.+]*[\\w-_\\.]\\@([\\w]+\\.)+[\\w]+[\\w]$";
 		Boolean valid = email.matches(EMAIL_REGEX);
 		if (!valid) {
 			System.err.println("Caught exception " + " Email is not valid : " + email);
+			return false;
 		} else {
-			
+			return true;
 		}
 	}
 	
@@ -191,7 +265,7 @@ public class Main {
 		uri.setHost(hostname);
 		uri.setPath(path);
 		uri.setPort(port);
-		if(query != null || !query.isEmpty())
+		if(query != null && !query.isEmpty())
 			uri.setQuery(query);
 		return uri.build();
 	}
@@ -202,30 +276,35 @@ public class Main {
 			HttpGet req = new HttpGet(endpoint);
 			CloseableHttpResponse response = httpClient.execute(req);
 			String responseBody = EntityUtils.toString(response.getEntity());
-			if(!response.getStatusLine().toString().startsWith("20"))
+			if(!response.getStatusLine().toString().startsWith("HTTP/1.1 2"))
 				throw new Exception("Failed to GET : error " + response.getStatusLine().toString());
 			return new JSONObject(responseBody); //responseJson.getLong("id"); example
 		}
 	
-	public static JSONObject  sendpostjson(URI endpoint, String message) throws Exception{
+	public static JSONObject  sendpostjson(URI endpoint, JSONObject message) throws Exception{
 		CloseableHttpClient  httpClient = HttpClients.createDefault();
 		
-		StringEntity params = new StringEntity(message);
+		StringEntity params = new StringEntity(message.toString());
 			HttpPost req = new HttpPost(endpoint);
 			
 			req.addHeader("Content-Type", "application/json");
 			req.setEntity(params);
 			CloseableHttpResponse response = httpClient.execute(req);
 			String responseBody = EntityUtils.toString(response.getEntity());
-			if(!response.getStatusLine().toString().startsWith("20"))
-				throw new Exception("Failed to POST : error " + response.getStatusLine().toString());
+			if(!response.getStatusLine().toString().startsWith("HTTP/1.1 2"))
+				throw new Exception("Failed to POST : error " + response.getStatusLine().toString() + ", " + responseBody);
 			return new JSONObject(responseBody); //responseJson.getLong("id"); example
 		}
 
 	
+	public static void saveXML() {
+		CreateXML creates = new CreateXML();
+		creates.create(thePublic, thePrivate, theEmail, theSign);
+	}
+	
 	public static void saveToFile() {
 		CreateXML creates = new CreateXML();
-		creates.create(thepublic, thesign);
+		creates.create(thePublic, theSign);
 	}
 	
 	
@@ -251,11 +330,11 @@ public static void generatingKeyV2() throws NoSuchAlgorithmException, NoSuchProv
 		Signature dsa = Signature.getInstance("SHA1withDSA");
 		
 		dsa.initSign(priv);
-		dsa.update(username.getBytes());
+		dsa.update(theEmail.getBytes());
 		String sig = encodeBase64(dsa.sign());
 		//set the value
-		thepublic = encodedKey;
-		thesign = sig;
+		thePublic = encodedKey;
+		theSign = sig;
 		thePrivate = encodedKeyPrivate;
 		
 		
@@ -264,7 +343,7 @@ public static void generatingKeyV2() throws NoSuchAlgorithmException, NoSuchProv
 	
 	public static void generatingKeyTest() throws NoSuchAlgorithmException, NoSuchProviderException, InvalidKeyException, SignatureException{
 		
-		KeyPairGenerator keyGen = KeyPairGenerator.getInstance("DSA", "SUN");
+		/*KeyPairGenerator keyGen = KeyPairGenerator.getInstance("DSA", "SUN");
 		
 		SecureRandom random = SecureRandom.getInstance("SHA1PRNG", "SUN");
 		
@@ -288,60 +367,17 @@ public static void generatingKeyV2() throws NoSuchAlgorithmException, NoSuchProv
 		//set the value
 		thepublic = encodedKey;
 		thesign = sig;
-		thePrivate = encodedKeyPrivate;
+		thePrivate = encodedKeyPrivate;*/
 		
 		
-	}
-	
-	/**
-	 * Returns an object containing an example private/public key pair and signed data. 
-	 * Should only be used for testing
-	 * @param dataToSign The data to sign, usually the username
-	 * @return The TestData object with the signed data and the keypair
-	 */
-	public static TestData getTestData(String dataToSign) throws NoSuchAlgorithmException, NoSuchProviderException, InvalidKeyException, SignatureException
-	{
-		KeyPairGenerator keyGen = KeyPairGenerator.getInstance("DSA");
-		SecureRandom random = SecureRandom.getInstance("SHA1PRNG", "SUN");
-		keyGen.initialize(1024, random);
-		KeyPair pair = keyGen.generateKeyPair();
 		
-		Signature dsa = Signature.getInstance("SHA1withDSA");
+		TestData test = getTestData(theEmail);
 		
-		PrivateKey priv = pair.getPrivate();
-		dsa.initSign(priv);
-		dsa.update(dataToSign.getBytes());
-		byte[] sig = dsa.sign();
+		thePublic = test.publicKeyBase64;
+		thePrivate = test.privateKeyBase64;
+		theSign = test.sigBase64;
 		
-		PublicKey pub = pair.getPublic();
 		
-		TestData out = new TestData(encodeDSA(pub), dataToSign, encodeBase64(sig), encodeDSA(priv));
-		
-		return out;
-	}
-	
-	
-	/**
-	 * Encodes a Key object with Base64
-	 * @param key The PublicKey or PrivateKey to encode
-	 * @return The base64 encoded key string
-	 */
-	public static String encodeDSA(Key key)
-	{
-		byte[] array = key.getEncoded();
-		return encodeBase64(array);
-	}
-
-	/**
-	 * Encodes a byte array as Base64 string
-	 * @param bytes The byte array to encode
-	 * @return The base64 encoded string
-	 */
-	public static String encodeBase64(byte[] bytes)
-	{
-		Encoder encoder = Base64.getEncoder();
-		byte[] out = encoder.encode(bytes);
-		return new String(out);
 	}
 	
 }
