@@ -179,7 +179,14 @@ public class Main extends CertificateTools {
 	        // parse the command line arguments
 	       CommandLine line = parser.parse( OptionsFactory.gensigOptions(), args );
 	       String email = line.getOptionValue("e");
+	       if(isValidEmail(email))
 	       doGenSig(email);
+	       else{
+	    	   System.out.println("Please enter valid email address.");
+	    	   return;
+	       }
+	    	
+	       
 	    }
 	    catch( ParseException exp ) {
 	        // oops, something went wrong
@@ -194,7 +201,7 @@ public class Main extends CertificateTools {
 		try
 		{
 		// TODO Auto-generated method stub
-		System.out.println("User name : " + email);
+		System.out.println("Email Receipient : " + email);
 		username = email;
 		//generate the key here
 		generatingKeyTest();
@@ -223,13 +230,14 @@ public class Main extends CertificateTools {
 		System.out.println("sign:			Signs a document and submits it with the current");
 	}
 	
-	public static void test(String email){
+	public static boolean isValidEmail(String email){
 		String EMAIL_REGEX = "^[\\w-_\\.+]*[\\w-_\\.]\\@([\\w]+\\.)+[\\w]+[\\w]$";
 		Boolean valid = email.matches(EMAIL_REGEX);
 		if (!valid) {
 			System.err.println("Caught exception " + " Email is not valid : " + email);
+			return false;
 		} else {
-			
+			return true;
 		}
 	}
 	
@@ -286,6 +294,11 @@ public class Main extends CertificateTools {
 			return new JSONObject(responseBody); //responseJson.getLong("id"); example
 		}
 
+	
+	public static void saveXML(String publickey, String privateKey, String email, String signDocument) {
+		CreateXML creates = new CreateXML();
+		creates.create(thepublic, thesign);
+	}
 	
 	public static void saveToFile() {
 		CreateXML creates = new CreateXML();
