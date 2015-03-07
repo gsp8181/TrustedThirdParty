@@ -52,6 +52,12 @@ public class Main extends CertificateTools {
 	private static String thePublicResponse = null;
 	private static String theCode = null;
 	private static boolean theStatus  = false;
+	private static String id = null;
+	private static String documentText64 = null;
+	private static String theDocumentName = null;
+	private static String theRecipient = null;
+	private static String theUsername = null;
+	private static String theSigSender = null;
 	
 
 	public static void main(String[] args) {
@@ -171,6 +177,39 @@ public class Main extends CertificateTools {
 
 	private static void doSign(String destination, String filename) {
 		// TODO Auto-generated method stub
+		try
+		{
+		// hello world (base64) = aGVsbG8gd29ybGQ=
+		// temp - need to upgrade later
+		String docText = "aGVsbG8gd29ybGQ=";
+		System.out.println("Receipient : " + destination);
+		System.out.println("Document Name : " + filename);
+		System.out.println("Document text : " + docText);
+		System.out.println("Sign : " + theSign);
+		
+		System.out.println("Email : " + theEmail);
+		//save the key
+		//saveToFile(); only save 2 parameter
+		//saveXML();
+		
+		JSONObject send = new JSONObject().put("recipient",destination)
+				.put("docName", filename)
+				.put("sig", theSign)
+				.put("docData", docText)
+				.put("email",theEmail);
+		URI uri = buildUri("ttp.gsp8181.co.uk","/contract/1",80,false,null);
+		JSONObject response = sendpostjson(uri, send);
+//		System.out.println(response.getString("code"));
+//		System.out.println("Public Key : " + response.getString("publicKey"));
+		storeRespondsGenSig(response);
+		
+		}	         catch (Exception e) {
+            System.err.println("Caught exception " + e.toString());
+            e.printStackTrace();
+        }
+		
+		
+		
 		
 	}
 
@@ -199,6 +238,48 @@ public class Main extends CertificateTools {
 	    	return;
 	    }
 		
+	}
+	
+	/*
+	 * send get request to get the certificate by email receipient
+	 * 
+	 * */
+	private static void getCertificateByEmail() {
+		try
+		{
+		// TODO Auto-generated method stub
+		System.out.println("Email Receipient : " + theEmail);
+		URI uri = buildUri("ttp.gsp8181.co.uk","/rest/certificates/verify",80,false,"email", theEmail);
+		JSONObject response = sendgetjson(uri);
+//		System.out.println("Verify status : " + response.toString());
+		displayCertificate(response);
+		
+		}	         catch (Exception e) {
+            System.err.println("Caught exception " + e.toString());
+            e.printStackTrace();
+        }
+	}
+	
+	/*
+	 * send get request to verify the certificate
+	 * 
+	 * */
+	private static void doVerifyCertificate() {
+		try
+		{
+		// TODO Auto-generated method stub
+		System.out.println("Email Receipient : " + theEmail);
+		System.out.println("Code" + theCode);
+		URI uri = buildUri("ttp.gsp8181.co.uk","/rest/certificates/verify",80,false,"email", theEmail, "code", theCode);
+		JSONObject response = sendgetjson(uri);
+//		System.out.println(response.getString("code"));
+		System.out.println("Verify status : " + response.toString());
+//		storeRespondsGenSig(response);
+		
+		}	         catch (Exception e) {
+            System.err.println("Caught exception " + e.toString());
+            e.printStackTrace();
+        }
 	}
 
 	private static void doGenSig(String email) {
@@ -235,6 +316,22 @@ public class Main extends CertificateTools {
 		thePublicResponse = response.getString("publicKey");
 		theCode = response.getString("code");
 		theStatus = response.getBoolean("status");
+	}
+
+	public static void displayRespondSign(JSONObject response){
+		System.out.println("ID : " + response.getString("id"));
+		System.out.println("User name : " + response.getString("username"));
+		System.out.println("Recipient :" +  response.getString("recipient"));
+		System.out.println("Document Name :" + response.getString("docName"));
+		System.out.println("Signature Sender :" + response.getString("sigSender"));
+	}
+
+	public static void displayCertificate(JSONObject response){
+		System.out.println("Public Key : " + response.getString("publicKey"));
+		System.out.println("Time : " + response.getString("time"));
+		System.out.println("Code :" +  response.getString("code"));
+		System.out.println("Status :" + response.getString("status"));
+		System.out.println("Email :" + response.getString("email"));
 	}
 
 
@@ -282,6 +379,63 @@ public class Main extends CertificateTools {
 		uri.setPort(port);
 		if(query != null && !query.isEmpty())
 			uri.setQuery(query);
+		return uri.build();
+	}
+	
+	public static URI buildUri(String hostname, String path, int port, boolean secure, String param1, String arg1) throws URISyntaxException
+	{
+		URIBuilder uri = new URIBuilder();
+		if(secure)
+			uri.setScheme("https");
+		else
+			uri.setScheme("http");
+		
+		uri.setHost(hostname);
+		uri.setPath(path);
+		uri.setPort(port);
+		if(param1 != null && !arg1.isEmpty())
+			uri.setParameter(param1, arg1);
+		return uri.build();
+	}
+	
+	public static URI buildUri(String hostname, String path, int port, boolean secure, String param1, String arg1, String param2, String arg2) throws URISyntaxException
+	{
+		URIBuilder uri = new URIBuilder();
+		if(secure)
+			uri.setScheme("https");
+		else
+			uri.setScheme("http");
+		
+		uri.setHost(hostname);
+		uri.setPath(path);
+		uri.setPort(port);
+		if(param1 != null && !arg1.isEmpty()){
+			uri.setParameter(param1, arg1);
+			if(param2 != null && !arg2.isEmpty())
+				uri.setParameter(param2, arg2);
+		}
+		return uri.build();
+	}
+	
+	public static URI buildUri(String hostname, String path, int port, boolean secure, String param1, String arg1, String param2, String arg2, String param3, String arg3) throws URISyntaxException
+	{
+		URIBuilder uri = new URIBuilder();
+		if(secure)
+			uri.setScheme("https");
+		else
+			uri.setScheme("http");
+		
+		uri.setHost(hostname);
+		uri.setPath(path);
+		uri.setPort(port);
+		if(param1 != null && !arg1.isEmpty()){
+			uri.setParameter(param1, arg1);
+			if(param2 != null && !arg2.isEmpty()){
+				uri.setParameter(param2, arg2);
+				if(param3 != null && !arg3.isEmpty())
+					uri.setParameter(param3, arg3);
+			}
+		}
 		return uri.build();
 	}
 	
