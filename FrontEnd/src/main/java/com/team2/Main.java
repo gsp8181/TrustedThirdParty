@@ -11,8 +11,10 @@ import java.security.PublicKey;
 import java.security.SecureRandom;
 import java.security.Signature;
 import java.security.SignatureException;
+import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Base64.Encoder;
+import java.util.List;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -36,6 +38,7 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import com.team2.security.*;
@@ -171,7 +174,30 @@ public class Main extends CertificateTools {
 	    }
 		
 	}
-	
+	/*
+	 * find the ts
+	 * find the signedstamp
+	 * 
+	 * */
+	private static void doGetAvailableContract(int ts, String signedStamp){
+		System.out.println("GET AVAILABLE CONTRACT TO SIGN");
+		System.out.println("Email : " + theEmail);
+		String tss = Integer.toString(ts);
+		
+		URI uri;
+		try {
+			List<String> list = new ArrayList<String>();
+			
+			uri = buildUri("ttp.gsp8181.co.uk","/rest/contracts/2/" + theEmail ,80,false,"ts", tss, "signedStamp", signedStamp);
+			JSONObject response = sendgetjson(uri);
+			//JSONArray array = response.getJSONArray();
+			
+		}  catch (Exception e) {
+            System.err.println("Caught exception " + e.toString());
+            e.printStackTrace();
+		}
+		
+	}
 	
 
 
@@ -184,10 +210,13 @@ public class Main extends CertificateTools {
 		String docText = "aGVsbG8gd29ybGQ=";
 		System.out.println("Receipient : " + destination);
 		System.out.println("Document Name : " + filename);
-		System.out.println("Document text : " + docText);
-		System.out.println("Sign : " + theSign);
-		
+		System.out.println("Document text(Base64) : " + docText);
+		System.out.println("Sign : " + theSign);	
 		System.out.println("Email : " + theEmail);
+		
+		theRecipient = destination;
+		theDocumentName = filename;
+		documentText64 = docText;
 		//save the key
 		//saveToFile(); only save 2 parameter
 		//saveXML();
@@ -199,17 +228,14 @@ public class Main extends CertificateTools {
 				.put("email",theEmail);
 		URI uri = buildUri("ttp.gsp8181.co.uk","/contract/1",80,false,null);
 		JSONObject response = sendpostjson(uri, send);
-//		System.out.println(response.getString("code"));
-//		System.out.println("Public Key : " + response.getString("publicKey"));
-		storeRespondsGenSig(response);
+		displayRespondSign(response);
+		storeRespondsdoSign(response);
+		
 		
 		}	         catch (Exception e) {
             System.err.println("Caught exception " + e.toString());
             e.printStackTrace();
         }
-		
-		
-		
 		
 	}
 
@@ -247,9 +273,8 @@ public class Main extends CertificateTools {
 	private static void getCertificateByEmail() {
 		try
 		{
-		// TODO Auto-generated method stub
 		System.out.println("Email Receipient : " + theEmail);
-		URI uri = buildUri("ttp.gsp8181.co.uk","/rest/certificates/verify",80,false,"email", theEmail);
+		URI uri = buildUri("ttp.gsp8181.co.uk","/rest/certificates/" +theEmail,80,false,null);
 		JSONObject response = sendgetjson(uri);
 //		System.out.println("Verify status : " + response.toString());
 		displayCertificate(response);
@@ -310,6 +335,15 @@ public class Main extends CertificateTools {
         }
 	}
 	
+	
+	public static void storeRespondsdoSign(JSONObject response){
+		id =  response.getString("id");
+		theUsername =  response.getString("username");
+		theRecipient =   response.getString("recipient");
+		theDocumentName =  response.getString("docName");
+		theSigSender = response.getString("sigSender");
+	}
+
 	
 	public static void storeRespondsGenSig(JSONObject response){
 		theTime = response.getString("time");
