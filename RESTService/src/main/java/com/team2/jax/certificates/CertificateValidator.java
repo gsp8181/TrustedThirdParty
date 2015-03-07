@@ -8,7 +8,6 @@ import javax.validation.ConstraintViolationException;
 import javax.validation.Validation;
 import javax.validation.ValidationException;
 import javax.validation.Validator;
-import javax.validation.ValidatorFactory;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 

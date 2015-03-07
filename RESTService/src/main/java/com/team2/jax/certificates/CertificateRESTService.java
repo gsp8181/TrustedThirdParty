@@ -3,7 +3,6 @@ package com.team2.jax.certificates;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
-
 import javax.ejb.Stateless;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;

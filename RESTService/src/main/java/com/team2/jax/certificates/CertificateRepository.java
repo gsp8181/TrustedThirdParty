@@ -58,7 +58,16 @@ public interface CertificateRepository {
 	 */
 	public boolean verify(String email, String code);
 	
-	
+	/**
+	 * <p>
+	 * Deletes the requested certificate in DynamoDB.   
+	 * </p>
+	 * <p>	
+	 * </p>
+	 * 
+	 * @param c
+	 *           The Certificate object needed to be deleted	 
+	 */
 	public void delete(Certificate c);
 	
 	

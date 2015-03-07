@@ -3,8 +3,6 @@ package com.team2.jax.contract;
 import java.io.Serializable;
 
 import javax.validation.constraints.NotNull;
-import javax.ws.rs.WebApplicationException;
-import javax.ws.rs.core.Response;
 import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement

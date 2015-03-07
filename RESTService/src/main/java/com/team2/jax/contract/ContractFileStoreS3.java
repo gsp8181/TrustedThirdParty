@@ -1,15 +1,13 @@
 package com.team2.jax.contract;
 
-import java.io.BufferedReader;
+
 import java.io.ByteArrayInputStream;
-import java.io.File;
+
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.net.URL;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
-
 import com.amazonaws.AmazonClientException;
 import com.amazonaws.AmazonServiceException;
 import com.amazonaws.HttpMethod;
@@ -21,10 +19,8 @@ import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.Bucket;
 import com.amazonaws.services.s3.model.GeneratePresignedUrlRequest;
-import com.amazonaws.services.s3.model.GetObjectRequest;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
-import com.amazonaws.services.s3.model.S3Object;
 import com.amazonaws.util.IOUtils;
 
 public class ContractFileStoreS3 implements ContractFileStore {

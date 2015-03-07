@@ -1,10 +1,8 @@
 package com.team2.jax.certificates;
 
 import java.io.Serializable;
-
 import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlRootElement;
-
 import org.hibernate.validator.constraints.Email;
 
 @XmlRootElement

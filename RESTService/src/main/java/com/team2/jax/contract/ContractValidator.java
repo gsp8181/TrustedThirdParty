@@ -18,7 +18,6 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
 import com.team2.jax.certificates.Certificate;
-import com.team2.jax.certificates.CertificateIn;
 import com.team2.jax.certificates.CertificateRepository;
 import com.team2.jax.certificates.CertificateRepositoryDynamo;
 
