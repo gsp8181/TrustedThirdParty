@@ -59,5 +59,7 @@ public interface CertificateRepository {
 	public boolean verify(String email, String code);
 	
 	
+	public void delete(Certificate c);
+	
 	
 }

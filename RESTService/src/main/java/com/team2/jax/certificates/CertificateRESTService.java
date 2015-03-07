@@ -56,13 +56,14 @@ public class CertificateRESTService {
 	 */
 	@GET
 	@Path("/{email}")
-	public Certificate getCertByUsername(@PathParam("email") String email) {
+	public Response getCertByUsername(@PathParam("email") String email) {
 		Certificate cert = service.findByEmail(email);
 
 		if (cert == null)
 			throw new WebApplicationException(Response.Status.NOT_FOUND);
 
-		return cert;
+		return Response.status(Response.Status.ACCEPTED).entity(
+				cert).build();
 
 	}
 
@@ -87,12 +88,13 @@ public class CertificateRESTService {
 	 * @see CertificateIn
 	 */
 	@POST
-	public Certificate sendCert(CertificateIn cert) {
+	public Response sendCert(CertificateIn cert) {
 		if (cert == null)
 			throw new WebApplicationException(Response.Status.BAD_REQUEST);
 
 		try {
-			return service.create(cert);
+			return Response.status(Response.Status.CREATED)
+					.entity(service.create(cert)).build();
 
 		} catch (ConstraintViolationException ce) {
 			// Handles bean specific constraint exceptions
