@@ -3,7 +3,9 @@ package com.team2.jax.certificates;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+
 import javax.ejb.Stateless;
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 import javax.validation.ValidationException;
@@ -15,6 +17,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
@@ -39,6 +42,9 @@ public class CertificateRESTService {
 
 	private static CertificateService service = new CertificateService();
 
+	@Context  //injected response proxy supporting multiple threads
+	private HttpServletResponse response;
+	
 	/**
 	 * <p>
 	 * Retrieve a certificate by associated username.
@@ -55,14 +61,13 @@ public class CertificateRESTService {
 	 */
 	@GET
 	@Path("/{email}")
-	public Response getCertByUsername(@PathParam("email") String email) {
+	public Certificate getCertByUsername(@PathParam("email") String email) {
 		Certificate cert = service.findByEmail(email);
 
 		if (cert == null)
 			throw new WebApplicationException(Response.Status.NOT_FOUND);
 
-		return Response.status(Response.Status.ACCEPTED).entity(
-				cert).build();
+		return cert;
 
 	}
 
@@ -87,13 +92,14 @@ public class CertificateRESTService {
 	 * @see CertificateIn
 	 */
 	@POST
-	public Response sendCert(CertificateIn cert) {
+	public Certificate sendCert(CertificateIn cert) {
 		if (cert == null)
 			throw new WebApplicationException(Response.Status.BAD_REQUEST);
 
 		try {
-			return Response.status(Response.Status.CREATED)
-					.entity(service.create(cert)).build();
+			Certificate out = service.create(cert);
+			response.setStatus(Response.Status.CREATED.getStatusCode());
+			return out;
 
 		} catch (ConstraintViolationException ce) {
 			// Handles bean specific constraint exceptions

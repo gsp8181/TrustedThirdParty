@@ -61,7 +61,7 @@ public class CertificateRESTServiceTest {
 		
 		crud.verify(c.getEmail(), c.getCode());
 		Response bob = get("http://localhost:8080/service/rest/certificates/bob@163.com");	
-		assertEquals(202, bob.getStatusCode());
+		assertEquals(200, bob.getStatusCode());
 		assertEquals("bob@163.com",new JsonPath(bob.asString()).getString("email"));
 		
 		Response john = get("http://localhost:8080/service/rest/certificates/John@163.com");
