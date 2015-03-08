@@ -24,6 +24,8 @@ public class ContractService {
 	
 	private static ContractFileStore cfs = new ContractFileStoreS3();
 	
+	private static EmailNotifier emailNotifier = EmailNotifier.getInstance();
+	
 	public ContractIntermediate start(ContractStart ssObj) {
 		validator.validate(ssObj);
 		Contract c = new Contract();
@@ -44,7 +46,6 @@ public class ContractService {
 		c.setSenderTime(cs.findByEmail(ssObj.getEmail()).getTime());
 		c.setRecipientTime(cs.findByEmail(ssObj.getRecipient()).getTime());
 		
-		EmailNotifier emailNotifier = EmailNotifier.getInstance();
 		try{
 		emailNotifier.sendEmail(ssObj.getEmail(), ssObj.getRecipient(), EmailNotifier.COUNTERSIGN_CONTEXT, c.getId());
 	} catch (Exception e) {
@@ -101,7 +102,6 @@ public class ContractService {
 		c.setContract(completeContract.getSig());
 		c.setCompleted(true);
 		
-		EmailNotifier emailNotifier = EmailNotifier.getInstance();
 		try {
 			//emailNotifier.sendEmail(c.getSender(), c.getRecipient(), EmailNotifier.GETDOC_CONTEXT, c.getId());
 			emailNotifier.sendEmail(c.getRecipient(), c.getSender(), EmailNotifier.GETCONTRACT_CONTEXT, c.getId());

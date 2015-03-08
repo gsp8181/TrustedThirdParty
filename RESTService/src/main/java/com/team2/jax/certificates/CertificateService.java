@@ -16,6 +16,8 @@ public class CertificateService {
 	private static CertificateRepository crud = new CertificateRepositoryDynamo();
 	
 	private static CertificateValidator validator = new CertificateValidator();
+	
+	private static EmailNotifier emailNotifier = EmailNotifier.getInstance();
 
 	public Certificate findByEmail(String email) {
 		return crud.findByEmail(email);
@@ -37,7 +39,7 @@ public class CertificateService {
 		
 		//TODO: newCert.getCode() send validation email to guy //http://ttp.gsp8181.co.uk/rest/certificates/verify?email="newCert.getEmail()"&code="newCert.getCode()"
 		try {
-			EmailNotifier.getInstance().sendEmail("verification.noreply@gsp8181.co.uk",newCert.getEmail(), EmailNotifier.LINK_CONTEXT, code);
+			emailNotifier.sendEmail("verification.noreply@gsp8181.co.uk",newCert.getEmail(), EmailNotifier.LINK_CONTEXT, code);
 		} catch (Exception e) {
 			crud.delete(newCert);
 			throw new WebApplicationException(Response.status(Status.INTERNAL_SERVER_ERROR).entity(e).build());
