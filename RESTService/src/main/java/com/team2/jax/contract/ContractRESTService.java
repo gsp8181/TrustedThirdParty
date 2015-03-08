@@ -21,6 +21,11 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import com.team2.jax.contract.objects.ContractComplete;
+import com.team2.jax.contract.objects.ContractDoc;
+import com.team2.jax.contract.objects.ContractIntermediate;
+import com.team2.jax.contract.objects.ContractStart;
+
 /**
  * <p>
  * Contract REST Service

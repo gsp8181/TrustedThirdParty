@@ -22,6 +22,8 @@ import com.team2.jax.certificates.CertificateRepository;
 import com.team2.jax.certificates.CertificateRepositoryDynamo;
 
 
+import com.team2.jax.contract.objects.ContractComplete;
+import com.team2.jax.contract.objects.ContractStart;
 import com.team2.security.CertificateTools;
 
 public class ContractValidator {

@@ -1,4 +1,4 @@
-package com.team2.jax.contract;
+package com.team2.jax.contract.objects;
 
 import java.io.Serializable;
 
