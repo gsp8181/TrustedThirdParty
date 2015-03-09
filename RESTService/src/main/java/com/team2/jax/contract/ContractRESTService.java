@@ -81,14 +81,41 @@ public class ContractRESTService {
 		}
 	}
 	
+	/**
+	 * <p>
+	 * Abort request.
+	 * </p>
+	 * <p>
+	 * The sender can optionally abort the contract signing process which will remove all record from the database, this may only happen if the contract has not been countersigned (or an error will be thrown).
+	 * </p> 
+	 * <p>
+	 * The signed request is the timestamp signed with the key of the initial
+	 * reciever (sender of this request) and must be less than 5 minutes old.
+	 * The signed data must be in base64 format and in URL format
+	 * </p>
+	 * @param id The ID of the contract to be deleted
+	 * @param signedStamp
+	 *            timestamp signed with the key of the sender (the initial
+	 *            receiver of the contract) in Base64URL format
+	 *            (CertificateTools.base64urlencode)
+	 * @param ts
+	 *            The UNIX epoch timestamp in seconds, MUST be less than 5
+	 *            minutes old
+	 * @return 204 (NO CONTENT) if deletion is successful or an error code if not
+	 */
 	@DELETE
 	@Path("/abort/{id}")
 	public Response abortContract(@PathParam("id") String id,
 			@QueryParam("ts") long ts,
 			@QueryParam("signedStamp") String signedStamp)
 			{
-		//TODO: implement
-		return null;
+		
+			service.abort(id, ts, signedStamp);
+		
+			return Response.status(Response.Status.NO_CONTENT).build();
+		
+		
+		
 			}
 			
 

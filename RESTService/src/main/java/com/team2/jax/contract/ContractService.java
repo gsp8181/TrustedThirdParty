@@ -145,4 +145,14 @@ public class ContractService {
 		return rObj;
 	}
 
+	public boolean abort(String id, long ts, String signedStamp) {
+		Contract c = cod.getById(id);
+		
+		validator.validateAbortRequest(id,ts,signedStamp,c);
+		
+		cod.deleteById(id);
+		
+		return true;
+	}
+
 }

@@ -144,6 +144,32 @@ public class ContractValidator {
 
 		
 	}
+
+	public void validateAbortRequest(String id, long ts, String signedStamp,
+			Contract c) {
+		
+		if (c == null)
+			throw new WebApplicationException(Response.Status.NOT_FOUND);
+		
+		Certificate cert = cs.findByEmail(c.getSender());
+		
+		if(cert == null)
+			throw new WebApplicationException(Response.Status.UNAUTHORIZED);
+		
+		try {
+			PublicKey ssPublicKey = CertificateTools.decodeDSAPub(cert.getPublicKey());
+			if(!CertificateTools.verifyTimestamp(ssPublicKey, ts, signedStamp))
+				throw new WebApplicationException(Response.Status.UNAUTHORIZED);
+		} catch (InvalidKeyException | SignatureException
+				| NoSuchAlgorithmException | InvalidKeySpecException e) {
+			throw new WebApplicationException(Response.status(Status.INTERNAL_SERVER_ERROR).entity(e).build());
+		}
+		
+		if(c.isCompleted())
+			throw new WebApplicationException(Response.Status.FORBIDDEN);
+		
+		
+	}
 	
 	
 
