@@ -35,13 +35,6 @@ public class CertificateValidator {
         	throw new ValidationException("signedData:Certificate verification failed");
         }
         
-        //Can cert user recieve emails from SNS?
-        
-        // If yes continue
-        
-        //If not send verification email AND fail this and discard all data
-        
-        //verifyEmail(String cert.getUsername());
 	}
 
 	private boolean certAlreadyExists(CertificateIn newCert) {

@@ -107,7 +107,6 @@ public class ContractService {
 		c.setCompleted(true);
 		
 		try {
-			//emailNotifier.sendEmail(c.getSender(), c.getRecipient(), EmailNotifier.GETDOC_CONTEXT, c.getId());
 			emailNotifier.sendEmail(c.getRecipient(), c.getSender(), EmailNotifier.GETCONTRACT_CONTEXT, c.getId());
 		} catch (Exception e) {
 			throw new WebApplicationException(Response.status(Status.INTERNAL_SERVER_ERROR).entity(e).build());
