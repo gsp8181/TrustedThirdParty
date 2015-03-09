@@ -11,6 +11,7 @@ import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 import javax.validation.ValidationException;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -79,6 +80,17 @@ public class ContractRESTService {
 					createValidationViolationResponse(ve));
 		}
 	}
+	
+	@DELETE
+	@Path("/abort/{id}")
+	public Response abortContract(@PathParam("id") String id,
+			@QueryParam("ts") long ts,
+			@QueryParam("signedStamp") String signedStamp)
+			{
+		//TODO: implement
+		return null;
+			}
+			
 
 	/**
 	 * <p>
