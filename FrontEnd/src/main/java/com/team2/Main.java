@@ -159,8 +159,8 @@ public class Main extends CertificateTools {
 		// If not return error
 		
 		//PrivateKey pk = decodeDSAPriv(thePrivate);
-		TimeStampedKey timeStamp = genTimestamp(/*pk*/null);
-		doGetAvailableContract(timeStamp.getTime(), timeStamp.getSignedKey());
+//		TimeStampedKey timeStamp = genTimestamp(/*pk*/null);
+//		doGetAvailableContract(timeStamp.getTime(), timeStamp.getSignedKey());
 		
 	}
 	
@@ -341,7 +341,7 @@ public class Main extends CertificateTools {
 		JSONObject response = sendpostjson(uri, send);
 		System.out.println(response.getString("code"));
 //		System.out.println("Public Key : " + response.getString("publicKey"));
-		storeRespondsGenSig(response);
+//		storeRespondsGenSig(response);
 		
 		}	         catch (Exception e) {
             System.err.println("Caught exception " + e.toString());
@@ -440,12 +440,15 @@ public class Main extends CertificateTools {
 		uri.setHost(hostname);
 		uri.setPath(path);
 		uri.setPort(port);
-		Iterator<Entry<String, String>> x = args.entrySet().iterator();
-		while (x.hasNext())
-		{
-			Entry<String, String> entry = x.next();
-			uri.setParameter(entry.getKey(), entry.getValue());
+		if (args != null) {
+			Iterator<Entry<String, String>> x = args.entrySet().iterator();
+			while (x.hasNext())
+			{
+				Entry<String, String> entry = x.next();
+				uri.setParameter(entry.getKey(), entry.getValue());
+			}
 		}
+		
 		return uri.build();
 	}
 	
