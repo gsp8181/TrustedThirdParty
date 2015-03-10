@@ -31,6 +31,7 @@ import java.net.URL;
 
 
 
+
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
@@ -371,14 +372,15 @@ public class Main extends CertificateTools {
 		try {
 			
 			String workingDir = System.getProperty("user.dir");
-			  File file = new File("c:\\MyXMLFile.xml");
+			String filename = "\\tran.xml";
+			  File file = new File(workingDir + filename);
 			  DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
 			  DocumentBuilder db = dbf.newDocumentBuilder();
 			  Document doc = db.parse(file);
 			  doc.getDocumentElement().normalize();
 			  System.out.println("Root element " + doc.getDocumentElement().getNodeName());
-			  NodeList nodeLst = doc.getElementsByTagName("employee");
-			  System.out.println("Information of all employees");
+			  NodeList nodeLst = doc.getElementsByTagName("transaction");
+			  System.out.println("Information of all transaction");
 
 			  for (int s = 0; s < nodeLst.getLength(); s++) {
 
@@ -386,15 +388,27 @@ public class Main extends CertificateTools {
 			    
 			    if (fstNode.getNodeType() == Node.ELEMENT_NODE) {
 			  
-			           Element fstElmnt = (Element) fstNode;
-			      NodeList fstNmElmntLst = fstElmnt.getElementsByTagName("firstname");
-			      Element fstNmElmnt = (Element) fstNmElmntLst.item(0);
-			      NodeList fstNm = fstNmElmnt.getChildNodes();
-			      System.out.println("First Name : "  + ((Node) fstNm.item(0)).getNodeValue());
-			      NodeList lstNmElmntLst = fstElmnt.getElementsByTagName("lastname");
-			      Element lstNmElmnt = (Element) lstNmElmntLst.item(0);
-			      NodeList lstNm = lstNmElmnt.getChildNodes();
-			      System.out.println("Last Name : " + ((Node) lstNm.item(0)).getNodeValue());
+			        Element fstElmnt = (Element) fstNode;
+				      NodeList fstNmElmntLst = fstElmnt.getElementsByTagName("Email");
+				      Element fstNmElmnt = (Element) fstNmElmntLst.item(0);
+				      NodeList fstNm = fstNmElmnt.getChildNodes();
+				      System.out.println("Email : "  + ((Node) fstNm.item(0)).getNodeValue());
+				      
+				      NodeList lstNmElmntLst = fstElmnt.getElementsByTagName("PublicKey");
+				      Element lstNmElmnt = (Element) lstNmElmntLst.item(0);
+				      NodeList lstNm = lstNmElmnt.getChildNodes();
+				      System.out.println("Public Key : " + ((Node) lstNm.item(0)).getNodeValue());
+				      
+				      
+				      NodeList privateKeyElmtList = fstElmnt.getElementsByTagName("PrivateKey");
+				      Element privateElem = (Element) privateKeyElmtList.item(0);
+				      NodeList privateNode = privateElem.getChildNodes();
+				      System.out.println("Private Key : " + ((Node) privateNode.item(0)).getNodeValue());
+				      
+				      NodeList signKeyElmtList = fstElmnt.getElementsByTagName("sign");
+				      Element signElem = (Element) signKeyElmtList.item(0);
+				      NodeList signNode = signElem.getChildNodes();
+				      System.out.println("Sign : " + ((Node) signNode.item(0)).getNodeValue());
 			    }
 
 			  }
