@@ -35,8 +35,7 @@ public class ContractRepositoryDynamo implements ContractRepository {
 	private final static String INDEX="Receiver";
 	private final static Projection PROJECTION = new Projection().withProjectionType(ProjectionType.ALL);
 	private final static String CONTRACT = "Contract";	
-	private final static ProvisionedThroughput THRUPUT = new ProvisionedThroughput(5L, 6L);	
-	
+	private final static ProvisionedThroughput THRUPUT = new ProvisionedThroughput(5L, 6L);		
 	
 	private static DynamoDB dynamo;
 	static {

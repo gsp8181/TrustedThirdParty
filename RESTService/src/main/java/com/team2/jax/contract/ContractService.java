@@ -3,11 +3,9 @@ package com.team2.jax.contract;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
-
 import com.team2.jax.certificates.CertificateRepository;
 import com.team2.jax.certificates.CertificateRepositoryDynamo;
 import com.team2.jax.contract.objects.ContractComplete;
@@ -107,7 +105,6 @@ public class ContractService {
 		c.setCompleted(true);
 		
 		try {
-			//emailNotifier.sendEmail(c.getSender(), c.getRecipient(), EmailNotifier.GETDOC_CONTEXT, c.getId());
 			emailNotifier.sendEmail(c.getRecipient(), c.getSender(), EmailNotifier.GETCONTRACT_CONTEXT, c.getId());
 		} catch (Exception e) {
 			throw new WebApplicationException(Response.status(Status.INTERNAL_SERVER_ERROR).entity(e).build());
@@ -144,6 +141,16 @@ public class ContractService {
 		rObj.setSig(contract);
 		
 		return rObj;
+	}
+
+	public boolean abort(String id, long ts, String signedStamp) {
+		Contract c = cod.getById(id);
+		
+		validator.validateAbortRequest(id,ts,signedStamp,c);
+		
+		cod.deleteById(id);
+		
+		return true;
 	}
 
 }

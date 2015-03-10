@@ -5,10 +5,6 @@ import static org.junit.Assert.*;
 import java.util.Date;
 import java.util.UUID;
 
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
 public class CertificateDynamoTest {
@@ -17,23 +13,6 @@ public class CertificateDynamoTest {
 	private static long TIME = new Date().getTime();
 	private static final String EMAIL = "John@gmail.com";
 
-
-//	@BeforeClass
-//	public static void setUpBeforeClass() throws Exception {
-//	}
-//
-//	@AfterClass
-//	public static void tearDownAfterClass() throws Exception {
-//	}
-//
-//	@Before
-//	public void setUp() throws Exception {
-//	}
-//
-	@After
-//	public void tearDown() throws Exception {
-//		
-//	}
 
 	@Test
 	public void testCreateNewCertificate() {

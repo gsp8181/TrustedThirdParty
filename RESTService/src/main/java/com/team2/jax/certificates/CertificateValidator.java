@@ -2,7 +2,6 @@ package com.team2.jax.certificates;
 
 import java.util.HashSet;
 import java.util.Set;
-
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 import javax.validation.Validation;
@@ -33,15 +32,8 @@ public class CertificateValidator {
         if(!verifyCert(cert))
         {
         	throw new ValidationException("signedData:Certificate verification failed");
-        }
-        
-        //Can cert user recieve emails from SNS?
-        
-        // If yes continue
-        
-        //If not send verification email AND fail this and discard all data
-        
-        //verifyEmail(String cert.getUsername());
+        }        
+       
 	}
 
 	private boolean certAlreadyExists(CertificateIn newCert) {

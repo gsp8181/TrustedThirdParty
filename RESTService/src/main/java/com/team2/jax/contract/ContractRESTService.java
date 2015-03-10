@@ -5,12 +5,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
 import javax.ejb.Stateless;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 import javax.validation.ValidationException;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -20,7 +20,6 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-
 import com.team2.jax.contract.objects.ContractComplete;
 import com.team2.jax.contract.objects.ContractDoc;
 import com.team2.jax.contract.objects.ContractIntermediate;
@@ -79,6 +78,44 @@ public class ContractRESTService {
 					createValidationViolationResponse(ve));
 		}
 	}
+	
+	/**
+	 * <p>
+	 * Abort request.
+	 * </p>
+	 * <p>
+	 * The sender can optionally abort the contract signing process which will remove all record from the database, this may only happen if the contract has not been countersigned (or an error will be thrown).
+	 * </p> 
+	 * <p>
+	 * The signed request is the timestamp signed with the key of the initial
+	 * reciever (sender of this request) and must be less than 5 minutes old.
+	 * The signed data must be in base64 format and in URL format
+	 * </p>
+	 * @param id The ID of the contract to be deleted
+	 * @param signedStamp
+	 *            timestamp signed with the key of the sender (the initial
+	 *            receiver of the contract) in Base64URL format
+	 *            (CertificateTools.base64urlencode)
+	 * @param ts
+	 *            The UNIX epoch timestamp in seconds, MUST be less than 5
+	 *            minutes old
+	 * @return 204 (NO CONTENT) if deletion is successful or an error code if not
+	 */
+	@DELETE
+	@Path("/abort/{id}")
+	public Response abortContract(@PathParam("id") String id,
+			@QueryParam("ts") long ts,
+			@QueryParam("signedStamp") String signedStamp)
+			{
+		
+			service.abort(id, ts, signedStamp);
+		
+			return Response.status(Response.Status.NO_CONTENT).build();
+		
+		
+		
+			}
+			
 
 	/**
 	 * <p>

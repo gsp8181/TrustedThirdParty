@@ -20,12 +20,9 @@ import java.time.Instant;
 import java.util.Base64;
 import java.util.Base64.Decoder;
 import java.util.Base64.Encoder;
-import java.util.logging.Logger;
 
-public class CertificateTools {
 
-	private static Logger log = Logger.getAnonymousLogger();
-	
+public class CertificateTools {	
 	/**
 	 * Returns an object containing an example private/public key pair and signed data. 
 	 * Should only be used for testing
@@ -49,6 +46,7 @@ public class CertificateTools {
 		PublicKey pub = pair.getPublic();
 		
 		TestData out = new TestData(encodeDSA(pub), dataToSign, encodeBase64(sig), encodeDSA(priv));
+		
 		
 		return out;
 	}

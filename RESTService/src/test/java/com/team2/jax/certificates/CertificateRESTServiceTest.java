@@ -4,51 +4,18 @@ import static com.jayway.restassured.RestAssured.*;
 
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Map;
 import java.util.UUID;
-
 import com.jayway.restassured.http.ContentType;
-import com.jayway.restassured.path.json.JsonPath;
 import com.jayway.restassured.response.Response;
-
-//import javax.ws.rs.core.Response.Status;
-
-
-
-
-
-
-
-
-
-
-
 import static org.junit.Assert.*;
-
-import com.team2.jax.certificates.CertificateRESTService;
-
-
-
-
-
-
-
-
-
-
-
-
 import org.junit.After;
-import org.junit.AfterClass;
 import org.junit.Before;
-import org.junit.BeforeClass;
-//import org.junit.BeforeClass;
 import org.junit.Test;
 
 public class CertificateRESTServiceTest {
 	
-	private CertificateRepositoryDynamo crud = new CertificateRepositoryDynamo();
-	private Certificate c = new Certificate();
+	private static CertificateRepositoryDynamo crud = new CertificateRepositoryDynamo();
+	private static Certificate c = new Certificate();
 		
 	@Before
 	public void setUp() throws Exception {
@@ -116,9 +83,7 @@ public class CertificateRESTServiceTest {
 		assertEquals(cert.getPublicKey(), c.getPublicKey());
 		assertEquals(cert.getCode(), "Certificate not verified, check your emails to verify this certificate");
 				
-		crud.delete(cert);
-		
-		
+		crud.delete(cert);		
 		
 	}
 	
