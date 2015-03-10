@@ -32,8 +32,8 @@ public class CertificateValidator {
         if(!verifyCert(cert))
         {
         	throw new ValidationException("signedData:Certificate verification failed");
-        }        
-       
+        }
+        
 	}
 
 	private boolean certAlreadyExists(CertificateIn newCert) {
