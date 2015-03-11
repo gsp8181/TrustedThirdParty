@@ -1,6 +1,8 @@
 package com.team2.security;
 
-public class TestData {
+import java.io.Serializable;
+
+public class TestData implements Serializable {
 
 	public TestData(String publicKeyBase64, String signedData,
 			String sigBase64, String privateKeyBase64) {
