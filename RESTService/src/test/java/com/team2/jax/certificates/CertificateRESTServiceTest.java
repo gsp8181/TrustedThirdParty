@@ -82,6 +82,8 @@ public class CertificateRESTServiceTest {
 		assertEquals(cert.getEmail(), c.getEmail());
 		assertEquals(cert.getPublicKey(), c.getPublicKey());
 		assertEquals(cert.getCode(), "Certificate not verified, check your emails to verify this certificate");
+		
+		
 				
 		crud.delete(cert);		
 		

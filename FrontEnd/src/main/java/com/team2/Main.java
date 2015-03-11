@@ -14,10 +14,7 @@ import java.security.SignatureException;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Base64.Encoder;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -54,7 +51,7 @@ public class Main extends CertificateTools {
 	private static String thePrivate = null;
 	private static String theEmail = null;
 	private static String theSign = null;
-	private static String theTime = null;
+	private static long theTime = 0L;
 	private static String thePublicResponse = null;
 	private static String theCode = null;
 	private static boolean theStatus  = false;
@@ -155,12 +152,7 @@ public class Main extends CertificateTools {
 	}
 
 	private static void getcontracts(String[] args){
-		// Check we have a private key stored (get from the XML file)
-		// If not return error
-		
-		//PrivateKey pk = decodeDSAPriv(thePrivate);
-//		TimeStampedKey timeStamp = genTimestamp(/*pk*/null);
-//		doGetAvailableContract(timeStamp.getTime(), timeStamp.getSignedKey());
+
 		
 	}
 	
@@ -187,10 +179,10 @@ public class Main extends CertificateTools {
 	 * find the signedstamp
 	 * 
 	 * */
-	private static void doGetAvailableContract(long ts, String signedStamp){
+	private static void doGetAvailableContract(int ts, String signedStamp){
 		System.out.println("GET AVAILABLE CONTRACT TO SIGN");
 		System.out.println("Email : " + theEmail);
-		String tss = Long.toString(ts);
+		String tss = Integer.toString(ts);
 		
 		URI uri;
 		try {
@@ -198,13 +190,7 @@ public class Main extends CertificateTools {
 			
 			uri = buildUri("ttp.gsp8181.co.uk","/rest/contracts/2/" + theEmail ,80,false,"ts", tss, "signedStamp", signedStamp);
 			JSONObject response = sendgetjson(uri);
-			System.out.println(response.toString());
-			JSONArray array = new JSONArray(response);
-			for (int i = 0; i < array.length(); i++) {
-				  JSONObject iterated = array.getJSONObject(i);
-				  String id = iterated.getString("id");
-				  String sender = iterated.getString("sender");
-				}
+			//JSONArray array = response.getJSONArray();
 			
 		}  catch (Exception e) {
             System.err.println("Caught exception " + e.toString());
@@ -341,7 +327,7 @@ public class Main extends CertificateTools {
 		JSONObject response = sendpostjson(uri, send);
 		System.out.println(response.getString("code"));
 //		System.out.println("Public Key : " + response.getString("publicKey"));
-//		storeRespondsGenSig(response);
+		storeRespondsGenSig(response);
 		
 		}	         catch (Exception e) {
             System.err.println("Caught exception " + e.toString());
@@ -360,7 +346,7 @@ public class Main extends CertificateTools {
 
 	
 	public static void storeRespondsGenSig(JSONObject response){
-		theTime = response.getString("time");
+		theTime = response.getLong("time");
 		thePublicResponse = response.getString("publicKey");
 		theCode = response.getString("code");
 		theStatus = response.getBoolean("status");
@@ -413,6 +399,23 @@ public class Main extends CertificateTools {
 	 * @return A URI object
 	 * @throws URISyntaxException
 	 */
+	@SuppressWarnings("deprecation")
+	public static URI buildUri(String hostname, String path, int port, boolean secure, String query) throws URISyntaxException
+	{
+		URIBuilder uri = new URIBuilder();
+		if(secure)
+			uri.setScheme("https");
+		else
+			uri.setScheme("http");
+		
+		uri.setHost(hostname);
+		uri.setPath(path);
+		uri.setPort(port);
+		if(query != null && !query.isEmpty())
+			uri.setQuery(query);
+		return uri.build();
+	}
+	
 	public static URI buildUri(String hostname, String path, int port, boolean secure, String param1, String arg1) throws URISyntaxException
 	{
 		URIBuilder uri = new URIBuilder();
@@ -426,29 +429,6 @@ public class Main extends CertificateTools {
 		uri.setPort(port);
 		if(param1 != null && !arg1.isEmpty())
 			uri.setParameter(param1, arg1);
-		return uri.build();
-	}
-	
-	public static URI buildUri(String hostname, String path, int port, boolean secure, Map<String, String> args) throws URISyntaxException
-	{
-		URIBuilder uri = new URIBuilder();
-		if(secure)
-			uri.setScheme("https");
-		else
-			uri.setScheme("http");
-		
-		uri.setHost(hostname);
-		uri.setPath(path);
-		uri.setPort(port);
-		if (args != null) {
-			Iterator<Entry<String, String>> x = args.entrySet().iterator();
-			while (x.hasNext())
-			{
-				Entry<String, String> entry = x.next();
-				uri.setParameter(entry.getKey(), entry.getValue());
-			}
-		}
-		
 		return uri.build();
 	}
 	

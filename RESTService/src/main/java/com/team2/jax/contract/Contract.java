@@ -112,7 +112,7 @@ public class Contract {
 		this.completed = completed;
 	}
 	
-    @DynamoDBAttribute(attributeName="senderTime")
+    @DynamoDBAttribute(attributeName="SenderTime")
     public void setSenderTime(long senderTime){
     	this.senderTime=senderTime;
     }
@@ -121,7 +121,7 @@ public class Contract {
     	return senderTime;
     }
     
-    @DynamoDBAttribute(attributeName="recipientTime")
+    @DynamoDBAttribute(attributeName="RecipientTime")
     public void setRecipientTime(long recipientTime){
     	this.recipientTime=recipientTime;
     }
