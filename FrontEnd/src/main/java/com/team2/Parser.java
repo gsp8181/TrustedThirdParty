@@ -50,7 +50,7 @@ public class Parser {
 			 ObjectInputStream inb =new ObjectInputStream(new FileInputStream("user"));
 			   user =  (User)inb.readObject();			   	   
 		 } 
-		   catch (Exception e) {e.printStackTrace();}
+		   catch (Exception e) {}
 	}
 	
 
