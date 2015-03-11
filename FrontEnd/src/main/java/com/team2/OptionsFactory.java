@@ -1,9 +1,6 @@
 package com.team2;
 
-import java.util.ArrayList;
-import java.util.List;
 
-import org.apache.commons.cli.Option;
 import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 
@@ -41,6 +38,9 @@ public class OptionsFactory {
                 .create("f") );
 		return options;
 	}
+	
+	
+	
 	public static Options countersignOptions()
 	{
 		Options options = new Options();
@@ -52,6 +52,7 @@ public class OptionsFactory {
                 .create("i") );
 		return options;
 	}
+	
 	public static Options getcompletedOptions()
 	{
 		Options options = new Options();
@@ -63,4 +64,17 @@ public class OptionsFactory {
                 .create("i") );
 		return options;
 	}
+	
+	public static Options abort()
+	{
+		Options options = new Options();
+		options.addOption( OptionBuilder.withLongOpt( "id" )
+				.isRequired(true)
+                .withDescription( "ID of the contract to abort" )
+                .hasArg()
+                .withArgName("Contract ID")
+                .create("i") );
+		return options;
+	}
+	
 }
