@@ -265,8 +265,7 @@ public class Main extends CertificateTools {
 			JSONObject send = new JSONObject().put("recipient", destination)
 					.put("docName", filename).put("sig", theSign)
 					.put("docData", docText).put("email", theEmail);
-			URI uri = buildUri("ttp.gsp8181.co.uk", "/contract/1", 80, false,
-					null);
+			URI uri = buildUri("/contracts/1", null);
 			JSONObject response = sendpostjson(uri, send);
 			displayRespondSign(response);
 			storeRespondsdoSign(response);
@@ -332,7 +331,6 @@ public class Main extends CertificateTools {
 			System.out.println("Signed private key : " + theSign);
 			System.out.println("Private key : " + thePrivate);
 			// save the key
-			// saveToFile(); only save 2 parameter
 			SaveFile.save(thePublic,thePrivate,theEmail,theSign);
 
 			JSONObject send = new JSONObject().put("publicKey", thePublic)
