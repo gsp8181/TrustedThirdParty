@@ -1,7 +1,6 @@
 package com.team2;
 
 import java.security.InvalidKeyException;
-import java.security.Key;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.NoSuchAlgorithmException;
@@ -13,32 +12,19 @@ import java.security.Signature;
 import java.security.SignatureException;
 import java.security.spec.InvalidKeySpecException;
 import java.util.ArrayList;
-import java.util.Base64;
-import java.util.Base64.Encoder;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.URL;
-
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-
-import sun.net.www.http.HttpClient;
-
-import com.sun.jmx.snmp.tasks.ThreadService;
-
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.GnuParser;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.ParseException;
 import org.apache.commons.cli.HelpFormatter;
-import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
@@ -49,11 +35,6 @@ import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-
 import com.team2.security.*;
 
 public class Main extends CertificateTools {
@@ -228,7 +209,6 @@ public class Main extends CertificateTools {
 			formatter.printHelp("ttp sign", OptionsFactory.signOptions());
 			return;
 		}
-
 	}
 
 	/*
@@ -341,24 +321,6 @@ public class Main extends CertificateTools {
 		}
 	}
 
-	/*
-	 * send get request to verify the certificate
-	 */
-	/*
-	 * private static void doVerifyCertificate() { try { // TODO Auto-generated
-	 * method stub System.out.println("Email Receipient : " + theEmail);
-	 * System.out.println("Code" + theCode); URI uri =
-	 * buildUri("ttp.gsp8181.co.uk"
-	 * ,"/rest/certificates/verify",80,false,"email", theEmail, "code",
-	 * theCode); JSONObject response = sendgetjson(uri); //
-	 * System.out.println(response.getString("code"));
-	 * System.out.println("Verify status : " + response.toString()); //
-	 * storeRespondsGenSig(response);
-	 * 
-	 * } catch (Exception e) { System.err.println("Caught exception " +
-	 * e.toString()); e.printStackTrace(); } }
-	 */
-
 	private static void doGenSig(String email) {
 		try {
 			// TODO Auto-generated method stub
@@ -371,7 +333,7 @@ public class Main extends CertificateTools {
 			System.out.println("Private key : " + thePrivate);
 			// save the key
 			// saveToFile(); only save 2 parameter
-			saveXML();
+			SaveFile.save(thePublic,thePrivate,theEmail,theSign);
 
 			JSONObject send = new JSONObject().put("publicKey", thePublic)
 					.put("signedData", theSign).put("email", theEmail);
@@ -388,64 +350,6 @@ public class Main extends CertificateTools {
 			e.printStackTrace();
 		}
 	}
-
-	/*public static void readXML() {
-
-		try {
-
-			String workingDir = System.getProperty("user.dir");
-			String filename = "\\tran.xml";
-			File file = new File(workingDir + filename);
-			DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-			DocumentBuilder db = dbf.newDocumentBuilder();
-			Document doc = db.parse(file);
-			doc.getDocumentElement().normalize();
-			System.out.println("Root element "
-					+ doc.getDocumentElement().getNodeName());
-			NodeList nodeLst = doc.getElementsByTagName("transaction");
-			System.out.println("Information of all transaction");
-
-			for (int s = 0; s < nodeLst.getLength(); s++) {
-
-				Node fstNode = nodeLst.item(s);
-
-				if (fstNode.getNodeType() == Node.ELEMENT_NODE) {
-
-					Element fstElmnt = (Element) fstNode;
-					NodeList fstNmElmntLst = fstElmnt
-							.getElementsByTagName("Email");
-					Element fstNmElmnt = (Element) fstNmElmntLst.item(0);
-					NodeList fstNm = fstNmElmnt.getChildNodes();
-					System.out.println("Email : "
-							+ ((Node) fstNm.item(0)).getNodeValue());
-
-					NodeList lstNmElmntLst = fstElmnt
-							.getElementsByTagName("PublicKey");
-					Element lstNmElmnt = (Element) lstNmElmntLst.item(0);
-					NodeList lstNm = lstNmElmnt.getChildNodes();
-					System.out.println("Public Key : "
-							+ ((Node) lstNm.item(0)).getNodeValue());
-
-					NodeList privateKeyElmtList = fstElmnt
-							.getElementsByTagName("PrivateKey");
-					Element privateElem = (Element) privateKeyElmtList.item(0);
-					NodeList privateNode = privateElem.getChildNodes();
-					System.out.println("Private Key : "
-							+ ((Node) privateNode.item(0)).getNodeValue());
-
-					NodeList signKeyElmtList = fstElmnt
-							.getElementsByTagName("sign");
-					Element signElem = (Element) signKeyElmtList.item(0);
-					NodeList signNode = signElem.getChildNodes();
-					System.out.println("Sign : "
-							+ ((Node) signNode.item(0)).getNodeValue());
-				}
-
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}*/
 
 	public static void storeRespondsdoSign(JSONObject response) {
 		id = response.getString("id");
@@ -591,16 +495,6 @@ public class Main extends CertificateTools {
 												// example
 	}
 
-	public static void saveXML() throws IOException {
-		//CreateXML creates = new CreateXML();
-		//creates.create(thePublic, thePrivate, theEmail, theSign);
-		SaveFile.save(thePublic,thePrivate,theEmail,theSign);
-	}
-
-	//public static void saveToFile() {
-		//CreateXML creates = new CreateXML();
-		//creates.create(thePublic, theSign);
-	//}
 
 	public static void generatingKeyV2() throws NoSuchAlgorithmException,
 			NoSuchProviderException, InvalidKeyException, SignatureException {
@@ -632,36 +526,5 @@ public class Main extends CertificateTools {
 		thePrivate = encodedKeyPrivate;
 
 	}
-
-	/*
-	 * public static void generatingKeyTest() throws NoSuchAlgorithmException,
-	 * NoSuchProviderException, InvalidKeyException, SignatureException{
-	 * 
-	 * KeyPairGenerator keyGen = KeyPairGenerator.getInstance("DSA", "SUN");
-	 * 
-	 * SecureRandom random = SecureRandom.getInstance("SHA1PRNG", "SUN");
-	 * 
-	 * keyGen.initialize(1024, random); //generate key KeyPair pair =
-	 * keyGen.generateKeyPair(); //private key object PrivateKey priv =
-	 * pair.getPrivate(); //public key object PublicKey pub = pair.getPublic();
-	 * //encoded public key String encodedKey = encodeDSA(pub); //encoded
-	 * private key String encodedKeyPrivate = encodeDSA(priv);
-	 * 
-	 * Signature dsa = Signature.getInstance("SHA1withDSA");
-	 * 
-	 * dsa.initSign(priv); dsa.update(username.getBytes()); String sig =
-	 * encodeBase64(dsa.sign()); //set the value thepublic = encodedKey; thesign
-	 * = sig; thePrivate = encodedKeyPrivate;
-	 * 
-	 * 
-	 * 
-	 * TestData test = getTestData(theEmail);
-	 * 
-	 * thePublic = test.publicKeyBase64; thePrivate = test.privateKeyBase64;
-	 * theSign = test.sigBase64;
-	 * 
-	 * 
-	 * }
-	 */
 
 }
