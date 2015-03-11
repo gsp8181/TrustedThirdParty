@@ -249,10 +249,11 @@ public class Main extends CertificateTools {
 			// hello world (base64) = aGVsbG8gd29ybGQ=
 			// temp - need to upgrade later
 			String docText = "aGVsbG8gd29ybGQ=";
+			String signature = CertificateTools.signData(docText, decodeDSAPriv(thePrivate));
 			System.out.println("Receipient : " + destination);
 			System.out.println("Document Name : " + filename);
 			System.out.println("Document text(Base64) : " + docText);
-			System.out.println("Sign : " + theSign);
+			System.out.println("Sign : " + signature);
 			System.out.println("Email : " + theEmail);
 
 			theRecipient = destination;
@@ -263,10 +264,11 @@ public class Main extends CertificateTools {
 			// saveXML();
 
 			JSONObject send = new JSONObject().put("recipient", destination)
-					.put("docName", filename).put("sig", theSign)
+					.put("docName", filename).put("sig", signature)
 					.put("docData", docText).put("email", theEmail);
 			URI uri = buildUri("/contracts/1", null);
 			JSONObject response = sendpostjson(uri, send);
+			System.out.println("Document Accepted");
 			displayRespondSign(response);
 			storeRespondsdoSign(response);
 
@@ -366,7 +368,7 @@ public class Main extends CertificateTools {
 
 	public static void displayRespondSign(JSONObject response) {
 		System.out.println("ID : " + response.getString("id"));
-		System.out.println("User name : " + response.getString("username"));
+		System.out.println("User name : " + response.getString("sender"));
 		System.out.println("Recipient :" + response.getString("recipient"));
 		System.out.println("Document Name :" + response.getString("docName"));
 		System.out.println("Signature Sender :"
