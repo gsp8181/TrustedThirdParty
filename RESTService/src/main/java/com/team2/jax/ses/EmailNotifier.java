@@ -34,10 +34,10 @@ public class EmailNotifier {
 		sesClient = new AmazonSimpleEmailServiceClient(credentials);
 		sesClient.setRegion(Region.getRegion(Regions.EU_WEST_1));
 		
-		NOTIFICATION_CONTEXT.put(COUNTERSIGN_CONTEXT,"YOUR CONTRACTED DOUCMENT HAS BEEN RECEIVED BY TDS. PLEASE COUNTER SIGN THE DOCUMENT USING CONTRACT ID ");
-		NOTIFICATION_CONTEXT.put(GETDOC_CONTEXT,"COUNER SIGNATURE VERIFIED BY TDS. YOU ARE NOW AUTHORISED TO RETRIEVE THE DOCUMENT FROM TDS USING CONTRACT ID ");
-		NOTIFICATION_CONTEXT.put(GETCONTRACT_CONTEXT,"CONTRACT COMPLETED BY TDS. YOU ARE NOW AUTHORISED TO RETRIEVE THE FINAL CONTRACT FROM TDS USING CONTRACT ID ");
-		NOTIFICATION_CONTEXT.put(LINK_CONTEXT,"http://ttp.gsp8181.co.uk/rest/certificates/verify?");
+		NOTIFICATION_CONTEXT.put(COUNTERSIGN_CONTEXT,"A contract is waiting for you using the TDS service. Please view the details using the TDS interface and sign if you are happy to accept. Stored at ID ");
+		NOTIFICATION_CONTEXT.put(GETDOC_CONTEXT,"COUNTER SIGNATURE VERIFIED BY TDS. YOU ARE NOW AUTHORISED TO RETRIEVE THE DOCUMENT FROM TDS USING CONTRACT ID ");
+		NOTIFICATION_CONTEXT.put(GETCONTRACT_CONTEXT,"The contract was successfully countersigned by the recipient, you may now retrieve the completed contract from the registry stored at ID ");
+		NOTIFICATION_CONTEXT.put(LINK_CONTEXT,"https://ttp.gsp8181.co.uk/rest/certificates/verify?");
 	}
 	
 	
