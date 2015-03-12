@@ -73,15 +73,15 @@ public class Parser {
 	public void print(String[] args)
 	{
 		String result = parse(args);
-		if(result==null){printHelp();}
-		else {System.out.println(result);}
+		if(result!=null){System.out.println(result);}
 	}
 	
 	private String parse(String[] args) {
 
 		// If there are no args, return;
 		if(args.length < 1)
-		{			
+		{
+			printHelp();
 	    	return null;
 		}
 		String command = args[0];		
@@ -116,6 +116,7 @@ public class Parser {
 			return null;
 
 		default:
+			printHelp();
 			return null;
 		}
 	    
