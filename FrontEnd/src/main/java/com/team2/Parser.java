@@ -18,6 +18,9 @@ import java.io.ObjectOutputStream;
 
 
 
+
+
+
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.GnuParser;
 import org.apache.commons.cli.CommandLine;
@@ -265,18 +268,20 @@ public class Parser {
 		return null;
 	}
 	
-	private String getContract(){ //TODO: should be JSON object?
+	private JSONArray getContractArray() throws Exception{ //TODO: should be JSON object?
 		
 		try {
 			PrivateKey key = CertificateTools.decodeDSAPriv(user.getSig().getPrivateKeyBase64());
-			URI endpoint = HttpMethods.buildUri("/contracts/2/",timeStampArgs(key)); //TODO: nope
+			URI endpoint = HttpMethods.buildUri("/contracts/2/" + user.getSig().getSignedData(),timeStampArgs(key)); //TODO: nope
 			try
 			{
-			 JSONObject res = HttpMethods.sendgetjson(endpoint);
-			 return res.toString(); //TODO !
+			 JSONArray res = HttpMethods.sendgetjsonArray(endpoint);
+			 return res;
 			} catch (Exception e)
 			{
-				return e.getMessage();
+				if(e.getMessage().contains("404"))
+					return null;
+				throw (e);
 			}
 			
 		} catch (NoSuchAlgorithmException | InvalidKeySpecException | InvalidKeyException | SignatureException e) {
@@ -284,6 +289,32 @@ public class Parser {
 			e.printStackTrace();
 			return null;
 		}
+		
+	}
+	
+	private String getContract()
+	{
+		JSONArray results;
+		try {
+			results = getContractArray();
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+		String resultString = "";
+		for(int i=0;i<results.length();i++)
+		{
+			
+			JSONObject obj = results.getJSONObject(i);
+			String ri = "Contract " + (i + 1) + "\n";
+			ri += "ID: " + obj.getString("id") + "\n";
+			ri += "From: " + obj.getString("sender") + "\n";
+			ri += "Filename: " + obj.getString("docName") + "\n";
+			ri += "Evidence of Origin: " + obj.getString("sigSender") + "\n";
+					
+			resultString += ri;
+		}
+		return resultString;
 		
 	}
 
@@ -309,13 +340,19 @@ public class Parser {
 		    catch( ParseException exp ) {
 		       
 		    	HelpFormatter formatter = new HelpFormatter();
-		    	formatter.printHelp( "ttp generateSig", OptionsFactory.gensigOptions() );
+		    	formatter.printHelp( "ttp generateSig", OptionsFactory.gensigOptions() ); //TODO: handle 404
 		    	return null;
 		    }
 	}
 	
 	private String signContract(String id){
-		JSONArray list = new JSONArray(getContract());
+		JSONArray list;
+		try {
+			list = getContractArray();
+		} catch (Exception e1) {
+			e1.printStackTrace();
+			return null;
+		}
 		String eoc=null;
 		for(int i=0;i<list.length();i++)
 		{
@@ -375,7 +412,8 @@ public class Parser {
 			try
 			{
 			 JSONObject res = HttpMethods.sendgetjson(endpoint);
-			 return res.toString(); //TODO !
+			 String sig = res.getString("sig");
+			 return "Contract ID: " + id + " has signature " + sig;
 			} catch (Exception e)
 			{
 				return e.getMessage();
@@ -401,14 +439,14 @@ public class Parser {
 	    catch( ParseException exp ) {
 	       
 	    	HelpFormatter formatter = new HelpFormatter();
-	    	formatter.printHelp( "ttp sign", OptionsFactory.signOptions() );
+	    	formatter.printHelp( "ttp sign", OptionsFactory.abort() );
 	    	return null;
 	    }
 	}
 	
 	private String deleteRecord(String id)
 	{
-		System.out.println(id);
+		
 		try {
 			PrivateKey key = CertificateTools.decodeDSAPriv(user.getSig().getPrivateKeyBase64());
 			

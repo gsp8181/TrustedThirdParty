@@ -14,6 +14,7 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 
@@ -44,8 +45,19 @@ public class HttpMethods {
 		if (!response.getStatusLine().toString().startsWith("HTTP/1.1 2"))
 			throw new Exception("Failed to GET : error "
 					+ response.getStatusLine().toString());
-		return new JSONObject(responseBody); // responseJson.getLong("id");
-												// example
+		return new JSONObject(responseBody);
+	}
+	
+	public static JSONArray sendgetjsonArray(URI endpoint) throws Exception {
+		CloseableHttpClient httpClient = HttpClients.createDefault();
+
+		HttpGet req = new HttpGet(endpoint);
+		CloseableHttpResponse response = httpClient.execute(req);
+		String responseBody = EntityUtils.toString(response.getEntity());
+		if (!response.getStatusLine().toString().startsWith("HTTP/1.1 2"))
+			throw new Exception("Failed to GET : error "
+					+ response.getStatusLine().toString());
+		return new JSONArray(responseBody); 
 	}
 	
 	public static JSONObject senddeletejson(URI endpoint) throws Exception {
@@ -57,8 +69,7 @@ public class HttpMethods {
 		if (!response.getStatusLine().toString().startsWith("HTTP/1.1 2"))
 			throw new Exception("Failed to DELETE : error "
 					+ response.getStatusLine().toString());
-		return new JSONObject(responseBody); // responseJson.getLong("id");
-												// example
+		return new JSONObject(responseBody);
 	}
 
 	public static JSONObject sendpostjson(URI endpoint, JSONObject message)
@@ -75,8 +86,7 @@ public class HttpMethods {
 		if (!response.getStatusLine().toString().startsWith("HTTP/1.1 2"))
 			throw new Exception("Failed to POST : error "
 					+ response.getStatusLine().toString() + ", " + responseBody);
-		return new JSONObject(responseBody); // responseJson.getLong("id");
-												// example
+		return new JSONObject(responseBody);
 	}
 	/**
 	 * Builds a URI object from the variables provided
