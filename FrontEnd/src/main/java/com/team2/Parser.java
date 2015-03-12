@@ -41,6 +41,7 @@ import com.team2.security.*;
 public class Parser {
 	private static User user;
 	private static String docData= "SGVsbG8sIHdvcmxkIQ==";	
+	private static final String hostName = "https://ttp.gsp8181.co.uk/rest";
 	
 	
 	static
@@ -165,7 +166,7 @@ public class Parser {
 		 Response res = given().
 			contentType(ContentType.JSON).
 			body(json).
-			post("http://ttp.gsp8181.co.uk/rest/certificates/");	
+			post(hostName + "/certificates/");	
 		 
 		return res.asString();
 		
@@ -209,7 +210,7 @@ public class Parser {
 			Response res = given().
 					contentType(ContentType.JSON).
 					body(json).
-					post("http://ttp.gsp8181.co.uk/rest/contracts/1/");
+					post(hostName + "/contracts/1/");
 			return res.asString();
 		} catch (InvalidKeyException | SignatureException
 				| NoSuchAlgorithmException | InvalidKeySpecException e) {
@@ -225,7 +226,7 @@ public class Parser {
 		try {
 			PrivateKey key = CertificateTools.decodeDSAPriv(user.getSig().getPrivateKeyBase64());
 			TimeStampedKey  t= CertificateTools.genTimestamp(key);
-			Response record = get("http://ttp.gsp8181.co.uk/rest/contracts/2/"+user.getSig().getSignedData()+"?ts="+t.getTime()+"&signedStamp="+t.getSignedKey());
+			Response record = get(hostName + "/contracts/2/"+user.getSig().getSignedData()+"?ts="+t.getTime()+"&signedStamp="+t.getSignedKey());
 			return record.asString();			
 			
 		} catch (NoSuchAlgorithmException | InvalidKeySpecException | InvalidKeyException | SignatureException e) {
@@ -269,7 +270,7 @@ public class Parser {
 			Response sign = given().
 					contentType(ContentType.JSON).
 					body(json1).
-					post("http://ttp.gsp8181.co.uk/rest/contracts/3/"+id);
+					post(hostName + "/contracts/3/"+id);
 			return sign.asString();
 		} catch (InvalidKeyException | SignatureException
 				| NoSuchAlgorithmException | InvalidKeySpecException e) {
@@ -304,7 +305,7 @@ public class Parser {
 		try {
 			PrivateKey key = CertificateTools.decodeDSAPriv(user.getSig().getPrivateKeyBase64());
 			TimeStampedKey  t= CertificateTools.genTimestamp(key);
-			Response doc = get("http://ttp.gsp8181.co.uk/rest/contracts/5/"+id+"?ts="+t.getTime()+"&signedStamp="+t.getSignedKey());
+			Response doc = get(hostName + "/contracts/5/"+id+"?ts="+t.getTime()+"&signedStamp="+t.getSignedKey());
 		    return doc.asString();
 		} catch (NoSuchAlgorithmException | InvalidKeySpecException | InvalidKeyException | SignatureException e) {
 			e.printStackTrace();
@@ -336,7 +337,7 @@ public class Parser {
 		try {
 			PrivateKey key = CertificateTools.decodeDSAPriv(user.getSig().getPrivateKeyBase64());
 			TimeStampedKey  t= CertificateTools.genTimestamp(key);
-			Response res = delete("http://ttp.gsp8181.co.uk/rest/contracts/abort/"+id+"?ts="+t.getTime()+"&signedStamp="+t.getSignedKey());			
+			Response res = delete(hostName + "/contracts/abort/"+id+"?ts="+t.getTime()+"&signedStamp="+t.getSignedKey());
 			return res.asString();
 		} catch (NoSuchAlgorithmException | InvalidKeySpecException | InvalidKeyException | SignatureException e) {
 			e.printStackTrace();
