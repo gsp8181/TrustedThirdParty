@@ -62,6 +62,7 @@ public class Parser {
 		 try{
 			 ObjectInputStream inb =new ObjectInputStream(new FileInputStream("user.ttpsettings"));
 			   user =  (User)inb.readObject();	
+			   inb.close();
 			   if (user == null)
 				   hasArgs = false;
 			   hasArgs = true;
