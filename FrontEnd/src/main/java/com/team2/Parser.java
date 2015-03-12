@@ -2,9 +2,7 @@ package com.team2;
 
 
 import java.net.URI;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.nio.file.LinkOption;
 import java.nio.file.Path;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
@@ -60,7 +58,7 @@ public class Parser {
 	{
 		
 		 try{
-			 ObjectInputStream inb =new ObjectInputStream(new FileInputStream("user.ttpsettings"));
+			 ObjectInputStream inb =new ObjectInputStream(new FileInputStream(System.getProperty("user.home") + "/.ttp/user.ttpsettings"));
 			   user =  (User)inb.readObject();	
 			   inb.close();
 			   if (user == null)
@@ -186,7 +184,9 @@ public class Parser {
 		u.getSig().print();
 		user = u;
 		try {
-			   ObjectOutputStream obj = new ObjectOutputStream (new FileOutputStream("user.ttpsettings")); //TODO end?:
+			File dir = new File(System.getProperty("user.home") + "/.ttp/");
+			dir.mkdir();
+			   ObjectOutputStream obj = new ObjectOutputStream (new FileOutputStream(System.getProperty("user.home") + "/.ttp/user.ttpsettings")); //TODO end?: TODO: overwrite protection?
 			   obj.writeObject(u);
 			   obj.close();
 		} catch (IOException e) {			
@@ -198,10 +198,6 @@ public class Parser {
 				.put("email", email)
 				.put("signedData", u.getSig().getSigBase64());
 				
-		/* Response res = given().
-			contentType(ContentType.JSON).
-			body(json.toString()).
-			post(hostName + "/certificates/");	*/
 		URI endpoint = HttpMethods.buildUri("/certificates/",null);
 		System.out.println("Submitting to server");
 		try
