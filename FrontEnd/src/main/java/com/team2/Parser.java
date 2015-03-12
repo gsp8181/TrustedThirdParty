@@ -5,13 +5,14 @@ import static com.jayway.restassured.RestAssured.delete;
 import static com.jayway.restassured.RestAssured.get;
 import static com.jayway.restassured.RestAssured.given;
 
-import java.io.*;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.PrivateKey;
 import java.security.SignatureException;
 import java.security.spec.InvalidKeySpecException;
+import java.util.HashMap;
+import java.util.Map;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -236,8 +237,7 @@ public class Parser {
 		
 		try {
 			PrivateKey key = CertificateTools.decodeDSAPriv(user.getSig().getPrivateKeyBase64());
-			TimeStampedKey  t= CertificateTools.genTimestamp(key);
-			Response record = get(hostName + "/contracts/2/"+user.getSig().getSignedData()+"?ts="+t.getTime()+"&signedStamp="+t.getSignedKey());
+			Response record = get(hostName + "/contracts/2/"+user.getSig().getSignedData(), timeStampArgs(key));
 			return record.asString();			
 			
 		} catch (NoSuchAlgorithmException | InvalidKeySpecException | InvalidKeyException | SignatureException e) {
@@ -248,6 +248,17 @@ public class Parser {
 	
 		
 	}
+
+	private Map<String, String> timeStampArgs(PrivateKey key)
+			throws InvalidKeyException, SignatureException,
+			NoSuchAlgorithmException {
+		TimeStampedKey  t= CertificateTools.genTimestamp(key);
+		Map<String, String> args = new HashMap<String, String>();
+		args.put("ts", String.valueOf(t.getTime()));
+		args.put("signedStamp", t.getSignedKey());
+		return args;
+	}
+	
 	private String counterSign(String[] args){
 		 CommandLineParser parser = new GnuParser();
 		    try {
@@ -314,8 +325,7 @@ public class Parser {
 		 
 		try {
 			PrivateKey key = CertificateTools.decodeDSAPriv(user.getSig().getPrivateKeyBase64());
-			TimeStampedKey  t= CertificateTools.genTimestamp(key);
-			Response doc = get(hostName + "/contracts/5/"+id+"?ts="+t.getTime()+"&signedStamp="+t.getSignedKey());
+			Response doc = get(hostName + "/contracts/5/"+id, timeStampArgs(key));
 		    return doc.asString();
 		} catch (NoSuchAlgorithmException | InvalidKeySpecException | InvalidKeyException | SignatureException e) {
 			e.printStackTrace();
@@ -346,8 +356,7 @@ public class Parser {
 	{System.out.println(id);
 		try {
 			PrivateKey key = CertificateTools.decodeDSAPriv(user.getSig().getPrivateKeyBase64());
-			TimeStampedKey  t= CertificateTools.genTimestamp(key);
-			Response res = delete(hostName + "/contracts/abort/"+id+"?ts="+t.getTime()+"&signedStamp="+t.getSignedKey());
+			Response res = delete(hostName + "/contracts/abort/"+id, timeStampArgs(key));
 			return res.asString();
 		} catch (NoSuchAlgorithmException | InvalidKeySpecException | InvalidKeyException | SignatureException e) {
 			e.printStackTrace();
