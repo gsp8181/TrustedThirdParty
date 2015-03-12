@@ -35,6 +35,8 @@ import org.json.JSONArray;
 
 
 
+import org.json.JSONObject;
+
 import com.team2.security.*;
 
 
@@ -202,10 +204,17 @@ public class Parser {
 		
 	}
 	
-	private String sign(String fileName,String destination){
-		String json;		
+	private String sign(String fileName,String destination){	
 		try {
-			json = "{\"docData\":\""+docData+"\", \"docName\":\""+fileName+"\", \"email\":\""+user.getSig().getSignedData()+"\", \"recipient\":\""+destination+"\", \"sig\":\""+CertificateTools.signData(docData, CertificateTools.decodeDSAPriv(user.getSig().getPrivateKeyBase64()))+"\"}";
+			JSONObject json = new JSONObject()
+					.append("docData", docData)
+					.append("docName", fileName)
+					.append("email", user.getSig().getSignedData())
+					.append("recipient", destination)
+					.append("sig",
+							CertificateTools.signData(docData, CertificateTools
+									.decodeDSAPriv(user.getSig()
+											.getPrivateKeyBase64())));
 			
 			Response res = given().
 					contentType(ContentType.JSON).
@@ -264,9 +273,8 @@ public class Parser {
 		}
 		if(eoc==null){return null;}
 		
-		String json1;
 		try {
-			json1 = "{\"sig\":\""+CertificateTools.signData(eoc, CertificateTools.decodeDSAPriv(user.getSig().getPrivateKeyBase64()))+"\"}";
+			JSONObject json1 = new JSONObject().append("sig",CertificateTools.signData(eoc, CertificateTools.decodeDSAPriv(user.getSig().getPrivateKeyBase64())));
 			Response sign = given().
 					contentType(ContentType.JSON).
 					body(json1).
