@@ -45,16 +45,19 @@ public class Parser {
 	private static User user;
 	private static String docData= "SGVsbG8sIHdvcmxkIQ==";	
 	private static final String hostName = "https://ttp.gsp8181.co.uk/rest";
-	
+	private static boolean hasArgs;
 	
 	static
 	{
 		
 		 try{
 			 ObjectInputStream inb =new ObjectInputStream(new FileInputStream("user"));
-			   user =  (User)inb.readObject();			   	   
+			   user =  (User)inb.readObject();	
+			   if (user == null)
+				   hasArgs = false;
+			   hasArgs = true;
 		 } 
-		   catch (Exception e) {}
+		   catch (Exception e) {hasArgs = false;}
 	}
 	
 
@@ -74,30 +77,38 @@ public class Parser {
 		}
 		String command = args[0];		
 		
-		switch(command)
-		{
+		switch (command) {
 		case "countersign":
-			return counterSign(args);
-			
+			if (noSigError())
+				return counterSign(args);
+			return null;
+
 		case "gensig":
 			return generateSig(args);
-			
+
 		case "getcompleted":
-			return getCompleted(args);
-			
+			if (noSigError())
+				return getCompleted(args);
+			return null;
+
 		case "getcontracts":
-			return getContract();
-			
+			if (noSigError())
+				return getContract();
+			return null;
+
 		case "sign":
-			return sendContract(args);
-						
-		case "abort":			
-			return abort(args);
-			
+			if (noSigError())
+				return sendContract(args);
+			return null;
+
+		case "abort":
+			if (noSigError())
+				return abort(args);
+			return null;
+
 		default:
 			return null;
 		}
-			
 	    
 	}
 
@@ -110,6 +121,14 @@ public class Parser {
 		System.out.println("getcontracts:	Returns all contracts waiting to be signed");
 		System.out.println("sign:	        Signs a document and submits it with the current");
 	} 
+	
+	private boolean noSigError()
+	{
+		if(!hasArgs)
+			System.err.println("There is no signature stored, add one before trying to use contract features");
+		
+		return hasArgs;
+	}
 	
 	
 	private String generateSig(String[] args){
