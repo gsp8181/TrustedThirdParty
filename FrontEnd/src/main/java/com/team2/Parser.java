@@ -1,6 +1,12 @@
 package com.team2;
 
-
+import java.awt.Desktop;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -12,253 +18,216 @@ import java.security.SignatureException;
 import java.security.spec.InvalidKeySpecException;
 import java.util.HashMap;
 import java.util.Map;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 
-
-
-
-
-
-
-
-
-
-
-
+import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.GnuParser;
-import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.ParseException;
 import org.apache.commons.cli.HelpFormatter;
+import org.apache.commons.cli.ParseException;
 import org.json.JSONArray;
-
-
-
-
-
-
-
-
 import org.json.JSONObject;
 
-import com.team2.security.*;
-
+import com.team2.security.CertificateTools;
+import com.team2.security.Sig;
+import com.team2.security.TimeStampedKey;
 
 public class Parser {
 	private static User user;
 	private static final String hostName = "https://ttp.gsp8181.co.uk/rest";
 	private static boolean hasArgs;
-	
-	static
-	{
-		
-		 try{
-			 ObjectInputStream inb =new ObjectInputStream(new FileInputStream(System.getProperty("user.home") + "/.ttp/user.ttpsettings"));
-			   user =  (User)inb.readObject();	
-			   inb.close();
-			   if (user == null)
-				   hasArgs = false;
-			   hasArgs = true;
-		 } 
-		   catch (Exception e) {hasArgs = false;}
-	}
-	
 
-	public void print(String[] args)
-	{
-		String result = parse(args);
-		if(result!=null){System.out.println(result);}
+	static {
+
+		try {
+			ObjectInputStream inb = new ObjectInputStream(new FileInputStream(
+					System.getProperty("user.home") + "/.ttp/user.ttpsettings"));
+			user = (User) inb.readObject();
+			inb.close();
+			if (user == null)
+				hasArgs = false;
+			hasArgs = true;
+		} catch (Exception e) {
+			hasArgs = false;
+		}
 	}
-	
-	private String parse(String[] args) {
+
+	public void print(String[] args) {
 
 		// If there are no args, return;
-		if(args.length < 1)
-		{
+		if (args.length < 1) {
 			printHelp();
-	    	return null;
+			return;
 		}
-		String command = args[0];		
-		
+		String command = args[0];
+
 		switch (command) {
 		case "countersign":
 			if (noSigError())
-				return counterSign(args);
-			return null;
+				counterSign(args);
+			return;
 
 		case "gensig":
-			return generateSig(args);
+			generateSig(args);
+			return;
 
 		case "getcompleted":
 			if (noSigError())
-				return getCompleted(args);
-			return null;
+				getCompleted(args);
+			return;
 
 		case "getcontracts":
 			if (noSigError())
-				return getContract();
-			return null;
+				getContract();
+			return;
 
 		case "sign":
 			if (noSigError())
-				return sendContract(args);
-			return null;
+				sendContract(args);
+			return;
 
 		case "abort":
 			if (noSigError())
-				return abort(args);
-			return null;
+				abort(args);
+			return;
 
 		default:
 			printHelp();
-			return null;
+			return;
 		}
-	    
+
 	}
 
-	
 	private void printHelp() {
 		System.out.println("usage: ttp <command>");
-		System.out.println("gensig:	        Generates a certificate and a signature according to the given email address");
+		System.out
+				.println("gensig:	        Generates a certificate and a signature\n\t\t according to the given email address");
 		System.out.println("countersign:	Countersigns a document");
-		System.out.println("getcompleted:	Returns the receipt signature of a remote document");
-		System.out.println("getcontracts:	Returns all contracts waiting to be signed");
-		System.out.println("sign:	        Signs a document and submits it with the current");
-	} 
-	
-	private boolean noSigError()
-	{
-		if(!hasArgs)
-			System.err.println("There is no signature stored, add one before trying to use contract features");
-		
+		System.out
+				.println("getcompleted:	Returns the receipt signature of a remote document");
+		System.out
+				.println("getcontracts:	Returns all contracts waiting to be signed");
+		System.out
+				.println("sign:	        Signs a document and submits it with the current");
+	}
+
+	private boolean noSigError() {
+		if (!hasArgs) {
+			System.err
+					.println("There is no signature stored, add one before trying to use contract features");
+			HelpFormatter formatter = new HelpFormatter();
+			formatter.printHelp("ttp generateSig",
+					OptionsFactory.gensigOptions());
+		}
+
 		return hasArgs;
 	}
-	
-	
-	private String generateSig(String[] args){
-		
-		 CommandLineParser parser = new GnuParser();
-		    try {
-		      
-		       CommandLine line = parser.parse( OptionsFactory.gensigOptions(), args );
-		       String email = line.getOptionValue("e");
-		       if(Validate.verify(email))
-		       {
-		    	   return initialize(email);
-		       }
-		       else 
-		       {
-		    	   System.out.println("The email address must be in the format of name@domain.com");
-		    	   return null;
-		       }	
-		     
-		    }
-		    catch( ParseException exp ) {
-		       
-		    	HelpFormatter formatter = new HelpFormatter();
-		    	formatter.printHelp( "ttp generateSig", OptionsFactory.gensigOptions() );
-		    	return null;
-		    }
-			
-		
-		
+
+	private void generateSig(String[] args) {
+
+		CommandLineParser parser = new GnuParser();
+		try {
+
+			CommandLine line = parser.parse(OptionsFactory.gensigOptions(),
+					args);
+			String email = line.getOptionValue("e");
+			if (Validate.verify(email)) {
+				initialize(email);
+			} else {
+				System.out
+						.println("The email address must be in the format of name@domain.com");
+			}
+
+		} catch (ParseException exp) {
+
+			HelpFormatter formatter = new HelpFormatter();
+			formatter.printHelp("ttp generateSig",
+					OptionsFactory.gensigOptions());
+		}
+
 	}
-	
-	private String initialize(String email){
+
+	private void initialize(String email) {
 		User u = new User();
 		try {
-			Sig sig = CertificateTools.getTestData(email);						
-			u.setSig(sig);			
+			Sig sig = CertificateTools.getTestData(email);
+			u.setSig(sig);
 		} catch (InvalidKeyException | NoSuchAlgorithmException
 				| NoSuchProviderException | SignatureException e) {
-    		e.printStackTrace();
-    		return null;
-			}	
-		
-		System.out.println("Signature generated for user: "+email);
+			e.printStackTrace();
+			return;
+		}
+
+		System.out.println("Signature generated for user: " + email);
 		u.getSig().print();
 		user = u;
 		try {
 			File dir = new File(System.getProperty("user.home") + "/.ttp/");
 			dir.mkdir();
-			   ObjectOutputStream obj = new ObjectOutputStream (new FileOutputStream(System.getProperty("user.home") + "/.ttp/user.ttpsettings")); //TODO end?: TODO: overwrite protection?
-			   obj.writeObject(u);
-			   obj.close();
-		} catch (IOException e) {			
+			ObjectOutputStream obj = new ObjectOutputStream(
+					new FileOutputStream(System.getProperty("user.home")
+							+ "/.ttp/user.ttpsettings")); //TODO: overwrite protection?
+			obj.writeObject(u);
+			obj.close();
+		} catch (IOException e) {
 			e.printStackTrace();
-			return null;
+			return;
 		}
 		JSONObject json = new JSONObject()
 				.put("publicKey", u.getSig().getPublicKeyBase64())
 				.put("email", email)
 				.put("signedData", u.getSig().getSigBase64());
-				
-		URI endpoint = HttpMethods.buildUri("/certificates/",null);
+
+		URI endpoint = HttpMethods.buildUri("/certificates/", null);
 		System.out.println("Submitting to server");
-		try
-		{
-		 JSONObject res = HttpMethods.sendpostjson(endpoint, json);
-		 return res.getString("code");
-		} catch (Exception e)
-		{
+		try {
+			JSONObject res = HttpMethods.sendpostjson(endpoint, json);
+			System.out.println(res.getString("code"));
+		} catch (Exception e) {
 			System.err.println("Failed to send");
-			return e.getMessage();
 		}
-		 
-		
-		
-		   
-		   
-	
 	}
-	
-	private String sendContract(String[] args){
-		 CommandLineParser parser = new GnuParser();
-		    try {
-		      
-		       CommandLine line = parser.parse( OptionsFactory.signOptions(), args );
-		       String destination = line.getOptionValue("d");
-		       String fileName = line.getOptionValue("f");
-		       if(Validate.verify(destination))		       
-		       {
-		    	   return sign(fileName, destination);
-		       }
-		       else 
-		       {
-		    	   System.out.println("The email address must be in the format of name@domain.com");
-		    	   return null;
-		       }	
-		     
-		    }
-		    catch( ParseException exp ) {
-		       
-		    	HelpFormatter formatter = new HelpFormatter();
-		    	formatter.printHelp( "ttp sign", OptionsFactory.signOptions() );
-		    	return null;
-		    }
-		
+
+	private void sendContract(String[] args) {
+		CommandLineParser parser = new GnuParser();
+		try {
+
+			CommandLine line = parser.parse(OptionsFactory.signOptions(), args);
+			String destination = line.getOptionValue("d");
+			String fileName = line.getOptionValue("f");
+			if (Validate.verify(destination)) {
+				sign(fileName, destination);
+			} else {
+				System.out
+						.println("The email address must be in the format of name@domain.com");
+			}
+
+		} catch (ParseException exp) {
+
+			HelpFormatter formatter = new HelpFormatter();
+			formatter.printHelp("ttp sign", OptionsFactory.signOptions());
+		}
+
 	}
-	
-	private String sign(String fileName,String destination){
-		
+
+	private void sign(String fileName, String destination) {
+
 		File f = new File(fileName);
-		Path p = f.toPath(); //todo: fqn or local name
-		if(!Files.isReadable(p))
-			return "Could not access \"" + p.getFileName() + "\", make sure it exists and can be read";
+		Path p = f.toPath(); // todo: fqn or local name
+		if (!Files.isReadable(p)) {
+			System.err.println("Could not access \"" + p.getFileName()
+					+ "\", make sure it exists and can be read");
+			return;
+		}
 		byte[] encoded;
 		try {
 			encoded = Files.readAllBytes(p);
 		} catch (IOException e1) {
-			return "READ ERROR, " + e1.getMessage();
-			
+			System.err.println("READ ERROR, " + e1.getMessage());
+			return;
+
 		}
 		String data = CertificateTools.encodeBase64(encoded);
-		
+
 		JSONObject json;
 		try {
 			json = new JSONObject()
@@ -273,224 +242,224 @@ public class Parser {
 		} catch (InvalidKeyException | SignatureException
 				| NoSuchAlgorithmException | InvalidKeySpecException e) {
 			e.printStackTrace();
-			return null;
+			return;
 		}
-			
 
-			URI endpoint = HttpMethods.buildUri("/contracts/1/",null);
-			try
-			{
-			 JSONObject res = HttpMethods.sendpostjson(endpoint, json);
-			 String contractId = res.getString("id");
-			 return "Contract accepted, the recipient has been emailed. The contract ID for reference is: " + contractId; //TODO !
-			} catch (Exception e)
-			{
-				return e.getMessage();
-			}
+		URI endpoint = HttpMethods.buildUri("/contracts/1/", null);
+		try {
+			JSONObject res = HttpMethods.sendpostjson(endpoint, json);
+			String contractId = res.getString("id");
+			System.out
+					.println("Contract accepted, the recipient has been emailed. The contract ID for reference is: "
+							+ contractId);
+		} catch (Exception e) {
+			System.err.println(e.getMessage());
+		}
 
 	}
-	
-	private JSONArray getContractArray() throws Exception{ //TODO: should be JSON object?
-		
+
+	private JSONArray getContractArray() throws Exception { 
+
 		try {
-			PrivateKey key = CertificateTools.decodeDSAPriv(user.getSig().getPrivateKeyBase64());
-			URI endpoint = HttpMethods.buildUri("/contracts/2/" + user.getSig().getSignedData(),timeStampArgs(key)); //TODO: nope
-			try
-			{
-			 JSONArray res = HttpMethods.sendgetjsonArray(endpoint);
-			 return res;
-			} catch (Exception e)
-			{
-				if(e.getMessage().contains("404"))
+			PrivateKey key = CertificateTools.decodeDSAPriv(user.getSig()
+					.getPrivateKeyBase64());
+			URI endpoint = HttpMethods.buildUri("/contracts/2/"
+					+ user.getSig().getSignedData(), timeStampArgs(key)); 
+			try {
+				JSONArray res = HttpMethods.sendgetjsonArray(endpoint);
+				return res;
+			} catch (Exception e) {
+				if (e.getMessage().contains("404"))
 					return null;
 				throw (e);
 			}
-			
-		} catch (NoSuchAlgorithmException | InvalidKeySpecException | InvalidKeyException | SignatureException e) {
-			
+
+		} catch (NoSuchAlgorithmException | InvalidKeySpecException
+				| InvalidKeyException | SignatureException e) {
+
 			e.printStackTrace();
 			return null;
 		}
-		
+
 	}
-	
-	private String getContract()
-	{
+
+	private void getContract() {
 		JSONArray results;
 		try {
 			results = getContractArray();
 		} catch (Exception e) {
 			e.printStackTrace();
-			return null;
+			return;
 		}
 		String resultString = "";
-		if(results == null)
-			return "No contracts found";
-		for(int i=0;i<results.length();i++)
-		{
-			
+		if (results == null) {
+			System.err.println("No contracts found");
+			return;
+		}
+		for (int i = 0; i < results.length(); i++) {
+
 			JSONObject obj = results.getJSONObject(i);
 			String ri = "Contract " + (i + 1) + "\n";
 			ri += "ID: " + obj.getString("id") + "\n";
 			ri += "From: " + obj.getString("sender") + "\n";
 			ri += "Filename: " + obj.getString("docName") + "\n";
 			ri += "Evidence of Origin: " + obj.getString("sigSender") + "\n";
-					
-			resultString += ri;
+
+			System.out.println(ri);
 		}
-		return resultString;
-		
+
 	}
 
 	private Map<String, String> timeStampArgs(PrivateKey key)
 			throws InvalidKeyException, SignatureException,
 			NoSuchAlgorithmException {
-		TimeStampedKey  t= CertificateTools.genTimestamp(key);
+		TimeStampedKey t = CertificateTools.genTimestamp(key);
 		Map<String, String> args = new HashMap<String, String>();
 		args.put("ts", String.valueOf(t.getTime()));
 		args.put("signedStamp", t.getSignedKey());
 		return args;
 	}
-	
-	private String counterSign(String[] args){
-		 CommandLineParser parser = new GnuParser();
-		    try {
-		      
-		       CommandLine line = parser.parse( OptionsFactory.countersignOptions(), args );
-		       String id = line.getOptionValue("i");
-		       return signContract(id);
-		     
-		    }
-		    catch( ParseException exp ) {
-		       
-		    	HelpFormatter formatter = new HelpFormatter();
-		    	formatter.printHelp( "ttp generateSig", OptionsFactory.gensigOptions() ); //TODO: handle 404
-		    	return null;
-		    }
+
+	private void counterSign(String[] args) {
+		CommandLineParser parser = new GnuParser();
+		try {
+
+			CommandLine line = parser.parse(
+					OptionsFactory.countersignOptions(), args);
+			String id = line.getOptionValue("i");
+			signContract(id);
+
+		} catch (ParseException exp) {
+
+			HelpFormatter formatter = new HelpFormatter();
+			formatter.printHelp("ttp generateSig",
+					OptionsFactory.gensigOptions()); // TODO: handle 404
+		}
 	}
-	
-	private String signContract(String id){
+
+	private void signContract(String id) {
 		JSONArray list;
 		try {
 			list = getContractArray();
 		} catch (Exception e1) {
 			e1.printStackTrace();
-			return null;
+			return;
 		}
-		String eoc=null;
-		for(int i=0;i<list.length();i++)
-		{
-			
-			if(list.getJSONObject(i).get("id").equals(id)){eoc=list.getJSONObject(i).getString("sigSender");}
-		}
-		if(eoc==null){return null;}
-		
-		try {
-			JSONObject json1 = new JSONObject().put("sig",CertificateTools.signData(eoc, CertificateTools.decodeDSAPriv(user.getSig().getPrivateKeyBase64())));
+		String eoc = null;
+		for (int i = 0; i < list.length(); i++) {
 
-			URI endpoint = HttpMethods.buildUri("/contracts/3/" + id,null);
-			try
-			{
-			 JSONObject res = HttpMethods.sendpostjson(endpoint, json1);
-			 String docRef = res.getString("docRef");
-			 return "The countersign was accepted and your document is now available for download at " + docRef;
-			} catch (Exception e)
-			{
-				return e.getMessage();
+			if (list.getJSONObject(i).get("id").equals(id)) {
+				eoc = list.getJSONObject(i).getString("sigSender");
+			}
+		}
+		if (eoc == null) {
+			System.err.println("Could not find contract with that ID");
+			return;
+		}
+
+		try {
+			JSONObject json1 = new JSONObject().put("sig", CertificateTools
+					.signData(eoc, CertificateTools.decodeDSAPriv(user.getSig()
+							.getPrivateKeyBase64())));
+
+			URI endpoint = HttpMethods.buildUri("/contracts/3/" + id, null);
+			try {
+				JSONObject res = HttpMethods.sendpostjson(endpoint, json1);
+				String docRef = res.getString("docRef");
+				System.out
+						.println("The countersign was accepted and your document is now available for download at "
+								+ docRef);
+				if (Desktop.isDesktopSupported()) {
+					System.out
+							.println("Attempting to open document for download in default browser");
+					Desktop.getDesktop().browse(new URI(docRef));
+				}
+			} catch (Exception e) {
+				System.err.println(e.getMessage());
 			}
 		} catch (InvalidKeyException | SignatureException
 				| NoSuchAlgorithmException | InvalidKeySpecException e) {
-				e.printStackTrace();
-				return null;
-		}
-		
-	}
-	
-	
-	private String getCompleted(String[] args){
-		
-			 CommandLineParser parser = new GnuParser();
-			    try {
-			      
-			       CommandLine line = parser.parse( OptionsFactory.getcompletedOptions(), args );
-			       String id = line.getOptionValue("i");
-			       return completedContract(id);
-			     
-			    }
-			    catch( ParseException exp ) {
-			       
-			    	HelpFormatter formatter = new HelpFormatter();
-			    	formatter.printHelp( "ttp sign", OptionsFactory.signOptions() );
-			    	return null;
-			    }
-			
-	}
-	
-	private String completedContract(String id){
-		 
-		try {
-			PrivateKey key = CertificateTools.decodeDSAPriv(user.getSig().getPrivateKeyBase64());
-
-			
-			URI endpoint = HttpMethods.buildUri("/contracts/5/" + id,timeStampArgs(key));
-			try
-			{
-			 JSONObject res = HttpMethods.sendgetjson(endpoint);
-			 String sig = res.getString("sig");
-			 return "Contract ID: " + id + " has signature " + sig;
-			} catch (Exception e)
-			{
-				return e.getMessage();
-			}
-			
-		} catch (NoSuchAlgorithmException | InvalidKeySpecException | InvalidKeyException | SignatureException e) {
 			e.printStackTrace();
-			return null;
 		}
-			
+
 	}
-	
-	private String abort(String[] args)
-	{
+
+	private void getCompleted(String[] args) {
+
 		CommandLineParser parser = new GnuParser();
-	    try {
-	      
-	       CommandLine line = parser.parse( OptionsFactory.abort(), args );
-	       String id = line.getOptionValue("i");
-	       return deleteRecord(id);
-	     
-	    }
-	    catch( ParseException exp ) {
-	       
-	    	HelpFormatter formatter = new HelpFormatter();
-	    	formatter.printHelp( "ttp sign", OptionsFactory.abort() );
-	    	return null;
-	    }
-	}
-	
-	private String deleteRecord(String id)
-	{
-		
 		try {
-			PrivateKey key = CertificateTools.decodeDSAPriv(user.getSig().getPrivateKeyBase64());
-			
-			URI endpoint = HttpMethods.buildUri("/contracts/abort/" + id,timeStampArgs(key)); //TODO: nope
-			try
-			{
-			 HttpMethods.senddeletejson(endpoint);
-			 return "Contract aborted successfully";
-			} catch (Exception e)
-			{
-				return e.getMessage();
-			}
-			
-		} catch (NoSuchAlgorithmException | InvalidKeySpecException | InvalidKeyException | SignatureException e) {
-			e.printStackTrace();
-			return null;
-		}
-	}	
-	
 
-	
-	
+			CommandLine line = parser.parse(
+					OptionsFactory.getcompletedOptions(), args);
+			String id = line.getOptionValue("i");
+			completedContract(id);
+
+		} catch (ParseException exp) {
+
+			HelpFormatter formatter = new HelpFormatter();
+			formatter.printHelp("ttp sign", OptionsFactory.signOptions());
+		}
+
+	}
+
+	private void completedContract(String id) {
+
+		try {
+			PrivateKey key = CertificateTools.decodeDSAPriv(user.getSig()
+					.getPrivateKeyBase64());
+
+			URI endpoint = HttpMethods.buildUri("/contracts/5/" + id,
+					timeStampArgs(key));
+			try {
+				JSONObject res = HttpMethods.sendgetjson(endpoint);
+				String sig = res.getString("sig");
+				System.out.println("Contract ID: " + id + " has signature "
+						+ sig);
+			} catch (Exception e) {
+				System.err.println(e.getMessage());
+			}
+
+		} catch (NoSuchAlgorithmException | InvalidKeySpecException
+				| InvalidKeyException | SignatureException e) {
+			e.printStackTrace();
+		}
+
+	}
+
+	private void abort(String[] args) {
+		CommandLineParser parser = new GnuParser();
+		try {
+
+			CommandLine line = parser.parse(OptionsFactory.abort(), args);
+			String id = line.getOptionValue("i");
+			deleteRecord(id);
+
+		} catch (ParseException exp) {
+
+			HelpFormatter formatter = new HelpFormatter();
+			formatter.printHelp("ttp sign", OptionsFactory.abort());
+		}
+	}
+
+	private void deleteRecord(String id) {
+
+		try {
+			PrivateKey key = CertificateTools.decodeDSAPriv(user.getSig()
+					.getPrivateKeyBase64());
+
+			URI endpoint = HttpMethods.buildUri("/contracts/abort/" + id,
+					timeStampArgs(key));
+			try {
+				HttpMethods.senddeletejson(endpoint);
+				System.out.println("Contract aborted successfully");
+			} catch (Exception e) {
+				System.err.println(e.getMessage());
+			}
+
+		} catch (NoSuchAlgorithmException | InvalidKeySpecException
+				| InvalidKeyException | SignatureException e) {
+			e.printStackTrace();
+		}
+	}
+
 }
