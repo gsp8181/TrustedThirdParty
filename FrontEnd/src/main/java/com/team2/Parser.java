@@ -2,6 +2,10 @@ package com.team2;
 
 
 import java.net.URI;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.LinkOption;
+import java.nio.file.Path;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
@@ -10,11 +14,18 @@ import java.security.SignatureException;
 import java.security.spec.InvalidKeySpecException;
 import java.util.HashMap;
 import java.util.Map;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+
+
+
+
+
+
 
 
 
@@ -42,7 +53,6 @@ import com.team2.security.*;
 
 public class Parser {
 	private static User user;
-	private static String docData= "SGVsbG8sIHdvcmxkIQ==";	
 	private static final String hostName = "https://ttp.gsp8181.co.uk/rest";
 	private static boolean hasArgs;
 	
@@ -236,17 +246,37 @@ public class Parser {
 		
 	}
 	
-	private String sign(String fileName,String destination){	
+	private String sign(String fileName,String destination){
+		
+		File f = new File(fileName);
+		Path p = f.toPath(); //todo: fqn or local name
+		if(!Files.isReadable(p))
+			return "Could not access \"" + p.getFileName() + "\", make sure it exists and can be read";
+		byte[] encoded;
 		try {
-			JSONObject json = new JSONObject()
-					.put("docData", docData)
-					.put("docName", fileName)
-					.put("email", user.getSig().getSignedData()) //that is bollocks
+			encoded = Files.readAllBytes(p);
+		} catch (IOException e1) {
+			return "READ ERROR, " + e1.getMessage();
+			
+		}
+		String data = CertificateTools.encodeBase64(encoded);
+		
+		JSONObject json;
+		try {
+			json = new JSONObject()
+					.put("docData", data)
+					.put("docName", p.getFileName())
+					.put("email", user.getSig().getSignedData())
 					.put("recipient", destination)
 					.put("sig",
-							CertificateTools.signData(docData, CertificateTools
+							CertificateTools.signData(data, CertificateTools
 									.decodeDSAPriv(user.getSig()
 											.getPrivateKeyBase64())));
+		} catch (InvalidKeyException | SignatureException
+				| NoSuchAlgorithmException | InvalidKeySpecException e) {
+			e.printStackTrace();
+			return null;
+		}
 			
 
 			URI endpoint = HttpMethods.buildUri("/contracts/1/",null);
@@ -259,13 +289,7 @@ public class Parser {
 			{
 				return e.getMessage();
 			}
-		} catch (InvalidKeyException | SignatureException
-				| NoSuchAlgorithmException | InvalidKeySpecException e) {
-			
-			e.printStackTrace();
-		}
-		
-		return null;
+
 	}
 	
 	private JSONArray getContractArray() throws Exception{ //TODO: should be JSON object?
@@ -302,6 +326,8 @@ public class Parser {
 			return null;
 		}
 		String resultString = "";
+		if(results == null)
+			return "No contracts found";
 		for(int i=0;i<results.length();i++)
 		{
 			
