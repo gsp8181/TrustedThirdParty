@@ -1,10 +1,7 @@
 package com.team2;
 
 
-import static com.jayway.restassured.RestAssured.delete;
-import static com.jayway.restassured.RestAssured.get;
-import static com.jayway.restassured.RestAssured.given;
-
+import java.net.URI;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
@@ -19,8 +16,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
-import com.jayway.restassured.http.ContentType;
-import com.jayway.restassured.response.Response;
+
 
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.GnuParser;
@@ -175,7 +171,7 @@ public class Parser {
 		u.getSig().print();
 		user = u;
 		try {
-			   ObjectOutputStream obj = new ObjectOutputStream (new FileOutputStream("user"));
+			   ObjectOutputStream obj = new ObjectOutputStream (new FileOutputStream("user")); //TODO end?:
 			   obj.writeObject(u);
 			   obj.close();
 		} catch (IOException e) {			
@@ -183,16 +179,27 @@ public class Parser {
 			return null;
 		}
 		JSONObject json = new JSONObject()
-				.append("publicKey", u.getSig().getPublicKeyBase64())
-				.append("email", email)
-				.append("signedData", u.getSig().getSigBase64());
+				.put("publicKey", u.getSig().getPublicKeyBase64())
+				.put("email", email)
+				.put("signedData", u.getSig().getSigBase64());
 				
-		 Response res = given().
+		/* Response res = given().
 			contentType(ContentType.JSON).
-			body(json).
-			post(hostName + "/certificates/");	
+			body(json.toString()).
+			post(hostName + "/certificates/");	*/
+		URI endpoint = HttpMethods.buildUri("/certificates/",null);
+		System.out.println("Submitting to server");
+		try
+		{
+		 JSONObject res = HttpMethods.sendpostjson(endpoint, json);
+		 return res.getString("code");
+		} catch (Exception e)
+		{
+			System.err.println("Failed to send");
+			return e.getMessage();
+		}
 		 
-		return res.asString();
+		
 		
 		   
 		   
@@ -229,20 +236,26 @@ public class Parser {
 	private String sign(String fileName,String destination){	
 		try {
 			JSONObject json = new JSONObject()
-					.append("docData", docData)
-					.append("docName", fileName)
-					.append("email", user.getSig().getSignedData())
-					.append("recipient", destination)
-					.append("sig",
+					.put("docData", docData)
+					.put("docName", fileName)
+					.put("email", user.getSig().getSignedData()) //that is bollocks
+					.put("recipient", destination)
+					.put("sig",
 							CertificateTools.signData(docData, CertificateTools
 									.decodeDSAPriv(user.getSig()
 											.getPrivateKeyBase64())));
 			
-			Response res = given().
-					contentType(ContentType.JSON).
-					body(json).
-					post(hostName + "/contracts/1/");
-			return res.asString();
+
+			URI endpoint = HttpMethods.buildUri("/contracts/1/",null);
+			try
+			{
+			 JSONObject res = HttpMethods.sendpostjson(endpoint, json);
+			 String contractId = res.getString("id");
+			 return "Contract accepted, the recipient has been emailed. The contract ID for reference is: " + contractId; //TODO !
+			} catch (Exception e)
+			{
+				return e.getMessage();
+			}
 		} catch (InvalidKeyException | SignatureException
 				| NoSuchAlgorithmException | InvalidKeySpecException e) {
 			
@@ -252,19 +265,25 @@ public class Parser {
 		return null;
 	}
 	
-	private String getContract(){
+	private String getContract(){ //TODO: should be JSON object?
 		
 		try {
 			PrivateKey key = CertificateTools.decodeDSAPriv(user.getSig().getPrivateKeyBase64());
-			Response record = get(hostName + "/contracts/2/"+user.getSig().getSignedData(), timeStampArgs(key));
-			return record.asString();			
+			URI endpoint = HttpMethods.buildUri("/contracts/2/",timeStampArgs(key)); //TODO: nope
+			try
+			{
+			 JSONObject res = HttpMethods.sendgetjson(endpoint);
+			 return res.toString(); //TODO !
+			} catch (Exception e)
+			{
+				return e.getMessage();
+			}
 			
 		} catch (NoSuchAlgorithmException | InvalidKeySpecException | InvalidKeyException | SignatureException e) {
 			
 			e.printStackTrace();
 			return null;
 		}
-	
 		
 	}
 
@@ -306,12 +325,18 @@ public class Parser {
 		if(eoc==null){return null;}
 		
 		try {
-			JSONObject json1 = new JSONObject().append("sig",CertificateTools.signData(eoc, CertificateTools.decodeDSAPriv(user.getSig().getPrivateKeyBase64())));
-			Response sign = given().
-					contentType(ContentType.JSON).
-					body(json1).
-					post(hostName + "/contracts/3/"+id);
-			return sign.asString();
+			JSONObject json1 = new JSONObject().put("sig",CertificateTools.signData(eoc, CertificateTools.decodeDSAPriv(user.getSig().getPrivateKeyBase64())));
+
+			URI endpoint = HttpMethods.buildUri("/contracts/3/" + id,null);
+			try
+			{
+			 JSONObject res = HttpMethods.sendpostjson(endpoint, json1);
+			 String docRef = res.getString("docRef");
+			 return "The countersign was accepted and your document is now available for download at " + docRef;
+			} catch (Exception e)
+			{
+				return e.getMessage();
+			}
 		} catch (InvalidKeyException | SignatureException
 				| NoSuchAlgorithmException | InvalidKeySpecException e) {
 				e.printStackTrace();
@@ -344,8 +369,18 @@ public class Parser {
 		 
 		try {
 			PrivateKey key = CertificateTools.decodeDSAPriv(user.getSig().getPrivateKeyBase64());
-			Response doc = get(hostName + "/contracts/5/"+id, timeStampArgs(key));
-		    return doc.asString();
+
+			
+			URI endpoint = HttpMethods.buildUri("/contracts/5/" + id,timeStampArgs(key));
+			try
+			{
+			 JSONObject res = HttpMethods.sendgetjson(endpoint);
+			 return res.toString(); //TODO !
+			} catch (Exception e)
+			{
+				return e.getMessage();
+			}
+			
 		} catch (NoSuchAlgorithmException | InvalidKeySpecException | InvalidKeyException | SignatureException e) {
 			e.printStackTrace();
 			return null;
@@ -372,16 +407,28 @@ public class Parser {
 	}
 	
 	private String deleteRecord(String id)
-	{System.out.println(id);
+	{
+		System.out.println(id);
 		try {
 			PrivateKey key = CertificateTools.decodeDSAPriv(user.getSig().getPrivateKeyBase64());
-			Response res = delete(hostName + "/contracts/abort/"+id, timeStampArgs(key));
-			return res.asString();
+			
+			URI endpoint = HttpMethods.buildUri("/contracts/abort/" + id,timeStampArgs(key)); //TODO: nope
+			try
+			{
+			 HttpMethods.senddeletejson(endpoint);
+			 return "Contract aborted successfully";
+			} catch (Exception e)
+			{
+				return e.getMessage();
+			}
+			
 		} catch (NoSuchAlgorithmException | InvalidKeySpecException | InvalidKeyException | SignatureException e) {
 			e.printStackTrace();
 			return null;
 		}
 	}	
+	
+
 	
 	
 }
