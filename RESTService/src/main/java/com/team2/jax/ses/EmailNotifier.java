@@ -1,4 +1,4 @@
-package com.team2.jax.ses;
+package com.team2.jax.contract;
 
 import java.util.HashMap;
 
@@ -17,16 +17,17 @@ public class EmailNotifier {
 	private static HashMap<String,String> NOTIFICATION_CONTEXT= new HashMap<String,String>();
 	
 	/* Set Notification contexts to be used for a contract signing*/
-	public final static String COUNTERSIGN_CONTEXT = "INTERMEDIATE NOTIFICATION";
-	public final static String GETDOC_CONTEXT  = "GET DOCUMENT NOTIFICATION";
-	public final static String GETCONTRACT_CONTEXT   = "GET COMPLETED CONTRACT NOTIFICATION";
-	public final static String LINK_CONTEXT   = "CERTIFICATE VERIFICATION NOTIFICATION"; 
+	public final static String COUNTERSIGN_CONTEXT = "NOTIFICATION OF ORIGIN";
+	public final static String GETDOC_CONTEXT  = "DOCUMENT NOTIFICATION";
+	public final static String GETCONTRACT_CONTEXT   = "NOTIFICATION OF RECEIPT";
+	public final static String LINK_CONTEXT   = "VERIFICATION NOTIFICATION"; 
 	
 	private final static String VERIFICATION_STATUS_SUCCESS   = "Success";
 	//private final static String VERIFICATION_STATUS_PENDING   = "Pending";
 	
 	private final static String TDS_EMAIL  = "tds.noreply@gsp8181.co.uk";
-	private final static String SUBJECT = "TDS Notification : Non-Repudiation Receipt from ";
+	private final static String SUBJECT = "AWS TDS : ";
+	private final static String SIGNATURE = String.format("%n%n") + "REGARDS"+ String.format("%n") +"TDS TEAM" + String.format("%n") + "https://ttp.gsp8181.co.uk/";
 	
 	/* Set SES Credentials*/
 	static{
@@ -35,9 +36,9 @@ public class EmailNotifier {
 		sesClient.setRegion(Region.getRegion(Regions.EU_WEST_1));
 		
 		NOTIFICATION_CONTEXT.put(COUNTERSIGN_CONTEXT,"A contract is waiting for you using the TDS service. Please view the details using the TDS interface and sign if you are happy to accept. Stored at ID ");
-		NOTIFICATION_CONTEXT.put(GETDOC_CONTEXT,"COUNTER SIGNATURE VERIFIED BY TDS. YOU ARE NOW AUTHORISED TO RETRIEVE THE DOCUMENT FROM TDS USING CONTRACT ID ");
+		NOTIFICATION_CONTEXT.put(GETDOC_CONTEXT,"The counter signature was verified and you are now authorised to retrieve contract ");
 		NOTIFICATION_CONTEXT.put(GETCONTRACT_CONTEXT,"The contract was successfully countersigned by the recipient, you may now retrieve the completed contract from the registry stored at ID ");
-		NOTIFICATION_CONTEXT.put(LINK_CONTEXT,"https://ttp.gsp8181.co.uk/rest/certificates/verify?");
+		NOTIFICATION_CONTEXT.put(LINK_CONTEXT,"You have recently signed up for the TDS service (or added a new private key) at https://ttp.gsp8181.co.uk/ If you did not take this action, please ignore this email. If you wish to accept the change, please follow this link to verify your private key: https://ttp.gsp8181.co.uk/rest/certificates/verify?");
 	}
 	
 	
@@ -92,13 +93,13 @@ public class EmailNotifier {
 	
 	public SendEmailResult sendEmail(String senderEmail, String receipientMail, String notificationContext, String contractId) throws Exception{	
         Destination destination = new Destination().withToAddresses(new String[]{receipientMail});    
-        Content subject = new Content().withData(SUBJECT + senderEmail);
+        Content subject = new Content().withData(SUBJECT + notificationContext);
         
         Content textBody=null;
         if(notificationContext.equalsIgnoreCase(LINK_CONTEXT))
-        	textBody= new Content().withData(NOTIFICATION_CONTEXT.get(LINK_CONTEXT)+"email="+ receipientMail + "&code=" + contractId);
+        	textBody= new Content().withData(NOTIFICATION_CONTEXT.get(LINK_CONTEXT)+"email="+ receipientMail + "&code=" + contractId + SIGNATURE);
         else        	
-        	textBody = new Content().withData(NOTIFICATION_CONTEXT.get(notificationContext) + contractId); 
+        	textBody = new Content().withData(NOTIFICATION_CONTEXT.get(notificationContext) + contractId + SIGNATURE); 
         
         
         Body body = new Body().withText(textBody);         
@@ -109,4 +110,5 @@ public class EmailNotifier {
         return mailResult; 
     }
 	
+		
 }
