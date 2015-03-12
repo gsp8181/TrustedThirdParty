@@ -60,16 +60,15 @@ public class HttpMethods {
 		return new JSONArray(responseBody); 
 	}
 	
-	public static JSONObject senddeletejson(URI endpoint) throws Exception {
+	public static boolean senddeletejson(URI endpoint) throws Exception {
 		CloseableHttpClient httpClient = HttpClients.createDefault();
 
 		HttpDelete req = new HttpDelete(endpoint);
 		CloseableHttpResponse response = httpClient.execute(req);
-		String responseBody = EntityUtils.toString(response.getEntity());
 		if (!response.getStatusLine().toString().startsWith("HTTP/1.1 2"))
 			throw new Exception("Failed to DELETE : error "
 					+ response.getStatusLine().toString());
-		return new JSONObject(responseBody);
+		return true;
 	}
 
 	public static JSONObject sendpostjson(URI endpoint, JSONObject message)
