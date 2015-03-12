@@ -48,13 +48,13 @@ public class ContractService {
 		c.setSenderTime(cs.findByEmail(ssObj.getEmail()).getTime());
 		c.setRecipientTime(cs.findByEmail(ssObj.getRecipient()).getTime());
 		
+		cod.create(c);
+		
 		try{
 		emailNotifier.sendEmail(ssObj.getEmail(), ssObj.getRecipient(), EmailNotifier.COUNTERSIGN_CONTEXT, c.getId());
 	} catch (Exception e) {
 		throw new WebApplicationException(Response.status(Status.INTERNAL_SERVER_ERROR).entity(e).build());
 	}
-		
-		cod.create(c);
 		
 		ContractIntermediate i = new ContractIntermediate();
 		i.setRecipient(c.getRecipient());
