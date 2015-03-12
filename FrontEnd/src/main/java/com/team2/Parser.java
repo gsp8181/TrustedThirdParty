@@ -60,7 +60,7 @@ public class Parser {
 	{
 		
 		 try{
-			 ObjectInputStream inb =new ObjectInputStream(new FileInputStream("user"));
+			 ObjectInputStream inb =new ObjectInputStream(new FileInputStream("user.ttpsettings"));
 			   user =  (User)inb.readObject();	
 			   if (user == null)
 				   hasArgs = false;
@@ -185,7 +185,7 @@ public class Parser {
 		u.getSig().print();
 		user = u;
 		try {
-			   ObjectOutputStream obj = new ObjectOutputStream (new FileOutputStream("user")); //TODO end?:
+			   ObjectOutputStream obj = new ObjectOutputStream (new FileOutputStream("user.ttpsettings")); //TODO end?:
 			   obj.writeObject(u);
 			   obj.close();
 		} catch (IOException e) {			

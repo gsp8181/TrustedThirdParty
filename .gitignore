@@ -2,6 +2,7 @@ build/
 AwsCredentials.properties
 target/
 .idea/
+user.ttpsettings
 
 #################
 ## Eclipse
