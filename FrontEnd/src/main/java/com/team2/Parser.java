@@ -162,9 +162,11 @@ public class Parser {
 			e.printStackTrace();
 			return null;
 		}
+		JSONObject json = new JSONObject()
+				.append("publicKey", u.getSig().getPublicKeyBase64())
+				.append("email", email)
+				.append("signedData", u.getSig().getSigBase64());
 				
-		String json = "{\"publicKey\":\""+u.getSig().getPublicKeyBase64()+"\",\"email\":\""+email+"\",\"signedData\":\""+u.getSig().getSigBase64()+"\"}";
-		
 		 Response res = given().
 			contentType(ContentType.JSON).
 			body(json).
