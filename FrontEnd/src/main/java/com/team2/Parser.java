@@ -371,14 +371,6 @@ public class Parser {
 				System.out
 						.println("The countersign was accepted and your document is now available for download at "
 								+ docRef);
-				try
-				{
-				if (Desktop.isDesktopSupported()) {
-					System.out
-							.println("Attempting to open document for download in default browser");
-					Desktop.getDesktop().browse(new URI(docRef));
-				}
-				} catch (Exception e){}
 			} catch (Exception e) {
 				System.err.println(e.getMessage());
 			}
