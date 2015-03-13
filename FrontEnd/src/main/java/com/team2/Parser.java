@@ -108,6 +108,8 @@ public class Parser {
 				.println("getcontracts:	Returns all contracts waiting to be signed");
 		System.out
 				.println("sign:	        Signs a document and submits it with the current");
+		System.out
+				.println("abort:	Aborts a contract exchange in progress");
 	}
 
 	private boolean noSigError() {
